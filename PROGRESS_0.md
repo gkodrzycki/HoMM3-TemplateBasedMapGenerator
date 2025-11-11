@@ -16,7 +16,7 @@ Generator map do Heroes of Might and Magic III + zestaw botów/heurystyk do obie
 
 #### Warstwa analityki statycznej (bez symulacji tury-za-turą):
 
-- Parser map → graf regionów, POI, łupy, wrogowie neutralni, dystanse (edge cost).
+- Parser map → graf regionów, POI (Point of Interest), łupy, wrogowie neutralni, dystanse (edge cost).
 
 - „Lustrzane” porównywanie stref startowych graczy.
 
@@ -30,4 +30,4 @@ Generator map do Heroes of Might and Magic III + zestaw botów/heurystyk do obie
 
 #### Raport fairness (HTML/Markdown):
 
-- Tabele metryk per gracz + wykresy pająkowe/radialne + jeden łączny F-score.
+- Tabele metryk per gracz + wykresy + jeden łączny F-score.
