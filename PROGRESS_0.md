@@ -24,7 +24,7 @@ Generator map do Heroes of Might and Magic III + zestaw botów/heurystyk do obie
 
 - Bot-Eksploracja: szacuje czas/dystans do POI oraz priorytetyzację ścieżek (greedy z ograniczeniami).
 
-- Bot-Walka (trudność): estymator „siły neutralnych” vs. typowe armie w turach 1–3 (model punktowy/krzywe kosztu).
+- Bot-Walka (trudność): estymator „siły neutralnych” vs. typowe armie w turach 1–3.
 
 - Bot-Ekonomia: szacuje czas do osiągnięcia poszczególnego poziomu rozwoju w mieście.
 
