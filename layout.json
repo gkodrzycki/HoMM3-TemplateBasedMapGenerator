@@ -8,12 +8,12 @@
     {
       "name": "region_player_1",
       "id": 1,
-      "faction" : "Stronghold",
       "zones": [
         {
           "id": 1,
           "size": "M",
           "terrain": "random",
+          "faction" : "Stronghold",
           "owner" : "player_1",
           "type": "starting_zone"
         },
@@ -21,6 +21,7 @@
           "id": 2,
           "size": "M",
           "terrain": "random",
+          "faction" : "Stronghold",
           "owner" : "none",
           "type": "support_zone"
 
@@ -30,12 +31,12 @@
     {
       "name": "region_player_2",
       "id": 2,
-      "faction" : "Rampart",
       "zones": [
         {
           "id": 3,
           "size": "M",
           "terrain": "random",
+          "faction" : "Rampart",
           "owner" : "player_2",
           "type": "starting_zone"
         },
@@ -43,6 +44,7 @@
           "id": 4,
           "size": "M",
           "terrain": "random",
+          "faction" : "Rampart",
           "owner" : "none",
           "type": "support_zone"
 
@@ -52,12 +54,12 @@
     {
       "name": "region_conquest",
       "id": 3,
-      "faction" : "None",
       "zones": [
         {
           "id": 5,
           "size": "M",
           "terrain": "random",
+          "faction" : "None",
           "owner" : "None",
           "type": "conquest_zone"
         }

@@ -25,12 +25,15 @@ SRC_DIR = $(GENERATOR_DIR)/.
 UTILS_DIR = $(GENERATOR_DIR)/luaUtils
 GAME_INFO_DIR = $(GENERATOR_DIR)/gameInfo
 GLOBAL_DIR = $(GENERATOR_DIR)/global
-TEMPLATE_INFO_DIR = $(GENERATOR_DIR)/layoutInfo
+LAYOUT_INFO_DIR = $(GENERATOR_DIR)/layoutInfo
 PLACERS_DIR = $(GENERATOR_DIR)/placers
 
 # Source files for Generator
 GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
-              $(TEMPLATE_INFO_DIR)/LayoutInfo.cpp \
+              $(LAYOUT_INFO_DIR)/LayoutInfo.cpp \
+              $(LAYOUT_INFO_DIR)/ZoneInfo.cpp \
+              $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
+              $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
               $(GLOBAL_DIR)/Random.cpp \
               $(UTILS_DIR)/lua_helpers.cpp 
 

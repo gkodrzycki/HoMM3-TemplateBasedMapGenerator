@@ -1,6 +1,5 @@
 #include "./LayoutInfo.h"
 
-
 LayoutInfo::LayoutInfo() {
     name = "";
     description = "";
@@ -21,21 +20,19 @@ void LayoutInfo::deserialize(const json& layout) {
     this->difficulty = difficulty;
 
     
-    // const auto& zonesConfig = getOrError<json>(config, "zones");
-    // for (const auto &zoneConfig : zonesConfig)
-    // {      
-    //     auto zone = std::make_shared<ZoneInfo>(config.value("debug", false));
-    //     zone->deserializeZone(zoneConfig, rng);
-    //     zonesI[zone->getId()] = zone;
-    // }
+    const auto& regionList = getOrError<json>(layout, "regions");
+    for (const auto& region : regionList) {
+        RegionInfo regionInfo;
+        regionInfo.deserializeRegion(region);
+        regionInfoList.push_back(regionInfo);
+    }
 
-    // const auto& connectionsConfig = getOrError<json>(config, "connections");
-    // for (const auto& connectionConfig : connectionsConfig) {
-    //     i32 zoneA =  getOrError<int>(connectionConfig, "zoneA");
-    //     i32 zoneB =  getOrError<int>(connectionConfig, "zoneB");
-    //     zonesI[zoneA]->addConnection(connectionConfig);
-    //     zonesI[zoneB]->addConnection(connectionConfig);
-    // }
+    const auto& connectionList = getOrError<json>(layout, "connections");
+    for (const auto& connection : connectionList) {
+        ConnectionInfo connectionInfo;
+        connectionInfo.deserializeConnection(connection);
+        connectionInfoList.push_back(connectionInfo);
+    }
 }
 
 
@@ -45,9 +42,13 @@ void LayoutInfo::printLayout() {
     std::cerr << "Template map size: " << mapSize << "\n";
     std::cerr << "Template difficulty: " << difficulty<< "\n";
 
-    // for(auto zone : zonesI) {
-    //     zone.second->printZone();
-    // }
+    for(auto region : regionInfoList){
+        region.printRegion();
+    }
 
+    for(auto connection : connectionInfoList){
+        std::cerr << "  Connection:\n";
+        connection.printConnection();
+    }
 
 }
