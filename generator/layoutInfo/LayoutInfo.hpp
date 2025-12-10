@@ -1,15 +1,14 @@
 #pragma once
 
 #include "../global/Global.hpp"
-#include "./RegionInfo.hpp"
 #include "./ConnectionInfo.hpp"
+#include "./RegionInfo.hpp"
 
 class RegionInfo;
 class ConnectionInfo;
 
 class LayoutInfo {
-public:
-
+  public:
     LayoutInfo();
 
     string getName();
@@ -19,13 +18,13 @@ public:
     vector<RegionInfo> getRegionInfoList();
     vector<ConnectionInfo> getConnectionInfoList();
 
-    void deserialize(const json& layout);
+    void deserialize(const json &layout);
     void printLayout();
 
-private:
+  private:
     string name;
     string description;
-    string difficulty; 
+    string difficulty;
     string mapSize;
     vector<RegionInfo> regionInfoList;
     vector<ConnectionInfo> connectionInfoList;

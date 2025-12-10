@@ -5,6 +5,6 @@
 #include "homm3lua_h3m.h"
 #include "homm3lua_h3mlua.h"
 
-int luaopen_homm3lua (lua_State *L);
+int luaopen_homm3lua(lua_State *L);
 
 #endif

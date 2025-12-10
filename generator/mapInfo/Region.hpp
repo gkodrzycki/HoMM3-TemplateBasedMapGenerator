@@ -8,7 +8,7 @@ class Zone;
 using ZoneMap = map<int, shared_ptr<Zone>>;
 
 class Region {
-public: 
+  public:
     Region();
 
     void setZoneID(int zoneID);
@@ -21,9 +21,8 @@ public:
     shared_ptr<Zone> getZone(int zoneID);
 
     ZoneMap getZoneMap();
-    
 
-private:
+  private:
     int regionID;
     string name;
 

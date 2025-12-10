@@ -89,5 +89,17 @@ clean:
 run: Generator
 	./Generator
 
+FMT_SRCS := $(shell find . \
+    -name '*.c' -o -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | \
+    grep -v '^./homm3tools/')
+
+.PHONY: format format-check
+format:
+	clang-format -i $(FMT_SRCS)
+
+# do CI / sprawdzania, czy kod jest sformatowany
+format-check:
+	clang-format --dry-run --Werror $(FMT_SRCS)
+
 # Phony targets
 .PHONY: all doc clean run

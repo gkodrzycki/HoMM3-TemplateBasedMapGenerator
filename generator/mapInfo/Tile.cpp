@@ -4,17 +4,9 @@ Tile::Tile() {}
 
 Tile::Tile(int zoneID, string terrain) : zoneID(zoneID), terrain(terrain) {}
 
-void Tile::setZoneID(int zoneID) {
-    this->zoneID = zoneID;
-}
-void Tile::setTerrain(string terrain) {
-    this->terrain = terrain;
-}
+void Tile::setZoneID(int zoneID) { this->zoneID = zoneID; }
+void Tile::setTerrain(string terrain) { this->terrain = terrain; }
 
-int Tile::getZoneID() {
-    return zoneID;
-}
+int Tile::getZoneID() { return zoneID; }
 
-string Tile::getTerrain() {
-    return terrain;
-}
+string Tile::getTerrain() { return terrain; }

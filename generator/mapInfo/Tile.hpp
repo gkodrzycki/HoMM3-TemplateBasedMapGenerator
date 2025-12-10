@@ -3,7 +3,7 @@
 #include "../global/Global.hpp"
 
 class Tile {
-public: 
+  public:
     Tile();
     Tile(int zoneID, string terrain);
 
@@ -13,7 +13,7 @@ public:
     int getZoneID();
     string getTerrain();
 
-private:
+  private:
     int zoneID;
     string terrain;
 };

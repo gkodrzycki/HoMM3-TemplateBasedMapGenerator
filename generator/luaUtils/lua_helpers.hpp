@@ -3,9 +3,8 @@
 
 #include "../global/Global.hpp"
 
-#include <nlohmann/json.hpp> 
 #include </usr/include/lua/lua.hpp>
-
+#include <nlohmann/json.hpp>
 
 // #include "../gameInfo/Object.hpp"
 
@@ -26,7 +25,7 @@
 // void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
 // void AddTerrainTiles(ofstream& luaFile, Map& map);
 // void AddBorderObstacles(ofstream &luaFile, Map &map);
-void AddHeader(ofstream& luaFile);
+void AddHeader(ofstream &luaFile);
 // void AddCreature(ofstream& luaFile, Creature creature);
 // void AddMine(ofstream& luaFile, Mine mine, Map &map);
 // void AddResource(ofstream& luaFile, Treasure treasure);

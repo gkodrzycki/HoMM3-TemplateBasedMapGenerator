@@ -3,7 +3,7 @@
 #include "./Global.hpp"
 
 class RNG {
-public:
+  public:
     RNG();
     RNG(int seed);
     int nextInt();
@@ -18,16 +18,11 @@ public:
     void setSeed(int seed);
     int getSeed();
 
-    template<typename T>
-    void shuffle(vector<T>& vec);
+    template <typename T> void shuffle(vector<T> &vec);
 
-
-private:
+  private:
     random_device rd;
     mt19937 gen;
 };
 
-template<typename T>
-void RNG::shuffle(vector<T>& vec) {
-    shuffle(vec.begin(), vec.end(), gen);
-}
+template <typename T> void RNG::shuffle(vector<T> &vec) { shuffle(vec.begin(), vec.end(), gen); }

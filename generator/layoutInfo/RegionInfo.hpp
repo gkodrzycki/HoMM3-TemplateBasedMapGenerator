@@ -6,18 +6,17 @@
 class ZoneInfo;
 
 class RegionInfo {
-public:
-
+  public:
     RegionInfo();
 
     int getID();
     string getName();
     vector<ZoneInfo> getZoneInfoList();
 
-    void deserializeRegion(const json& region);
+    void deserializeRegion(const json &region);
     void printRegion();
 
-private:
+  private:
     int id;
     string name;
     vector<ZoneInfo> zoneInfoList;

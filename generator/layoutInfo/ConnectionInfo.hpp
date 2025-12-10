@@ -2,20 +2,18 @@
 
 #include "../global/Global.hpp"
 
-
 class ConnectionInfo {
 
-public:
+  public:
     ConnectionInfo();
 
     int getZoneFrom();
     int getZoneDest();
-    
-    void deserializeConnection(const json& connection);
+
+    void deserializeConnection(const json &connection);
     void printConnection();
 
-private:
+  private:
     int zoneFrom;
     int zoneDest;
-
 };

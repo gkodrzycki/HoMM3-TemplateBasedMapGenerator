@@ -3,7 +3,7 @@
 #include "../global/Global.hpp"
 
 class Zone {
-public:
+  public:
     Zone();
 
     void setCenter(int3 center);
@@ -22,7 +22,7 @@ public:
     string getOwner();
     string getType();
 
-private:
+  private:
     int3 center;
 
     int zoneID;
@@ -31,5 +31,4 @@ private:
     string faction;
     string owner;
     string type;
-
 };

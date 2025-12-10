@@ -4,6 +4,6 @@
 #include <h3mlib.h>
 #include <lua.h>
 
-void h3mlua_constants (lua_State *L);
+void h3mlua_constants(lua_State *L);
 
 #endif

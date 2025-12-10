@@ -11,6 +11,6 @@ typedef struct {
     int z;
 } h3mlua_xyz;
 
-h3mlua_xyz h3mlua_check_xyz (lua_State *L, int arg);
+h3mlua_xyz h3mlua_check_xyz(lua_State *L, int arg);
 
 #endif

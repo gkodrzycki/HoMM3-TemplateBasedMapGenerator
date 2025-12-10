@@ -2,15 +2,11 @@
 
 ConnectionInfo::ConnectionInfo() : zoneFrom(0), zoneDest(0) {}
 
-int ConnectionInfo::getZoneFrom() {
-    return zoneFrom;
-}
+int ConnectionInfo::getZoneFrom() { return zoneFrom; }
 
-int ConnectionInfo::getZoneDest() {
-    return zoneDest;
-}
+int ConnectionInfo::getZoneDest() { return zoneDest; }
 
-void ConnectionInfo::deserializeConnection(const json& connection) {
+void ConnectionInfo::deserializeConnection(const json &connection) {
     int zoneFrom = getOrError<int>(connection, "from_zone");
     int zoneDest = getOrError<int>(connection, "dest_zone");
 

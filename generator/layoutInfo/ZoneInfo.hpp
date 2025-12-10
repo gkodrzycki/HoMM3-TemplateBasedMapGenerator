@@ -3,8 +3,7 @@
 #include "../global/Global.hpp"
 
 class ZoneInfo {
-public:
-
+  public:
     ZoneInfo();
 
     int getID();
@@ -14,10 +13,10 @@ public:
     string getOwner();
     string getType();
 
-    void deserializeZone(const json& zone);
+    void deserializeZone(const json &zone);
     void printZone();
 
-private:
+  private:
     int id;
     string size;
     string terrain;

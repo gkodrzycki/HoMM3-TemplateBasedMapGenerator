@@ -1,12 +1,8 @@
 #include "./Random.hpp"
 
-RNG::RNG() {
-    gen = mt19937(rd());
-}
+RNG::RNG() { gen = mt19937(rd()); }
 
-RNG::RNG(int seed) {
-    gen = mt19937(seed);
-}
+RNG::RNG(int seed) { gen = mt19937(seed); }
 
 int RNG::nextInt() {
     uniform_int_distribution<> dis;
@@ -39,11 +35,11 @@ double RNG::nextDouble(double min, double max) {
 }
 
 double RNG::nextDoubleRounded(double min, double max) {
-        uniform_real_distribution<> dis(min, max);
+    uniform_real_distribution<> dis(min, max);
 
-        double value = dis(gen);
-        return round(value * 2.0) / 2.0;
-    }
+    double value = dis(gen);
+    return round(value * 2.0) / 2.0;
+}
 
 bool RNG::nextBool() {
     bernoulli_distribution dis;
@@ -55,10 +51,6 @@ bool RNG::nextBool(float probability) {
     return dis(gen);
 }
 
-void RNG::setSeed(int seed) {
-    gen = mt19937(seed);
-}
+void RNG::setSeed(int seed) { gen = mt19937(seed); }
 
-int RNG::getSeed() {
-    return gen();
-}
+int RNG::getSeed() { return gen(); }
