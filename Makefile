@@ -97,9 +97,22 @@ FMT_SRCS := $(shell find . \
 format:
 	clang-format -i $(FMT_SRCS)
 
-# do CI / sprawdzania, czy kod jest sformatowany
 format-check:
 	clang-format --dry-run --Werror $(FMT_SRCS)
+
+.PHONY: lint
+
+lint:
+	cppcheck \
+		--enable=all --inconclusive \
+		--std=c++17 --language=c++ \
+		--language=c++ \
+		--force \
+		--suppress=*:lua.h* \
+		--suppress=missingIncludeSystem \
+		-i homm3lua \
+		-i homm3tools \
+		.
 
 # Phony targets
 .PHONY: all doc clean run
