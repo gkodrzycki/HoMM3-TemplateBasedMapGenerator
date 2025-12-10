@@ -23,10 +23,11 @@ HOMM3_OBJ := $(addprefix dist/,$(notdir $(HOMM3_SRC:.c=.o)))
 GENERATOR_DIR = ./generator
 SRC_DIR = $(GENERATOR_DIR)/.
 UTILS_DIR = $(GENERATOR_DIR)/luaUtils
-GAME_INFO_DIR = $(GENERATOR_DIR)/gameInfo
+MAP_INFO_DIR = $(GENERATOR_DIR)/mapInfo
 GLOBAL_DIR = $(GENERATOR_DIR)/global
 LAYOUT_INFO_DIR = $(GENERATOR_DIR)/layoutInfo
-PLACERS_DIR = $(GENERATOR_DIR)/placers
+MAP_DIR = $(GENERATOR_DIR)/map
+PLACERS_DIR = $(MAP_DIR)/placers
 
 # Source files for Generator
 GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
@@ -35,8 +36,12 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
               $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
               $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
               $(GLOBAL_DIR)/Random.cpp \
-              $(UTILS_DIR)/lua_helpers.cpp 
-
+			  $(MAP_DIR)/Map.cpp \
+			  $(PLACERS_DIR)/RegionPlacer.cpp \
+              $(UTILS_DIR)/lua_helpers.cpp \
+			  $(MAP_INFO_DIR)/Tile.cpp \
+			  $(MAP_INFO_DIR)/Zone.cpp \
+			  $(MAP_INFO_DIR)/Region.cpp
 
 # Object files for Generator
 GEN_OBJECTS = $(GEN_SOURCES:.cpp=.o)

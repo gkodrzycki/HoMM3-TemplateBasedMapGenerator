@@ -1,7 +1,13 @@
 #include "./Zone.hpp"
 
-Zone::Zone()
-    : zoneID(0), size("M"), terrain("Random"), faction("Random"), owner("None"), type("Default") {}
+Zone::Zone(ZoneInfo zoneInfo) {
+    this->setFaction(zoneInfo.getFaction());
+    this->setOwner(zoneInfo.getOwner());
+    this->setSize(zoneInfo.getSize());
+    this->setTerrain(zoneInfo.getTerrain());
+    this->setType(zoneInfo.getType());
+    this->setZoneID(zoneInfo.getID());
+}
 
 void Zone::setCenter(int3 center) { this->center = center; }
 
@@ -30,3 +36,13 @@ string Zone::getFaction() { return faction; }
 string Zone::getOwner() { return owner; }
 
 string Zone::getType() { return type; }
+
+void Zone::printZone() {
+    cerr << "    Zone id: " << zoneID << "\n";
+    cerr << "      Size: " << size << "\n";
+    cerr << "      Terrain: " << terrain << "\n";
+    cerr << "      Faction: " << faction << "\n";
+    cerr << "      Owner: " << owner << "\n";
+    cerr << "      Type: " << type << "\n";
+    cerr << "      Center: " << center.toString() << "\n";
+}

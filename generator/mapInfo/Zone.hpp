@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../global/Global.hpp"
+#include "../layoutInfo/ZoneInfo.hpp"
 
 class Zone {
   public:
-    Zone();
+    Zone(ZoneInfo zoneInfo);
 
     void setCenter(int3 center);
     void setZoneID(int zoneID);
@@ -21,6 +22,8 @@ class Zone {
     string getFaction();
     string getOwner();
     string getType();
+
+    void printZone();
 
   private:
     int3 center;

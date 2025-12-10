@@ -3,6 +3,7 @@
 #include "./global/Global.hpp"
 #include "./global/Random.hpp"
 #include "./layoutInfo/LayoutInfo.hpp"
+#include "./map/Map.hpp"
 
 LayoutInfo parseLayout(const json &layout) {
     LayoutInfo layoutInfo;
@@ -98,8 +99,11 @@ int main(int argc, char *argv[]) {
     LayoutInfo layoutInfo = parseLayout(layout);
     layoutInfo.printLayout();
 
-    // Map map(&rng);
-    // map.generateMap(layoutInfo);
+    cerr << "========== MAP ==========\n";
+
+    Map map(rng, layoutInfo);
+    map.generateMap();
+    map.printMap();
 
     // generateLuaScript(config);
 

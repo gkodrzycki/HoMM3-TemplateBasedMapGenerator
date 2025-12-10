@@ -5,6 +5,7 @@
 #include "../layoutInfo/LayoutInfo.hpp"
 #include "../mapInfo/Region.hpp"
 #include "../mapInfo/Tile.hpp"
+#include "./placers/RegionPlacer.hpp"
 
 class RNG;
 class LayoutInfo;
@@ -12,18 +13,28 @@ class Tile;
 class Region;
 
 using RegionMap = map<int, shared_ptr<Region>>;
-using TileMap = map<pair<int, int>, shared_ptr<Tile>>;
+using TileMap = map<int, map<int, shared_ptr<Tile>>>;
 
 class Map {
   public:
-    Map(RNG *rng);
+    Map(RNG &rng, LayoutInfo layoutInfo);
 
-    void generateMap(LayoutInfo layout);
+    void initTiles();
+
+    void generateMap();
 
     void printMap();
 
+    void addRegion(shared_ptr<Region> region);
+
+    LayoutInfo getLayoutInfo();
+    RNG &getRNG();
+
   private:
-    RNG *rng;
+    RNG &rng;
+    LayoutInfo layoutInfo;
+
+    int width, height;
 
     RegionMap regionMap;
     TileMap tileMap;

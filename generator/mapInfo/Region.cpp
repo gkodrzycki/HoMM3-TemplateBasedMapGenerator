@@ -1,14 +1,17 @@
 #include "./Region.hpp"
 
-Region::Region() {}
+Region::Region(RegionInfo regionInfo) {
+    this->setRegionID(regionInfo.getID());
+    this->setName(regionInfo.getName());
+}
 
-void Region::setZoneID(int zoneID) { this->regionID = zoneID; }
+void Region::setRegionID(int regionID) { this->regionID = regionID; }
 
-void Region::setTerrain(string terrain) { this->name = terrain; }
+void Region::setName(string name) { this->name = name; }
 
-int Region::getZoneID() { return regionID; }
+int Region::getRegionID() { return regionID; }
 
-string Region::getTerrain() { return name; }
+string Region::getName() { return name; }
 
 void Region::addZone(shared_ptr<Zone> zone) { zoneMap[zone->getZoneID()] = zone; }
 
@@ -21,3 +24,11 @@ shared_ptr<Zone> Region::getZone(int zoneID) {
 }
 
 ZoneMap Region::getZoneMap() { return zoneMap; }
+
+void Region::printRegion() {
+    cerr << "  Region id: " << regionID << "\n";
+    cerr << "  Region name: " << name << "\n";
+    for (auto &zonePair : zoneMap) {
+        zonePair.second->printZone();
+    }
+}
