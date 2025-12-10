@@ -1,4 +1,4 @@
-#include "./LayoutInfo.h"
+#include "./LayoutInfo.hpp"
 
 LayoutInfo::LayoutInfo() {
     name = "";
@@ -7,12 +7,32 @@ LayoutInfo::LayoutInfo() {
     difficulty = "";
 }
 
+string LayoutInfo::getName() {
+    return name;
+}
+string LayoutInfo::getDescription() {
+    return description;
+}
+string LayoutInfo::getMapSize() {
+    return mapSize;
+}
+string LayoutInfo::getDifficulty() {
+    return difficulty;
+}
+vector<RegionInfo> LayoutInfo::getRegionInfoList() {
+    return regionInfoList;
+}
+vector<ConnectionInfo> LayoutInfo::getConnectionInfoList() {
+    return connectionInfoList;
+}
+
+
 void LayoutInfo::deserialize(const json& layout) {
 
-    std::string name = getOrError<std::string>(layout, "name");
-    std::string description = getOrError<std::string>(layout, "description");
-    std::string mapSize = layout.value("size", "M");
-    std::string difficulty = getOrError<std::string>(layout, "difficulty");
+    string name = getOrError<string>(layout, "name");
+    string description = getOrError<string>(layout, "description");
+    string mapSize = layout.value("size", "M");
+    string difficulty = getOrError<string>(layout, "difficulty");
 
     this->name = name;
     this->description = description;
@@ -37,17 +57,17 @@ void LayoutInfo::deserialize(const json& layout) {
 
 
 void LayoutInfo::printLayout() {
-    std::cerr << "Template name: " << name << "\n";
-    std::cerr << "Template description: " << description << "\n";
-    std::cerr << "Template map size: " << mapSize << "\n";
-    std::cerr << "Template difficulty: " << difficulty<< "\n";
+    cerr << "Template name: " << name << "\n";
+    cerr << "Template description: " << description << "\n";
+    cerr << "Template map size: " << mapSize << "\n";
+    cerr << "Template difficulty: " << difficulty<< "\n";
 
     for(auto region : regionInfoList){
         region.printRegion();
     }
 
     for(auto connection : connectionInfoList){
-        std::cerr << "  Connection:\n";
+        cerr << "  Connection:\n";
         connection.printConnection();
     }
 

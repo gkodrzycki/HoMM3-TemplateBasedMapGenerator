@@ -1,12 +1,15 @@
 #pragma once
 
-#include "../global/Global.h"
+#include "../global/Global.hpp"
 
 
 class ConnectionInfo {
 
 public:
     ConnectionInfo();
+
+    int getZoneFrom();
+    int getZoneDest();
     
     void deserializeConnection(const json& connection);
     void printConnection();

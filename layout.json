@@ -50,20 +50,6 @@
 
         }
       ]
-    },
-    {
-      "name": "region_conquest",
-      "id": 3,
-      "zones": [
-        {
-          "id": 5,
-          "size": "M",
-          "terrain": "random",
-          "faction" : "None",
-          "owner" : "None",
-          "type": "conquest_zone"
-        }
-      ]
     }
   ],
 
@@ -77,12 +63,8 @@
       "dest_zone": 4
     },
     {
-      "from_zone": 3,
-      "dest_zone": 5
-    },
-    {
       "from_zone": 1,
-      "dest_zone": 5
+      "dest_zone": 3
     }
   ]
 

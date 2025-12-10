@@ -1,12 +1,8 @@
-#include <bits/stdc++.h>
-#include <algorithm>
-
 #include "./luaUtils/lua_helpers.hpp"
 
-#include "./layoutInfo/LayoutInfo.h"
-
-
-using json = nlohmann::json;
+#include "./global/Global.hpp"
+#include "./global/Random.hpp"
+#include "./layoutInfo/LayoutInfo.hpp"
 
 LayoutInfo parseLayout(const json& layout) {
     LayoutInfo layoutInfo;
@@ -17,9 +13,9 @@ LayoutInfo parseLayout(const json& layout) {
 
 // void generateLuaScript(LayoutInfo layoutInfo) {
       
-//     std::ofstream luaFile("generated_script.lua");
+//     ofstream luaFile("generated_script.lua");
 //     if (!luaFile.is_open()) {
-//         std::cerr << "Failed to create Lua script file." << std::endl;
+//         cerr << "Failed to create Lua script file." << endl;
 //         return;
 //     }
 //     AddHeader(luaFile);
@@ -30,8 +26,8 @@ LayoutInfo parseLayout(const json& layout) {
 
 //     luaFile << "instance:name('" << templateInfo.getName() << "')\n";
 //     luaFile << "instance:description('" << templateInfo.getDescription() << "')\n";
-//     std::string difficulty = templateInfo.getDifficulty();
-//     std::transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::toupper);
+//     string difficulty = templateInfo.getDifficulty();
+//     transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::toupper);
 //     luaFile << "instance:difficulty(homm3lua.DIFFICULTY_" << difficulty << ")\n\n";
 
 //     // Map map(&rng);
@@ -39,12 +35,12 @@ LayoutInfo parseLayout(const json& layout) {
 
 
 //     // if (config.value("debug", false)) {
-//     //     std::cerr << "Map generated\n";
+//     //     cerr << "Map generated\n";
 //     //     map.print();
 //     // }
 
 //     // Finishing luaScript
-//     std::string homeDir = getenv("HOME");
+//     string homeDir = getenv("HOME");
 
 //     if(saveLocation == "") {
 //         saveLocation = homeDir + "/.local/share/vcmi/Maps/test.h3m";
@@ -54,16 +50,16 @@ LayoutInfo parseLayout(const json& layout) {
 //     luaFile << "\n";
     
 //     luaFile.close();
-//     std::cout << "Lua script generated successfully." << std::endl;
+//     cout << "Lua script generated successfully." << endl;
 // }
 
-void execute_lua_script(const std::string& script_name) {
+void execute_lua_script(const string& script_name) {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
     if (luaL_dofile(L, script_name.c_str())) {
-        std::cerr << "Error executing Lua script '" << script_name 
-                  << "': " << lua_tostring(L, -1) << std::endl;
+        cerr << "Error executing Lua script '" << script_name 
+                  << "': " << lua_tostring(L, -1) << endl;
         lua_close(L);
     }
 
@@ -71,9 +67,9 @@ void execute_lua_script(const std::string& script_name) {
 }
 
 int main(int argc, char *argv[]){
-    std::ifstream file("layout.json");
+    ifstream file("layout.json");
     if (!file.is_open()) {
-        std::cerr << "Failed to open layout.json file." << std::endl;
+        cerr << "Failed to open layout.json file." << endl;
         return 1;
     }
 
@@ -81,12 +77,12 @@ int main(int argc, char *argv[]){
     try {
         file >> layout;
     } catch (const json::parse_error& e) {
-        std::cerr << "JSON parsing error: " << e.what() << std::endl;
+        cerr << "JSON parsing error: " << e.what() << endl;
         return 1;
     }
 
     RNG rng;
-    std::string saveLocation = "";    
+    string saveLocation = "";    
 
 
     for(int i = 1; i < argc; i++) {
@@ -102,12 +98,17 @@ int main(int argc, char *argv[]){
     
     LayoutInfo layoutInfo = parseLayout(layout);
     layoutInfo.printLayout();
+
+
+    // Map map(&rng);
+    // map.generateMap(layoutInfo);
+    
     
     // generateLuaScript(config);
 
-    // std::cout << "Executing Lua script...\n";
+    // cout << "Executing Lua script...\n";
     // execute_lua_script("generated_script.lua");
-    // std::cout << "Lua script executed successfully.\n";
+    // cout << "Lua script executed successfully.\n";
 
     return 0;
 }

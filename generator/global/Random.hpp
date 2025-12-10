@@ -1,8 +1,6 @@
 #pragma once
 
-#include <bits/stdc++.h>
-#include <random>
-#include <algorithm> 
+#include "./Global.hpp"
 
 class RNG {
 public:
@@ -21,15 +19,15 @@ public:
     int getSeed();
 
     template<typename T>
-    void shuffle(std::vector<T>& vec);
+    void shuffle(vector<T>& vec);
 
 
 private:
-    std::random_device rd;
-    std::mt19937 gen;
+    random_device rd;
+    mt19937 gen;
 };
 
 template<typename T>
-void RNG::shuffle(std::vector<T>& vec) {
-    std::shuffle(vec.begin(), vec.end(), gen);
+void RNG::shuffle(vector<T>& vec) {
+    shuffle(vec.begin(), vec.end(), gen);
 }

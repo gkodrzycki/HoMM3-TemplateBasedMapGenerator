@@ -1,6 +1,14 @@
-#include "./ConnectionInfo.h"
+#include "./ConnectionInfo.hpp"
 
 ConnectionInfo::ConnectionInfo() : zoneFrom(0), zoneDest(0) {}
+
+int ConnectionInfo::getZoneFrom() {
+    return zoneFrom;
+}
+
+int ConnectionInfo::getZoneDest() {
+    return zoneDest;
+}
 
 void ConnectionInfo::deserializeConnection(const json& connection) {
     int zoneFrom = getOrError<int>(connection, "from_zone");
@@ -11,6 +19,6 @@ void ConnectionInfo::deserializeConnection(const json& connection) {
 }
 
 void ConnectionInfo::printConnection() {
-    std::cerr << "      Connection From: " << zoneFrom << "\n";
-    std::cerr << "      Connection Dest: " << zoneDest << "\n";
+    cerr << "      Connection From: " << zoneFrom << "\n";
+    cerr << "      Connection Dest: " << zoneDest << "\n";
 }

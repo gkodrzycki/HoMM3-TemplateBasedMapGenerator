@@ -1,11 +1,21 @@
-#include "./RegionInfo.h"
+#include "./RegionInfo.hpp"
 
 
 RegionInfo::RegionInfo() : id(0), name("") {}
 
+int RegionInfo::getID() {
+    return id;
+}
+string RegionInfo::getName() {
+    return name;
+}
+vector<ZoneInfo> RegionInfo::getZoneInfoList() {
+    return zoneInfoList;
+}
+
 void RegionInfo::deserializeRegion(const json& region) {
     int id = getOrError<int>(region, "id");
-    std::string name = getOrError<std::string>(region, "name");
+    string name = getOrError<string>(region, "name");
 
     this->id = id; 
     this->name = name;
@@ -19,8 +29,8 @@ void RegionInfo::deserializeRegion(const json& region) {
 }
 
 void RegionInfo::printRegion() {
-    std::cerr << "  Region id: " << id << "\n";
-    std::cerr << "  Region name: " << name << "\n";
+    cerr << "  Region id: " << id << "\n";
+    cerr << "  Region name: " << name << "\n";
 
     for(auto zone : zoneInfoList){
         zone.printZone();

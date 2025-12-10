@@ -1,62 +1,62 @@
-#include "./Random.h"
+#include "./Random.hpp"
 
 RNG::RNG() {
-    gen = std::mt19937(rd());
+    gen = mt19937(rd());
 }
 
 RNG::RNG(int seed) {
-    gen = std::mt19937(seed);
+    gen = mt19937(seed);
 }
 
 int RNG::nextInt() {
-    std::uniform_int_distribution<> dis;
+    uniform_int_distribution<> dis;
     return dis(gen);
 }
 
 int RNG::nextInt(int min, int max) {
-    std::uniform_int_distribution<> dis(min, max);
+    uniform_int_distribution<> dis(min, max);
     return dis(gen);
 }
 
 float RNG::nextFloat() {
-    std::uniform_real_distribution<> dis;
+    uniform_real_distribution<> dis;
     return dis(gen);
 }
 
 float RNG::nextFloat(float min, float max) {
-    std::uniform_real_distribution<> dis(min, max);
+    uniform_real_distribution<> dis(min, max);
     return dis(gen);
 }
 
 double RNG::nextDouble() {
-    std::uniform_real_distribution<> dis;
+    uniform_real_distribution<> dis;
     return dis(gen);
 }
 
 double RNG::nextDouble(double min, double max) {
-    std::uniform_real_distribution<> dis(min, max);
+    uniform_real_distribution<> dis(min, max);
     return dis(gen);
 }
 
 double RNG::nextDoubleRounded(double min, double max) {
-        std::uniform_real_distribution<> dis(min, max);
+        uniform_real_distribution<> dis(min, max);
 
         double value = dis(gen);
-        return std::round(value * 2.0) / 2.0;
+        return round(value * 2.0) / 2.0;
     }
 
 bool RNG::nextBool() {
-    std::bernoulli_distribution dis;
+    bernoulli_distribution dis;
     return dis(gen);
 }
 
 bool RNG::nextBool(float probability) {
-    std::bernoulli_distribution dis(probability);
+    bernoulli_distribution dis(probability);
     return dis(gen);
 }
 
 void RNG::setSeed(int seed) {
-    gen = std::mt19937(seed);
+    gen = mt19937(seed);
 }
 
 int RNG::getSeed() {

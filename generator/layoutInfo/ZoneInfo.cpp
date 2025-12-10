@@ -1,15 +1,34 @@
-#include "./ZoneInfo.h"
+#include "./ZoneInfo.hpp"
 
 ZoneInfo::ZoneInfo() : id(0), size("M"), terrain("Random"), faction("Random"), owner("None"), type("Default") {}
+
+int ZoneInfo::getID() {
+    return id;
+}
+string ZoneInfo::getSize() {
+    return size;
+}
+string ZoneInfo::getTerrain() {
+    return terrain;
+}
+string ZoneInfo::getFaction() {
+    return faction;
+}
+string ZoneInfo::getOwner() {
+    return owner;
+}
+string ZoneInfo::getType() {
+    return type;
+}
 
 void ZoneInfo::deserializeZone(const json& zone) {
     int id = getOrError<int>(zone, "id");
 
-    std::string size = getOrError<std::string>(zone, "size");
-    std::string terrain = getOrError<std::string>(zone, "terrain");
-    std::string faction = getOrError<std::string>(zone, "faction");
-    std::string owner = getOrError<std::string>(zone, "owner");
-    std::string type = getOrError<std::string>(zone, "type");
+    string size = getOrError<string>(zone, "size");
+    string terrain = getOrError<string>(zone, "terrain");
+    string faction = getOrError<string>(zone, "faction");
+    string owner = getOrError<string>(zone, "owner");
+    string type = getOrError<string>(zone, "type");
 
     this->id = id; 
     this->terrain = terrain; 
@@ -19,10 +38,10 @@ void ZoneInfo::deserializeZone(const json& zone) {
 }
 
 void ZoneInfo::printZone() {
-    std::cerr << "      Zone id: " << id << "\n";
-    std::cerr << "      Zone size: " << size << "\n";
-    std::cerr << "      Zone terrain: " << terrain << "\n";
-    std::cerr << "      Zone faction: " << faction << "\n";
-    std::cerr << "      Zone owner: " << owner << "\n";
-    std::cerr << "      Zone type: " << type << "\n";
+    cerr << "      Zone id: " << id << "\n";
+    cerr << "      Zone size: " << size << "\n";
+    cerr << "      Zone terrain: " << terrain << "\n";
+    cerr << "      Zone faction: " << faction << "\n";
+    cerr << "      Zone owner: " << owner << "\n";
+    cerr << "      Zone type: " << type << "\n";
 }
