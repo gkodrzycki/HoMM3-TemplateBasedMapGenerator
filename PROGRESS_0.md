@@ -1,9 +1,9 @@
 # HOMM3 map generator & fairness evaluation — PROGRESS_0
 
-### Repo bazowe: 
+### Repo bazowe:
 **Sko0owi/HOMM3-mapgen**
 
-### Cel ogólny: 
+### Cel ogólny:
 Generator map do Heroes of Might and Magic III + zestaw botów/heurystyk do obiektywnej (powtarzalnej) ewaluacji „sprawiedliwości” map dla graczy/lokacji startowych.
 
 ## 1) Zakres projektu (MVP)

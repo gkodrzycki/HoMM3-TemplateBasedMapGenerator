@@ -23,26 +23,22 @@ void generateLuaScript(Map map, string &saveLocation) {
     }
     AddHeader(luaFile);
 
-    luaFile << "local instance = homm3lua.new(homm3lua.FORMAT_ROE,homm3lua.SIZE_" << encodeMapSize(layoutInfo.getMapSize()) << ")\n";
-
+    luaFile << "local instance = homm3lua.new(homm3lua.FORMAT_ROE,homm3lua.SIZE_"
+            << encodeMapSize(layoutInfo.getMapSize()) << ")\n";
 
     luaFile << "instance:name('" << layoutInfo.getName() << "')\n";
-    luaFile << "instance:description('" << layoutInfo.getDescription() << "')\n"; 
+    luaFile << "instance:description('" << layoutInfo.getDescription() << "')\n";
     string difficulty = layoutInfo.getDifficulty();
-    transform(difficulty.begin(), difficulty.end(), difficulty.begin(),
-    ::toupper);
-    luaFile << "instance:difficulty(homm3lua.DIFFICULTY_" <<
-    difficulty << ")\n\n";
+    transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::toupper);
+    luaFile << "instance:difficulty(homm3lua.DIFFICULTY_" << difficulty << ")\n\n";
 
     AddTerrain(luaFile);
     AddTerrainTiles(luaFile, map);
 
-    
-
     // Finishing luaScript
     string homeDir = getenv("HOME");
 
-    if(saveLocation == "") {
+    if (saveLocation == "") {
         saveLocation = homeDir + "/.local/share/vcmi/Maps/test.h3m";
     }
 

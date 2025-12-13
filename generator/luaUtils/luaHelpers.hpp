@@ -1,8 +1,8 @@
 #ifndef LUA_HELPERS_HPP
 #define LUA_HELPERS_HPP
 
-#include "../global/Random.hpp"
 #include "../global/Global.hpp"
+#include "../global/Random.hpp"
 
 #include "../map/Map.hpp"
 
@@ -26,7 +26,7 @@ class Map;
 // void AddPlayer(ofstream& luaFile, int playerId);
 // void AddTown(ofstream &luaFile, Town town, bool is_main = true);
 void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
-void AddTerrainTiles(ofstream& luaFile, Map& map);
+void AddTerrainTiles(ofstream &luaFile, Map &map);
 // void AddBorderObstacles(ofstream &luaFile, Map &map);
 void AddHeader(ofstream &luaFile);
 // void AddCreature(ofstream& luaFile, Creature creature);

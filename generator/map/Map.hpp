@@ -4,8 +4,8 @@
 #include "../global/Random.hpp"
 #include "../layoutInfo/LayoutInfo.hpp"
 #include "../mapInfo/Region.hpp"
-#include "../mapInfo/Zone.hpp"
 #include "../mapInfo/Tile.hpp"
+#include "../mapInfo/Zone.hpp"
 #include "./placers/RegionPlacer.hpp"
 
 class RNG;

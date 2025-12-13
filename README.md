@@ -5,8 +5,13 @@
 
 ## Enable pre-commit:
 ```bash
-chmod +x ./scripts/pre-commit.sh
-ln -s ./scripts/pre-commit.sh .git/hooks/pre-commit
+pip install pre-commit
+pre-commit install
+```
+
+To check if everything is ok, run:
+```bash
+pre-commit run --all-files
 ```
 
 ## Example simple map
