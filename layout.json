@@ -1,6 +1,6 @@
 {
   "debug": false,
-  "name": "2P Duel Template",
+  "name": "Simple map",
   "description": "A balanced map for 2 players with a contested central area.",
   "size": "S",
   "difficulty": "easy",
