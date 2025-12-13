@@ -94,27 +94,28 @@ string encodeMapSize(string size) {
 // }
 
 // @function    AddTerrain
-// @tparam      ofstream    luaFile     file where we save lua script parts. 
+// @tparam      ofstream    luaFile     file where we save lua script parts.
 // @tparam      string      terrain     type of terrain, GRASS by default, See TERRAIN_*.
-void AddTerrain(std::ofstream& luaFile, std::string terrain){
-    luaFile << "instance:terrain(homm3lua.TERRAIN_" << terrain <<  ")\n";
+void AddTerrain(std::ofstream &luaFile, std::string terrain) {
+    luaFile << "instance:terrain(homm3lua.TERRAIN_" << terrain << ")\n";
 }
 
 // @function    AddTerrainTiles
-// @tparam      ofstream    luaFile     file where we save lua script parts. 
+// @tparam      ofstream    luaFile     file where we save lua script parts.
 // @tparam      Map         map         object of map class with finised setup.
-void AddTerrainTiles(std::ofstream& luaFile, Map& map){
+void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
     luaFile << "instance:terrain(function (x, y, z)\n";
 
     int width = map.getWidth();
     int height = map.getHeight();
-    for(int y = 0; y < height; y++){
-        for(int x = 0; x < width; x++){
-            auto tilePtr = map.getTile(int3(x,y,0));  
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            auto tilePtr = map.getTile(int3(x, y, 0));
             string terrain = tilePtr->getTerrain();
-            transform(terrain.begin(), terrain.end(), terrain.begin(),::toupper);
+            transform(terrain.begin(), terrain.end(), terrain.begin(), ::toupper);
 
-            luaFile << "if x == " << x << " and y == " << y << " then return homm3lua.TERRAIN_" << terrain << " end\n";
+            luaFile << "if x == " << x << " and y == " << y << " then return homm3lua.TERRAIN_"
+                    << terrain << " end\n";
         }
     }
 
