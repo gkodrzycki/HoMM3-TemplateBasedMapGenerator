@@ -38,7 +38,7 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
               $(GLOBAL_DIR)/Random.cpp \
 			  $(MAP_DIR)/Map.cpp \
 			  $(PLACERS_DIR)/RegionPlacer.cpp \
-              $(UTILS_DIR)/lua_helpers.cpp \
+              $(UTILS_DIR)/luaHelpers.cpp \
 			  $(MAP_INFO_DIR)/Tile.cpp \
 			  $(MAP_INFO_DIR)/Zone.cpp \
 			  $(MAP_INFO_DIR)/Region.cpp

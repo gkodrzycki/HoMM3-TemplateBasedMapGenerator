@@ -1,16 +1,19 @@
 #ifndef LUA_HELPERS_HPP
 #define LUA_HELPERS_HPP
 
+#include "../global/Random.hpp"
 #include "../global/Global.hpp"
 
+#include "../map/Map.hpp"
+
 #include </usr/include/lua/lua.hpp>
-#include <nlohmann/json.hpp>
 
 // #include "../gameInfo/Object.hpp"
 
+string encodeMapSize(string size);
 // using MapObjects = vector<Object>;
 
-// class Map;
+class Map;
 // class Zone;
 // class Town;
 // class Treasure;
@@ -22,8 +25,8 @@
 
 // void AddPlayer(ofstream& luaFile, int playerId);
 // void AddTown(ofstream &luaFile, Town town, bool is_main = true);
-// void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
-// void AddTerrainTiles(ofstream& luaFile, Map& map);
+void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
+void AddTerrainTiles(ofstream& luaFile, Map& map);
 // void AddBorderObstacles(ofstream &luaFile, Map &map);
 void AddHeader(ofstream &luaFile);
 // void AddCreature(ofstream& luaFile, Creature creature);

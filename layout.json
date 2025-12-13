@@ -12,7 +12,7 @@
         {
           "id": 1,
           "size": "M",
-          "terrain": "random",
+          "terrain": "grass",
           "faction" : "Stronghold",
           "owner" : "player_1",
           "type": "starting_zone"
@@ -20,7 +20,7 @@
         {
           "id": 2,
           "size": "M",
-          "terrain": "random",
+          "terrain": "sand",
           "faction" : "Stronghold",
           "owner" : "none",
           "type": "support_zone"
@@ -35,7 +35,7 @@
         {
           "id": 3,
           "size": "M",
-          "terrain": "random",
+          "terrain": "snow",
           "faction" : "Rampart",
           "owner" : "player_2",
           "type": "starting_zone"
@@ -43,7 +43,7 @@
         {
           "id": 4,
           "size": "M",
-          "terrain": "random",
+          "terrain": "lava",
           "faction" : "Rampart",
           "owner" : "none",
           "type": "support_zone"

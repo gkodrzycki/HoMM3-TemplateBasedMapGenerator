@@ -13,11 +13,16 @@ pair<int, int> decodeMapSize(string mapSize) {
         return {144, 144};
     return {-1, -1};
 }
-
+shared_ptr<Tile> Map::getTile(int3 pos) { return tileMap[pos.y][pos.x]; }
 LayoutInfo Map::getLayoutInfo() { return layoutInfo; }
 RNG &Map::getRNG() { return rng; }
+RegionMap Map::getRegionMap() { return regionMap; }
+ZoneMap Map::getZoneMap() { return zoneMap; }
+int Map::getWidth() { return width; }
+int Map::getHeight() { return height; }
 
 void Map::addRegion(shared_ptr<Region> region) { this->regionMap[region->getRegionID()] = region; }
+void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zone; }
 
 void Map::initTiles() {
     pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
@@ -25,8 +30,8 @@ void Map::initTiles() {
     width = width_height.first;
     height = width_height.second;
 
-    for (int i = 0; i < width; i++) {
-        for (int j = 0; j < height; j++) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
             tileMap[i][j] = std::make_shared<Tile>();
         }
     }
@@ -38,11 +43,12 @@ void Map::generateMap() {
 
     RegionPlacer regionPlacer(*this);
     regionPlacer.generateRegions();
-    // regionPlacer.placeZones() or placeRegions
+    regionPlacer.placeRegions();
 }
 
 void Map::printMap() {
-    for (auto &region : regionMap) {
-        region.second->printRegion();
+    cerr << "==== Regions ====\n";
+    for (auto &[regionID, region] : regionMap) {
+        region->printRegion();
     }
 }

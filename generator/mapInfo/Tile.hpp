@@ -13,6 +13,8 @@ class Tile {
     int getZoneID();
     string getTerrain();
 
+    void printTile();
+
   private:
     int zoneID;
     string terrain;

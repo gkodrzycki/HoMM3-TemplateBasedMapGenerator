@@ -1,4 +1,4 @@
-#include "./lua_helpers.hpp"
+#include "./luaHelpers.hpp"
 #include <sstream>
 
 // #include "../gameInfo/Tile.hpp"
@@ -12,11 +12,19 @@
 // #include "../gameInfo/Treasure.hpp"
 // #include "../gameInfo/Mine.hpp"
 // #include "../gameInfo/Creature.hpp"
-#include "../global/Random.hpp"
+
+string encodeMapSize(string size) {
+    if (size == "S")
+        return "SMALL";
+    if (size == "M")
+        return "MEDIUM";
+    if (size == "L")
+        return "LARGE";
+    if (size == "XL")
+        return "EXTRA_LARGE";
+    return "UNKNOWN_SIZE";
+}
 // #include "../placers/GuardPlacer.hpp"
-
-using json = nlohmann::json;
-
 // // @function    AddPlayer
 // // @tparam      ofstream    luaFile     file where we save lua script parts.
 // // @tparam      integer     playerId    player ID.
@@ -85,36 +93,33 @@ using json = nlohmann::json;
 //     luaFile << "end)\n";
 // }
 
-// // @function    AddTerrain
-// // @tparam      ofstream    luaFile     file where we save lua script parts.
-// // @tparam      string      terrain     type of terrain, GRASS by default,
-// See TERRAIN_*. void AddTerrain(ofstream& luaFile, string terrain){
-//     luaFile << "instance:terrain(homm3lua.TERRAIN_" << terrain <<  ")\n";
-// }
+// @function    AddTerrain
+// @tparam      ofstream    luaFile     file where we save lua script parts. 
+// @tparam      string      terrain     type of terrain, GRASS by default, See TERRAIN_*.
+void AddTerrain(std::ofstream& luaFile, std::string terrain){
+    luaFile << "instance:terrain(homm3lua.TERRAIN_" << terrain <<  ")\n";
+}
 
-// // @function    AddTerrainTiles
-// // @tparam      ofstream    luaFile     file where we save lua script parts.
-// // @tparam      Map         map         object of map class with finised
-// setup. void AddTerrainTiles(ofstream& luaFile, Map& map){
-//     luaFile << "instance:terrain(function (x, y, z)\n";
+// @function    AddTerrainTiles
+// @tparam      ofstream    luaFile     file where we save lua script parts. 
+// @tparam      Map         map         object of map class with finised setup.
+void AddTerrainTiles(std::ofstream& luaFile, Map& map){
+    luaFile << "instance:terrain(function (x, y, z)\n";
 
-//     for(int y = 0; y < map.getHeight(); y++){
-//         for(int x = 0; x < map.getWidth(); x++){
-//             auto tile = map.getTile(x, y);
-//             int tileZoneId = tile->getZoneId();
+    int width = map.getWidth();
+    int height = map.getHeight();
+    for(int y = 0; y < height; y++){
+        for(int x = 0; x < width; x++){
+            auto tilePtr = map.getTile(int3(x,y,0));  
+            string terrain = tilePtr->getTerrain();
+            transform(terrain.begin(), terrain.end(), terrain.begin(),::toupper);
 
-//             if(!tile->getIsBorder())
-//             {
-//                 string terrain =
-//                 terrainToString(map.getZones()[tileZoneId]->getTerrain());
-//                 luaFile << "if x == " << x << " and y == " << y << " then
-//                 return homm3lua.TERRAIN_" << terrain << " end\n";
-//             }
-//         }
-//     }
+            luaFile << "if x == " << x << " and y == " << y << " then return homm3lua.TERRAIN_" << terrain << " end\n";
+        }
+    }
 
-//     luaFile << "end)\n";
-// }
+    luaFile << "end)\n";
+}
 
 // // @function    AddBorderObstacles
 // // @tparam      ofstream    luaFile     file where we save lua script parts.
