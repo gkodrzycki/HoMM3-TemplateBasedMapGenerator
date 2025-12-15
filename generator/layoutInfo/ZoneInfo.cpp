@@ -18,25 +18,25 @@ string ZoneInfo::getWithRegionFallback(const json &zone, const string &key,
     if (!regionDefault.empty()) {
         return regionDefault;
     }
-    // TODO: maybe create customized error for that? Just for clarity
+
     throw runtime_error("Key '" + key + "' is not defined in zone and has no region default.");
 }
 
 void ZoneInfo::deserializeZone(const json &zone, const RegionDefaults &defaults) {
     int id = getOrError<int>(zone, "id");
 
-    string size = getWithRegionFallback(zone, "size", defaults.size);
+    string size    = getWithRegionFallback(zone, "size", defaults.size);
     string terrain = getWithRegionFallback(zone, "terrain", defaults.terrain);
     string faction = getWithRegionFallback(zone, "faction", defaults.faction);
-    string owner = getWithRegionFallback(zone, "owner", defaults.owner);
-    string type = getWithRegionFallback(zone, "type", defaults.type);
+    string owner   = getWithRegionFallback(zone, "owner", defaults.owner);
+    string type    = getWithRegionFallback(zone, "type", defaults.type);
 
-    this->id = id;
-    this->size = size;
+    this->id      = id;
+    this->size    = size;
     this->terrain = terrain;
     this->faction = faction;
-    this->owner = owner;
-    this->type = type;
+    this->owner   = owner;
+    this->type    = type;
 }
 
 void ZoneInfo::printZone() {
