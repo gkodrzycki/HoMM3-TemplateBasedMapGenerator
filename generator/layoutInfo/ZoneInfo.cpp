@@ -10,16 +10,28 @@ string ZoneInfo::getFaction() { return faction; }
 string ZoneInfo::getOwner() { return owner; }
 string ZoneInfo::getType() { return type; }
 
-void ZoneInfo::deserializeZone(const json &zone) {
+string ZoneInfo::getWithRegionFallback(const json &zone, const string &key,
+                                       const string &regionDefault) {
+    if (zone.contains(key)) {
+        return zone.at(key).get<string>();
+    }
+    if (!regionDefault.empty()) {
+        return regionDefault;
+    }
+    throw runtime_error("Key '" + key + "' is not defined in zone and has no region default.");
+}
+
+void ZoneInfo::deserializeZone(const json &zone, const RegionDefaults &defaults) {
     int id = getOrError<int>(zone, "id");
 
-    string size = getOrError<string>(zone, "size");
-    string terrain = getOrError<string>(zone, "terrain");
-    string faction = getOrError<string>(zone, "faction");
-    string owner = getOrError<string>(zone, "owner");
-    string type = getOrError<string>(zone, "type");
+    string size = getWithRegionFallback(zone, "size", defaults.size);
+    string terrain = getWithRegionFallback(zone, "terrain", defaults.terrain);
+    string faction = getWithRegionFallback(zone, "faction", defaults.faction);
+    string owner = getWithRegionFallback(zone, "owner", defaults.owner);
+    string type = getWithRegionFallback(zone, "type", defaults.type);
 
     this->id = id;
+    this->size = size;
     this->terrain = terrain;
     this->faction = faction;
     this->owner = owner;

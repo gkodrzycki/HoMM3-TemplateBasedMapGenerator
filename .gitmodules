@@ -1,6 +1,6 @@
 [submodule "homm3tools"]
 	path = homm3tools
-	url = git@github.com:potmdehex/homm3tools.git
+	url = git@github.com:gkodrzycki/homm3tools.git
 
 # [submodule "vcmi"]
 # 	path = vcmi
