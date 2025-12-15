@@ -21,7 +21,7 @@ class ZoneInfo {
     string getOwner();
     string getType();
 
-    string getWithRegionFallback(const json &zone, const string &key, const string &regionDefault);
+    string getRegionWithFallback(const json &zone, const string &key, const string &regionDefault);
     void deserializeZone(const json &zone, const RegionDefaults &defaults = RegionDefaults());
     void printZone();
 
