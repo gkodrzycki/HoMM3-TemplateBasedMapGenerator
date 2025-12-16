@@ -33,7 +33,7 @@ void RegionPlacer::generateRegions() {
 
 void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneCenters) {
 
-    int width = map.getWidth();
+    int width  = map.getWidth();
     int height = map.getHeight();
     int currentClaim[height][width][2];
 

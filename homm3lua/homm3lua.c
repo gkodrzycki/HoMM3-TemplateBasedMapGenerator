@@ -10,7 +10,7 @@
 // @treturn     homm3lua              Map instance.
 static int new(lua_State *L) {
     const int format = luaL_checkinteger(L, 1);
-    const int size = luaL_checkinteger(L, 2);
+    const int size   = luaL_checkinteger(L, 2);
 
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)lua_newuserdata(L, sizeof(h3mlib_ctx_t));
 
@@ -69,11 +69,11 @@ static int artifact(lua_State *L) {
 static int creature(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
-    const char *creature = luaL_checkstring(L, 2);
-    const h3mlua_xyz xyz = h3mlua_check_xyz(L, 3);
-    const int quantity = luaL_checkinteger(L, 4);
-    const int disposition = luaL_checkinteger(L, 5);
-    const int never_flees = lua_toboolean(L, 6);
+    const char *creature    = luaL_checkstring(L, 2);
+    const h3mlua_xyz xyz    = h3mlua_check_xyz(L, 3);
+    const int quantity      = luaL_checkinteger(L, 4);
+    const int disposition   = luaL_checkinteger(L, 5);
+    const int never_flees   = lua_toboolean(L, 6);
     const int does_not_grow = lua_toboolean(L, 7);
 
     int object = 0;
@@ -128,9 +128,9 @@ static int difficulty(lua_State *L) {
 static int hero(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
-    const int hero = luaL_checkinteger(L, 2);
+    const int hero       = luaL_checkinteger(L, 2);
     const h3mlua_xyz xyz = h3mlua_check_xyz(L, 3);
-    const int player = luaL_checkinteger(L, 4);
+    const int player     = luaL_checkinteger(L, 4);
 
     static const char *models[] = {
         "Knight",    "Cleric",      "Ranger",       "Druid",       "Alchemist",    "Wizard",
@@ -159,9 +159,9 @@ static int hero(lua_State *L) {
 static int mine(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
-    const char *mine = luaL_checkstring(L, 2);
+    const char *mine     = luaL_checkstring(L, 2);
     const h3mlua_xyz xyz = h3mlua_check_xyz(L, 3);
-    const int owner = luaL_checkinteger(L, 4);
+    const int owner      = luaL_checkinteger(L, 4);
 
     int object = 0;
 
@@ -229,7 +229,7 @@ static int resource(lua_State *L) {
 
     const char *resource = luaL_checkstring(L, 2);
     const h3mlua_xyz xyz = h3mlua_check_xyz(L, 3);
-    const int quantity = luaL_checkinteger(L, 4);
+    const int quantity   = luaL_checkinteger(L, 4);
 
     int object = 0;
 
@@ -251,7 +251,7 @@ static int sign(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
     size_t size;
-    const char *message = luaL_checklstring(L, 2, &size);
+    const char *message  = luaL_checklstring(L, 2, &size);
     const h3mlua_xyz xyz = h3mlua_check_xyz(L, 3);
 
     int object = 0;
@@ -273,12 +273,12 @@ static int terrain(lua_State *L) {
 
     switch (lua_type(L, 2)) {
     case LUA_TFUNCTION: {
-        const int both = (*h3m)->h3m.bi.any.has_two_levels;
-        const int size = (*h3m)->h3m.bi.any.map_size;
+        const int both  = (*h3m)->h3m.bi.any.has_two_levels;
+        const int size  = (*h3m)->h3m.bi.any.map_size;
         const int size2 = size * size;
 
-        uint8_t *rivers = calloc((1 + both) * size2, sizeof(uint8_t));
-        uint8_t *roads = calloc((1 + both) * size2, sizeof(uint8_t));
+        uint8_t *rivers  = calloc((1 + both) * size2, sizeof(uint8_t));
+        uint8_t *roads   = calloc((1 + both) * size2, sizeof(uint8_t));
         uint8_t *terrain = malloc((1 + both) * size2);
 
         if (h3m_terrain_get_all((*h3m), 0, terrain, size2))
@@ -343,9 +343,9 @@ static int terrain(lua_State *L) {
 static int text(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
-    const char *text = luaL_checkstring(L, 2);
+    const char *text     = luaL_checkstring(L, 2);
     const h3mlua_xyz xyz = h3mlua_check_xyz(L, 3);
-    const char *object = luaL_checkstring(L, 4);
+    const char *object   = luaL_checkstring(L, 4);
 
     if (h3m_object_text(*h3m, object, xyz.x, xyz.y, xyz.z, text))
         return luaL_error(L, "h3m_object_text");
@@ -363,9 +363,9 @@ static int text(lua_State *L) {
 static int town(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
-    const char *town = luaL_checkstring(L, 2);
-    const h3mlua_xyz xyz = h3mlua_check_xyz(L, 3);
-    const int owner = luaL_checkinteger(L, 4);
+    const char *town       = luaL_checkstring(L, 2);
+    const h3mlua_xyz xyz   = h3mlua_check_xyz(L, 3);
+    const int owner        = luaL_checkinteger(L, 4);
     const int is_main_town = lua_toboolean(L, 5);
 
     int object = 0;
@@ -399,14 +399,14 @@ static int town(lua_State *L) {
         if (strcmp(town, "Random Town") == 0)
             (*h3m)->h3m.players[owner]->roe.town_types = 0xFF;
 
-        (*h3m)->meta.player_sizes[owner] = 11;
-        (*h3m)->h3m.players[owner]->roe.unknown1 = 0;
-        (*h3m)->h3m.players[owner]->roe.has_main_town = 1;
-        (*h3m)->h3m.players[owner]->roe.u.e1.starting_town_xpos = xyz.x - 2;
-        (*h3m)->h3m.players[owner]->roe.u.e1.starting_town_ypos = xyz.y;
-        (*h3m)->h3m.players[owner]->roe.u.e1.starting_town_zpos = xyz.z;
+        (*h3m)->meta.player_sizes[owner]                             = 11;
+        (*h3m)->h3m.players[owner]->roe.unknown1                     = 0;
+        (*h3m)->h3m.players[owner]->roe.has_main_town                = 1;
+        (*h3m)->h3m.players[owner]->roe.u.e1.starting_town_xpos      = xyz.x - 2;
+        (*h3m)->h3m.players[owner]->roe.u.e1.starting_town_ypos      = xyz.y;
+        (*h3m)->h3m.players[owner]->roe.u.e1.starting_town_zpos      = xyz.z;
         (*h3m)->h3m.players[owner]->roe.u.e1.starting_hero_is_random = 1;
-        (*h3m)->h3m.players[owner]->roe.u.e1.starting_hero_type = 0xFF;
+        (*h3m)->h3m.players[owner]->roe.u.e1.starting_hero_type      = 0xFF;
     }
 
     return 0;

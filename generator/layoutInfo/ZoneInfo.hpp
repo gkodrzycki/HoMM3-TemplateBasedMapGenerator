@@ -2,6 +2,14 @@
 
 #include "../global/Global.hpp"
 
+struct RegionDefaults {
+    string size    = "";
+    string terrain = "";
+    string faction = "";
+    string owner   = "";
+    string type    = "";
+};
+
 class ZoneInfo {
   public:
     ZoneInfo();
@@ -13,7 +21,8 @@ class ZoneInfo {
     string getOwner();
     string getType();
 
-    void deserializeZone(const json &zone);
+    string getWithRegionFallback(const json &zone, const string &key, const string &regionDefault);
+    void deserializeZone(const json &zone, const RegionDefaults &defaults = RegionDefaults());
     void printZone();
 
   private:

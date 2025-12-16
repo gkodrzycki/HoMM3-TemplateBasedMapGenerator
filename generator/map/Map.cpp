@@ -27,7 +27,7 @@ void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zo
 void Map::initTiles() {
     pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
 
-    width = width_height.first;
+    width  = width_height.first;
     height = width_height.second;
 
     for (int i = 0; i < height; i++) {

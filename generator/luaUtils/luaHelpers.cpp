@@ -106,11 +106,11 @@ void AddTerrain(std::ofstream &luaFile, std::string terrain) {
 void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
     luaFile << "instance:terrain(function (x, y, z)\n";
 
-    int width = map.getWidth();
+    int width  = map.getWidth();
     int height = map.getHeight();
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            auto tilePtr = map.getTile(int3(x, y, 0));
+            auto tilePtr   = map.getTile(int3(x, y, 0));
             string terrain = tilePtr->getTerrain();
             transform(terrain.begin(), terrain.end(), terrain.begin(), ::toupper);
 

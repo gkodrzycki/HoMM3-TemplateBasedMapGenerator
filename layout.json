@@ -8,51 +8,46 @@
     {
       "name": "region_player_1",
       "id": 1,
+      "size": "M",
       "zones": [
         {
           "id": 1,
-          "size": "M",
           "terrain": "grass",
-          "faction" : "Stronghold",
-          "owner" : "player_1",
+          "faction": "Stronghold",
+          "owner": "player_1",
           "type": "starting_zone"
         },
         {
           "id": 2,
-          "size": "M",
           "terrain": "sand",
-          "faction" : "Stronghold",
-          "owner" : "none",
+          "faction": "Stronghold",
+          "owner": "none",
           "type": "support_zone"
-
         }
       ]
     },
     {
       "name": "region_player_2",
       "id": 2,
+      "size": "M",
       "zones": [
         {
           "id": 3,
-          "size": "M",
           "terrain": "snow",
-          "faction" : "Rampart",
-          "owner" : "player_2",
+          "faction": "Rampart",
+          "owner": "player_2",
           "type": "starting_zone"
         },
         {
           "id": 4,
-          "size": "M",
           "terrain": "lava",
-          "faction" : "Rampart",
-          "owner" : "none",
+          "faction": "Rampart",
+          "owner": "none",
           "type": "support_zone"
-
         }
       ]
     }
   ],
-
   "connections": [
     {
       "from_zone": 1,
@@ -67,5 +62,4 @@
       "dest_zone": 3
     }
   ]
-
 }
