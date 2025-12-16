@@ -7,18 +7,18 @@ string RegionInfo::getName() { return name; }
 vector<ZoneInfo> RegionInfo::getZoneInfoList() { return zoneInfoList; }
 
 void RegionInfo::deserializeRegion(const json &region) {
-    int id = getOrError<int>(region, "id");
+    int id      = getOrError<int>(region, "id");
     string name = getOrError<string>(region, "name");
 
-    this->id = id;
+    this->id   = id;
     this->name = name;
 
     RegionDefaults defaults;
-    defaults.size = getOrDefault<string>(region, "size", "");
+    defaults.size    = getOrDefault<string>(region, "size", "");
     defaults.terrain = getOrDefault<string>(region, "terrain", "");
     defaults.faction = getOrDefault<string>(region, "faction", "");
-    defaults.owner = getOrDefault<string>(region, "owner", "");
-    defaults.type = getOrDefault<string>(region, "type", "");
+    defaults.owner   = getOrDefault<string>(region, "owner", "");
+    defaults.type    = getOrDefault<string>(region, "type", "");
 
     const auto &zoneList = getOrError<json>(region, "zones");
     for (const auto &zone : zoneList) {

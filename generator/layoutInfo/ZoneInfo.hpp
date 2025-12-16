@@ -3,11 +3,11 @@
 #include "../global/Global.hpp"
 
 struct RegionDefaults {
-    string size = "";
+    string size    = "";
     string terrain = "";
     string faction = "";
-    string owner = "";
-    string type = "";
+    string owner   = "";
+    string type    = "";
 };
 
 class ZoneInfo {

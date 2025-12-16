@@ -14,9 +14,9 @@ class Tile;
 class Region;
 class Zone;
 
-using ZoneMap = map<int, shared_ptr<Zone>>;
+using ZoneMap   = map<int, shared_ptr<Zone>>;
 using RegionMap = map<int, shared_ptr<Region>>;
-using TileMap = map<int, map<int, shared_ptr<Tile>>>;
+using TileMap   = map<int, map<int, shared_ptr<Tile>>>;
 
 class Map {
   public:

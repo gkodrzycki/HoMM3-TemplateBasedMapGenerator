@@ -1,10 +1,10 @@
 #include "./LayoutInfo.hpp"
 
 LayoutInfo::LayoutInfo() {
-    name = "";
+    name        = "";
     description = "";
-    mapSize = "M";
-    difficulty = "";
+    mapSize     = "M";
+    difficulty  = "";
 }
 
 string LayoutInfo::getName() { return name; }
@@ -16,15 +16,15 @@ vector<ConnectionInfo> LayoutInfo::getConnectionInfoList() { return connectionIn
 
 void LayoutInfo::deserialize(const json &layout) {
 
-    string name = getOrError<string>(layout, "name");
+    string name        = getOrError<string>(layout, "name");
     string description = getOrError<string>(layout, "description");
-    string mapSize = layout.value("size", "M");
-    string difficulty = getOrError<string>(layout, "difficulty");
+    string mapSize     = layout.value("size", "M");
+    string difficulty  = getOrError<string>(layout, "difficulty");
 
-    this->name = name;
+    this->name        = name;
     this->description = description;
-    this->mapSize = mapSize;
-    this->difficulty = difficulty;
+    this->mapSize     = mapSize;
+    this->difficulty  = difficulty;
 
     const auto &regionList = getOrError<json>(layout, "regions");
     for (const auto &region : regionList) {
