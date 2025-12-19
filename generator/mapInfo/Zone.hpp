@@ -2,6 +2,9 @@
 
 #include "../global/Global.hpp"
 #include "../layoutInfo/ZoneInfo.hpp"
+#include "./Faction.hpp"
+
+enum class Faction;
 
 class Zone {
   public:
@@ -11,7 +14,7 @@ class Zone {
     void setZoneID(int zoneID);
     void setSize(string size);
     void setTerrain(string terrain);
-    void setFaction(string faction);
+    void setFaction(Faction faction);
     void setOwner(string owner);
     void setType(string type);
 
@@ -19,7 +22,7 @@ class Zone {
     int getZoneID();
     string getSize();
     string getTerrain();
-    string getFaction();
+    Faction getFaction();
     string getOwner();
     string getType();
 
@@ -31,7 +34,7 @@ class Zone {
     int zoneID;
     string size;
     string terrain;
-    string faction;
+    Faction faction;
     string owner;
     string type;
 };

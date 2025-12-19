@@ -35,6 +35,8 @@ void generateLuaScript(Map map, string &saveLocation) {
     AddTerrain(luaFile);
     AddTerrainTiles(luaFile, map);
 
+    AddTowns(luaFile, map);
+
     // Finishing luaScript
     string homeDir = getenv("HOME");
 

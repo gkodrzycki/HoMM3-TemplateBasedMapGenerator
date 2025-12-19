@@ -1,7 +1,7 @@
 #include "./Zone.hpp"
 
 Zone::Zone(ZoneInfo zoneInfo) {
-    this->setFaction(zoneInfo.getFaction());
+    this->setFaction(stringToFaction(zoneInfo.getFaction()));
     this->setOwner(zoneInfo.getOwner());
     this->setSize(zoneInfo.getSize());
     this->setTerrain(zoneInfo.getTerrain());
@@ -17,7 +17,7 @@ void Zone::setSize(string size) { this->size = size; }
 
 void Zone::setTerrain(string terrain) { this->terrain = terrain; }
 
-void Zone::setFaction(string faction) { this->faction = faction; }
+void Zone::setFaction(Faction faction) { this->faction = faction; }
 
 void Zone::setOwner(string owner) { this->owner = owner; }
 
@@ -31,7 +31,7 @@ string Zone::getSize() { return size; }
 
 string Zone::getTerrain() { return terrain; }
 
-string Zone::getFaction() { return faction; }
+Faction Zone::getFaction() { return faction; }
 
 string Zone::getOwner() { return owner; }
 
@@ -41,7 +41,7 @@ void Zone::printZone() {
     cerr << "    Zone id: " << zoneID << "\n";
     cerr << "      Size: " << size << "\n";
     cerr << "      Terrain: " << terrain << "\n";
-    cerr << "      Faction: " << faction << "\n";
+    cerr << "      Faction: " << factionToString(faction) << "\n";
     cerr << "      Owner: " << owner << "\n";
     cerr << "      Type: " << type << "\n";
     cerr << "      Center: " << center.toString() << "\n";

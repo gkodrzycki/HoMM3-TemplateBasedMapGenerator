@@ -6,7 +6,7 @@ struct RegionDefaults {
     string size    = "";
     string terrain = "";
     string faction = "";
-    string owner   = "";
+    string owner   = "None";
     string type    = "";
 };
 
