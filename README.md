@@ -9,7 +9,7 @@ pip install pre-commit
 pre-commit install
 ```
 
-To check if everything is ok, run:
+To lint everything is ok, run:
 ```bash
 pre-commit run --all-files
 ```
