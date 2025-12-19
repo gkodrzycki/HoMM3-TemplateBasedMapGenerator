@@ -14,14 +14,14 @@
           "id": 1,
           "terrain": "grass",
           "faction": "Stronghold",
-          "owner": "player_1",
+          "owner_id": "1",
           "type": "starting_zone"
         },
         {
           "id": 2,
           "terrain": "sand",
           "faction": "Stronghold",
-          "owner": "none",
+          "owner_id": "0",
           "type": "support_zone"
         }
       ]
@@ -35,14 +35,14 @@
           "id": 3,
           "terrain": "snow",
           "faction": "Rampart",
-          "owner": "player_2",
+          "owner_id": "2",
           "type": "starting_zone"
         },
         {
           "id": 4,
           "terrain": "lava",
           "faction": "Rampart",
-          "owner": "none",
+          "owner_id": "0",
           "type": "support_zone"
         }
       ]

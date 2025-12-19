@@ -23,8 +23,9 @@ class Map;
 // class TemplateInfo;
 // class Creature;
 
-// void AddPlayer(ofstream& luaFile, int playerId);
-// void AddTown(ofstream &luaFile, Town town, bool is_main = true);
+void AddPlayer(ofstream &luaFile, string playerId);
+void AddTown(ofstream &luaFile, Town town, bool is_main = true);
+void AddTowns(ofstream &luaFile, Map &map);
 void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
 void AddTerrainTiles(ofstream &luaFile, Map &map);
 // void AddBorderObstacles(ofstream &luaFile, Map &map);

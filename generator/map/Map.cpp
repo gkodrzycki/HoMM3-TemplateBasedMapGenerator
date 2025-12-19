@@ -18,11 +18,14 @@ LayoutInfo Map::getLayoutInfo() { return layoutInfo; }
 RNG &Map::getRNG() { return rng; }
 RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
+ObjectVector Map::getObjectVector() { return objectVector; }
+
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
 
 void Map::addRegion(shared_ptr<Region> region) { this->regionMap[region->getRegionID()] = region; }
 void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zone; }
+void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(object); }
 
 void Map::initTiles() {
     pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
@@ -44,11 +47,19 @@ void Map::generateMap() {
     RegionPlacer regionPlacer(*this);
     regionPlacer.generateRegions();
     regionPlacer.placeRegions();
+
+    ObjectPlacer objectPlacer(*this);
+    objectPlacer.placeTowns();
 }
 
 void Map::printMap() {
     cerr << "==== Regions ====\n";
     for (auto &[regionID, region] : regionMap) {
         region->printRegion();
+    }
+
+    cerr << "==== Objects ====\n";
+    for (auto &object : objectVector) {
+        object->printObject();
     }
 }

@@ -25,35 +25,51 @@ string encodeMapSize(string size) {
     return "UNKNOWN_SIZE";
 }
 // #include "../placers/GuardPlacer.hpp"
-// // @function    AddPlayer
-// // @tparam      ofstream    luaFile     file where we save lua script parts.
-// // @tparam      integer     playerId    player ID.
-// void AddPlayer(ofstream& luaFile, int playerId) {
-//     luaFile << "instance:player(homm3lua.PLAYER_" << playerId << ")\n";
-// }
+// @function    AddPlayer
+// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      string      playerId    player ID.
+void AddPlayer(ofstream &luaFile, string playerId) {
+    luaFile << "instance:player(homm3lua.PLAYER_" << playerId << ")\n";
+}
 
-// // @function    AddTown
-// // @tparam      ofstream    luaFile     file where we save lua script parts.
-// // @tparam      Town        town        completed town object.
-// // @tparam      boolean     is_main     tells if is main town.
-// void AddTown(ofstream &luaFile, Town town, bool is_main){
+// @function    AddTown
+// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      Town        town        completed town object.
+// @tparam      boolean     is_main     tells if is main town.
+void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
 
-//     string nameOfObject = "TOWN_" + factionToString(town.getFaction());
-//     i32 Id = town.getOwner();
-//     i32 X = town.getPosition().x;
-//     i32 Y = town.getPosition().y;
+    string nameOfObject = "TOWN_" + factionToString(town->getFaction());
+    string ID           = town->getOwner();
+    int X               = town->getPosition().x;
+    int Y               = town->getPosition().y;
 
-//     luaFile << "instance:town(homm3lua." << nameOfObject
-//             << ", {x=" << X
-//             << ", y=" << Y
-//             << ", z=0}, homm3lua.PLAYER_" << Id
-//             << ", " << is_main << ")\n";
-// }
+    luaFile << "instance:town(homm3lua." << nameOfObject << ", {x=" << X << ", y=" << Y
+            << ", z=0}, homm3lua.PLAYER_" << ID << ", " << is_main << ")\n";
+}
+
+// @function    AddTowns
+// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      Map         map         object of map class with finished setup
+void AddTowns(ofstream &luaFile, Map &map) {
+    ObjectVector objectVector = map.getObjectVector();
+    set<string> addedPlayers;
+
+    for (auto object : objectVector) {
+        if (auto town = std::dynamic_pointer_cast<Town>(object)) {
+            string playerID = town->getOwner();
+            if (addedPlayers.find(playerID) == addedPlayers.end()) {
+                addedPlayers.insert(playerID);
+                AddPlayer(luaFile, playerID);
+            }
+            AddTown(luaFile, town, true);
+        }
+    }
+}
 
 // // @function    AddMine
 // // @tparam      ofstream    luaFile     file where we save lua script parts.
 // // @tparam      Mine        mine        completed mine object.
-// // @tparam      Map         map        object of map class with finised
+// // @tparam      Map         map        object of map class with finished
 // setup. void AddMine(ofstream& luaFile, Mine mine, Map &map){
 //     i32 x = mine.getPosition().x;
 //     i32 y = mine.getPosition().y;
@@ -73,7 +89,7 @@ string encodeMapSize(string size) {
 // // @function    AddRoads
 // // @tparam      ofstream    luaFile         file where we save lua script
 // parts.
-// // @tparam      Map         map             object of map class with finised
+// // @tparam      Map         map             object of map class with finished
 // setup. void AddRoads(ofstream& luaFile, Map& map){
 
 //     luaFile << "-- Dynamic terrain adjustments for linear paths between
@@ -102,7 +118,7 @@ void AddTerrain(std::ofstream &luaFile, std::string terrain) {
 
 // @function    AddTerrainTiles
 // @tparam      ofstream    luaFile     file where we save lua script parts.
-// @tparam      Map         map         object of map class with finised setup.
+// @tparam      Map         map         object of map class with finished setup.
 void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
     luaFile << "instance:terrain(function (x, y, z)\n";
 
@@ -124,7 +140,7 @@ void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
 
 // // @function    AddBorderObstacles
 // // @tparam      ofstream    luaFile     file where we save lua script parts.
-// // @tparam      Map         map         object of map class with finised
+// // @tparam      Map         map         object of map class with finished
 // setup. void AddBorderObstacles(ofstream& luaFile, Map& map){
 //     for(int y = 0; y < map.getHeight(); y++){
 //         for(int x = 0; x < map.getWidth(); x++){
@@ -254,7 +270,7 @@ local homm3lua = require('homm3lua'))";
 // // @tparam      ofstream        luaFile         file where we save lua script
 // parts.
 // // @tparam      Map             map             object of map class with
-// finised setup. void AddMapObjects(ofstream &luaFile, Map& map){
+// finished setup. void AddMapObjects(ofstream &luaFile, Map& map){
 
 //     luaFile << "-- Place 1 way monoliths\n";
 
