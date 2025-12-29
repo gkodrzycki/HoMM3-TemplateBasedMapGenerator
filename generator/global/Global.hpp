@@ -33,15 +33,10 @@ T getOrDefault(const nlohmann::json &j, const string &key, const T &defaultValue
 }
 
 int3 const directions4[] = {
-    // TODO think about 8 directions
     int3(1, 0, 0),
     int3(0, 1, 0),
     int3(-1, 0, 0),
     int3(0, -1, 0),
-    // int3(1,1,0),
-    // int3(-1,-1,0),
-    // int3(-1,1,0),
-    // int3(1,-1,0),
 };
 
 int3 const directions8[] = {int3(1, 0, 0), int3(0, 1, 0),   int3(-1, 0, 0), int3(0, -1, 0),

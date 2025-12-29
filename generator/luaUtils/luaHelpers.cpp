@@ -142,8 +142,8 @@ void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
 // @tparam      ofstream    luaFile          file where we save lua script
 // parts.
 // @tparam      string      obstacle         type of obstacle.
-// @tparam      integer3    pos              position of obstacle.
-void AddObstacle(ofstream &luaFile, string obstacle, int3 pos) {
+// @tparam      int3        pos              position of obstacle.
+void AddObstacle(ofstream &luaFile, const string &obstacle, int3 pos) {
     luaFile << "instance:obstacle('" << obstacle << "', {x=" << pos.x << ", y=" << pos.y
             << ", z=" << pos.z << "})\n";
 }
