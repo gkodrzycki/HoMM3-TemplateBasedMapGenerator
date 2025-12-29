@@ -48,7 +48,7 @@ void ObjectPlacer::expandBorderTiles(vector<int3> &borderTiles, int maxDepth) {
     set<int3> visited;
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
-    for (int3 pos : borderTiles) {
+    for (const int3 &pos : borderTiles) {
         q.push({0, pos});
         visited.insert(pos);
     }
@@ -79,7 +79,7 @@ void ObjectPlacer::placeBorders() {
     vector<int3> borderTiles = getBorderTiles();
     expandBorderTiles(borderTiles);
 
-    for (int3 pos : borderTiles) {
+    for (const int3 &pos : borderTiles) {
         Obstacle obstacle("Pine Trees", pos, "Obstacle");
         auto obstaclePtr = make_shared<Obstacle>(obstacle);
         map.addObject(obstaclePtr);

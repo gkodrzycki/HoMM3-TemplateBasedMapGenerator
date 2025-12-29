@@ -26,14 +26,14 @@ string encodeMapSize(string size) {
 }
 // #include "../placers/GuardPlacer.hpp"
 // @function    AddPlayer
-// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      string      playerId    player ID.
 void AddPlayer(ofstream &luaFile, string playerId) {
     luaFile << "instance:player(homm3lua.PLAYER_" << playerId << ")\n";
 }
 
 // @function    AddTown
-// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      Town        town        completed town object.
 // @tparam      boolean     is_main     tells if is main town.
 void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
@@ -48,7 +48,7 @@ void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
 }
 
 // @function    AddTowns
-// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      Map         map         object of map class with finished setup
 void AddTowns(ofstream &luaFile, Map &map) {
     ObjectVector objectVector = map.getObjectVector();
@@ -67,7 +67,7 @@ void AddTowns(ofstream &luaFile, Map &map) {
 }
 
 // // @function    AddMine
-// // @tparam      ofstream    luaFile     file where we save lua script parts.
+// // @tparam      ofstream    luaFile     file where we save lua script.
 // // @tparam      Mine        mine        completed mine object.
 // // @tparam      Map         map        object of map class with finished
 // setup. void AddMine(ofstream& luaFile, Mine mine, Map &map){
@@ -110,14 +110,14 @@ void AddTowns(ofstream &luaFile, Map &map) {
 // }
 
 // @function    AddTerrain
-// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      string      terrain     type of terrain, GRASS by default, See TERRAIN_*.
 void AddTerrain(std::ofstream &luaFile, std::string terrain) {
     luaFile << "instance:terrain(homm3lua.TERRAIN_" << terrain << ")\n";
 }
 
 // @function    AddTerrainTiles
-// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      Map         map         object of map class with finished setup.
 void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
     luaFile << "instance:terrain(function (x, y, z)\n";
@@ -139,8 +139,7 @@ void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
 }
 
 // @function    AddObstacle
-// @tparam      ofstream    luaFile          file where we save lua script
-// parts.
+// @tparam      ofstream    luaFile          file where we save lua script.
 // @tparam      string      obstacle         type of obstacle.
 // @tparam      int3        pos              position of obstacle.
 void AddObstacle(ofstream &luaFile, const string &obstacle, int3 pos) {
@@ -149,12 +148,12 @@ void AddObstacle(ofstream &luaFile, const string &obstacle, int3 pos) {
 }
 
 // @function    AddBorderObstacles
-// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      Map         map         object of map class with finished setup.
 void AddBorderObstacles(ofstream &luaFile, Map &map) {
     ObjectVector objectVector = map.getObjectVector();
 
-    for (auto object : objectVector) {
+    for (const auto &object : objectVector) {
         if (auto obstacle = std::dynamic_pointer_cast<Obstacle>(object)) {
             AddObstacle(luaFile, obstacle->getObstacleName(), obstacle->getPosition());
         }
@@ -171,7 +170,7 @@ void AddBorderObstacles(ofstream &luaFile, Map &map) {
 }
 
 // @function    AddHeader
-// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      ofstream    luaFile     file where we save lua script.
 void AddHeader(ofstream &luaFile) {
     luaFile << R"(
 package.cpath = package.cpath .. ';dist/?.so;../dist/?.so'
@@ -179,8 +178,7 @@ local homm3lua = require('homm3lua'))";
 }
 
 // // @function    AddCreature
-// // @tparam      ofstream    luaFile          file where we save lua script
-// parts.
+// // @tparam      ofstream    luaFile          file where we save lua script.
 // // @tparam      Creature    creature         Creature object to place.
 // void AddCreature(ofstream& luaFile, Creature creature){
 
@@ -201,8 +199,7 @@ local homm3lua = require('homm3lua'))";
 // }
 
 // // @function    AddResource
-// // @tparam      ofstream    luaFile          file where we save lua script
-// parts.
+// // @tparam      ofstream    luaFile          file where we save lua script.
 // // @tparam      Treasure    treasure         Treasure object to place.
 // void AddResource(ofstream& luaFile, Treasure treasure){
 //     string treasureType = treasureTypeToString(treasure.getTreasureType());
@@ -218,8 +215,7 @@ local homm3lua = require('homm3lua'))";
 // }
 
 // // @function    AddArtifact
-// // @tparam      ofstream    luaFile          file where we save lua script
-// parts.
+// // @tparam      ofstream    luaFile          file where we save lua script.
 // // @tparam      Treasure    treasure         Treasure object to place.
 // void AddArtifact(ofstream& luaFile, Treasure treasure){
 //     string treasureType = treasureTypeToString(treasure.getTreasureType());
@@ -233,8 +229,7 @@ local homm3lua = require('homm3lua'))";
 // }
 
 // // @function    AddBuildingTreasure
-// // @tparam      ofstream    luaFile          file where we save lua script
-// parts.
+// // @tparam      ofstream    luaFile          file where we save lua script.
 // // @tparam      Treasure    treasure         Treasure object to place.
 // void AddBuildingTreasure(ofstream& luaFile, Treasure treasure) {
 //     string treasureType = treasureTypeToString(treasure.getTreasureType());
@@ -249,8 +244,7 @@ local homm3lua = require('homm3lua'))";
 // }
 
 // // @function    AddSign
-// // @tparam      ofstream    luaFile          file where we save lua script
-// parts.
+// // @tparam      ofstream    luaFile          file where we save lua script.
 // // @tparam      string      text             text on sign.
 // // @tparam      integer     x                position on x axis of sign.
 // // @tparam      integer     y                position on y axis of sign.
@@ -261,8 +255,7 @@ local homm3lua = require('homm3lua'))";
 // }
 
 // // @function    AddMapObjects
-// // @tparam      ofstream        luaFile         file where we save lua script
-// parts.
+// // @tparam      ofstream        luaFile         file where we save lua script.
 // // @tparam      Map             map             object of map class with
 // finished setup. void AddMapObjects(ofstream &luaFile, Map& map){
 
