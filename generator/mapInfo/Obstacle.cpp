@@ -2,12 +2,12 @@
 
 Obstacle::Obstacle() : Object(int3(1, 1, 1), "Obstacle") { obstacleName = "Pine Trees"; }
 
-Obstacle::Obstacle(string obstacleName, int3 position, string name) : Object(position, name) {
+Obstacle::Obstacle(const string &obstacleName, int3 position, const string &name)
+    : Object(position, name) {
     this->obstacleName = obstacleName;
 }
 
-void Obstacle::setObstacleName(string obstacleName) { this->obstacleName = obstacleName; }
-
+void Obstacle::setObstacleName(const string &obstacleName) { this->obstacleName = obstacleName; }
 string Obstacle::getObstacleName() { return obstacleName; }
 
 void Obstacle::printObject() const {

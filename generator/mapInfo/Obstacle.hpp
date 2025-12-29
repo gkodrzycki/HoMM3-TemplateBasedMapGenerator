@@ -6,9 +6,9 @@
 class Obstacle : public Object {
   public:
     Obstacle();
-    Obstacle(string obstacleName, int3 position, string name);
+    Obstacle(const string &obstacleName, int3 position, const string &name);
 
-    void setObstacleName(string obstacleName);
+    void setObstacleName(const string &obstacleName);
 
     string getObstacleName();
 

@@ -24,7 +24,7 @@ LayoutInfo Map::getLayoutInfo() { return layoutInfo; }
 RNG &Map::getRNG() { return rng; }
 RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
-TileMap Map::getTileMap() { return tileMap; }
+const TileMap &Map::getTileMap() { return tileMap; }
 ObjectVector Map::getObjectVector() { return objectVector; }
 
 int Map::getWidth() { return width; }
