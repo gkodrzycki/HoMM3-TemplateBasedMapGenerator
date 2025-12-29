@@ -11,6 +11,7 @@ class LayoutInfo {
   public:
     LayoutInfo();
 
+    bool getDebug();
     string getName();
     string getDescription();
     string getMapSize();
@@ -22,6 +23,7 @@ class LayoutInfo {
     void printLayout();
 
   private:
+    bool debug;
     string name;
     string description;
     string difficulty;

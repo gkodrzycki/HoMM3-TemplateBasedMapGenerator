@@ -98,19 +98,21 @@ int main(int argc, char *argv[]) {
     }
 
     LayoutInfo layoutInfo = parseLayout(layout);
-    layoutInfo.printLayout();
-
-    cerr << "========== MAP ==========\n";
+    if (layoutInfo.getDebug())
+        layoutInfo.printLayout();
 
     Map map(rng, layoutInfo);
     map.generateMap();
-    // map.printMap();
+    if (layoutInfo.getDebug()) {
+        cerr << "========== MAP ==========\n";
+        map.printMap();
+    }
 
     generateLuaScript(map, saveLocation);
 
     cout << "Executing Lua script...\n";
     executeLuaScript("generated_script.lua");
-    cout << "Lua script executed successfully.\n";
+    cout << "Lua script executed successfully and saved to generated_script.lua\n";
 
     return 0;
 }

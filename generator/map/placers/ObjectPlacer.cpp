@@ -9,9 +9,6 @@ void ObjectPlacer::placeTowns() {
         string zoneType = zone->getType();
 
         if (zoneType == "starting_zone") {
-            cerr << "Placing town " << factionToString(zone->getFaction()) << " at "
-                 << zone->getCenter().toString() << "\n";
-
             Town town(zone->getFaction(), zone->getOwner(), zone->getCenter(), "Town");
             auto townPtr = make_shared<Town>(town);
             map.addObject(townPtr);

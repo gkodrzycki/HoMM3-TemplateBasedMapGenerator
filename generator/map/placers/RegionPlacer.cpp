@@ -63,16 +63,19 @@ void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneCenters) {
 
     ZoneMap zoneMap = map.getZoneMap();
 
-    cerr << "==== ZoneIDs on Map ====\n";
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            int zoneID = currentClaim[y][x][0];
-            cerr << zoneID << " ";
-            auto tilePtr = map.getTile(int3(x, y, 0));
-            tilePtr->setZoneID(zoneID);
-            tilePtr->setTerrain(zoneMap[zoneID]->getTerrain());
+    bool debug = map.getLayoutInfo().getDebug();
+    if (debug) {
+        cerr << "==== ZoneIDs on Map ====\n";
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int zoneID = currentClaim[y][x][0];
+                cerr << zoneID << " ";
+                auto tilePtr = map.getTile(int3(x, y, 0));
+                tilePtr->setZoneID(zoneID);
+                tilePtr->setTerrain(zoneMap[zoneID]->getTerrain());
+            }
+            cerr << "\n";
         }
-        cerr << "\n";
     }
 }
 
