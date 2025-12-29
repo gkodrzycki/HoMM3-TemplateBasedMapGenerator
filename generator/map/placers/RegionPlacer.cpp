@@ -45,24 +45,12 @@ void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneCenters) {
         q.push(zoneCenter);
     }
 
-    int3 directions[] = {
-        // TODO think about 8 directions
-        int3(1, 0, 0),
-        int3(0, 1, 0),
-        int3(-1, 0, 0),
-        int3(0, -1, 0),
-        // int3(1,1,0),
-        // int3(-1,-1,0),
-        // int3(-1,1,0),
-        // int3(1,-1,0),
-    };
-
     while (q.size()) {
         int3 currentPos = q.front();
         q.pop();
         int currentID = currentClaim[currentPos.y][currentPos.x][currentPos.z];
 
-        for (auto direction : directions) {
+        for (auto direction : directions4) {
             int3 newPos = currentPos + direction;
             if (newPos.x < 0 || newPos.y < 0 || newPos.x >= width || newPos.y >= height)
                 continue;

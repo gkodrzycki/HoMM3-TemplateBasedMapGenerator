@@ -40,6 +40,7 @@ class Map {
     LayoutInfo getLayoutInfo();
     RegionMap getRegionMap();
     ZoneMap getZoneMap();
+    TileMap getTileMap();
     ObjectVector getObjectVector();
     RNG &getRNG();
     int getWidth();

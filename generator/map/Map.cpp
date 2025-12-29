@@ -13,11 +13,18 @@ pair<int, int> decodeMapSize(string mapSize) {
         return {144, 144};
     return {-1, -1};
 }
-shared_ptr<Tile> Map::getTile(int3 pos) { return tileMap[pos.y][pos.x]; }
+shared_ptr<Tile> Map::getTile(int3 pos) {
+    if (pos.x < 0 || pos.x >= width || pos.y < 0 || pos.y >= height)
+        return nullptr;
+
+    return tileMap[pos.y][pos.x];
+}
+
 LayoutInfo Map::getLayoutInfo() { return layoutInfo; }
 RNG &Map::getRNG() { return rng; }
 RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
+TileMap Map::getTileMap() { return tileMap; }
 ObjectVector Map::getObjectVector() { return objectVector; }
 
 int Map::getWidth() { return width; }
@@ -50,6 +57,8 @@ void Map::generateMap() {
 
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeTowns();
+
+    objectPlacer.placeBorders();
 }
 
 void Map::printMap() {

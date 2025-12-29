@@ -138,31 +138,37 @@ void AddTerrainTiles(std::ofstream &luaFile, Map &map) {
     luaFile << "end)\n";
 }
 
-// // @function    AddBorderObstacles
-// // @tparam      ofstream    luaFile     file where we save lua script parts.
-// // @tparam      Map         map         object of map class with finished
-// setup. void AddBorderObstacles(ofstream& luaFile, Map& map){
-//     for(int y = 0; y < map.getHeight(); y++){
-//         for(int x = 0; x < map.getWidth(); x++){
-//             auto tile = map.getTile(x, y);
+// @function    AddObstacle
+// @tparam      ofstream    luaFile          file where we save lua script
+// parts.
+// @tparam      string      obstacle         type of obstacle.
+// @tparam      integer3    pos              position of obstacle.
+void AddObstacle(ofstream &luaFile, string obstacle, int3 pos) {
+    luaFile << "instance:obstacle('" << obstacle << "', {x=" << pos.x << ", y=" << pos.y
+            << ", z=" << pos.z << "})\n";
+}
 
-//             string terrain;
+// @function    AddBorderObstacles
+// @tparam      ofstream    luaFile     file where we save lua script parts.
+// @tparam      Map         map         object of map class with finished setup.
+void AddBorderObstacles(ofstream &luaFile, Map &map) {
+    ObjectVector objectVector = map.getObjectVector();
 
-//             if (tile->getIsBorder() && !tile->getIsRoad()) {
-//                 AddObstacle(luaFile, "Pine Trees", x, y, 0);
-//             }
+    for (auto object : objectVector) {
+        if (auto obstacle = std::dynamic_pointer_cast<Obstacle>(object)) {
+            AddObstacle(luaFile, obstacle->getObstacleName(), obstacle->getPosition());
+        }
+    }
 
-//             //Example Obstacles
-//             // Lava Flow
-//             // Mountain4
+    // Example Obstacles
+    //  Lava Flow
+    //  Mountain4
 
-//             //Rock_Rough10?
-//             // Pine Trees
-//             // Mushrooms
-//             // Mountain
-//         }
-//     }
-// }
+    // Rock_Rough10?
+    //  Pine Trees
+    //  Mushrooms
+    //  Mountain
+}
 
 // @function    AddHeader
 // @tparam      ofstream    luaFile     file where we save lua script parts.
@@ -224,18 +230,6 @@ local homm3lua = require('homm3lua'))";
 
 //     luaFile << "instance:artifact(homm3lua." << treasureType << ", {x=" << x
 //     << ", y=" << y << ", z=" << z << "})\n";
-// }
-
-// // @function    AddObstacle
-// // @tparam      ofstream    luaFile          file where we save lua script
-// parts.
-// // @tparam      string      obstacle         type of obstacle.
-// // @tparam      integer     x                position on x axis of obstacle.
-// // @tparam      integer     y                position on y axis of obstacle.
-// // @tparam      integer     z                position on z axis of obstacle.
-// void AddObstacle(ofstream& luaFile, string obstacle, int x, int y, int z){
-//     luaFile << "instance:obstacle('" << obstacle << "', {x=" << x << ", y="
-//     << y << ", z=" << z << "})\n";
 // }
 
 // // @function    AddBuildingTreasure

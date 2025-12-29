@@ -37,6 +37,10 @@ void generateLuaScript(Map map, string &saveLocation) {
 
     AddTowns(luaFile, map);
 
+    AddBorderObstacles(luaFile, map);
+
+    // AddConnections(luaFiles, map)
+
     // Finishing luaScript
     string homeDir = getenv("HOME");
 
@@ -100,7 +104,7 @@ int main(int argc, char *argv[]) {
 
     Map map(rng, layoutInfo);
     map.generateMap();
-    map.printMap();
+    // map.printMap();
 
     generateLuaScript(map, saveLocation);
 
