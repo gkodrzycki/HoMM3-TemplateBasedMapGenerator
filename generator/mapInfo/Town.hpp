@@ -8,10 +8,10 @@ class Town : public Object {
   public:
     Town();
     Town(Faction faction);
-    Town(Faction faction, string owner, int3 position, string name);
+    Town(Faction faction, const string &owner, const int3 &position, const string &name);
 
     void setFaction(Faction faction);
-    void setOwner(string owner);
+    void setOwner(const string &owner);
 
     string getOwner();
     Faction getFaction();

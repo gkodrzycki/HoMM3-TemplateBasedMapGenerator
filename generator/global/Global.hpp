@@ -31,3 +31,13 @@ T getOrDefault(const nlohmann::json &j, const string &key, const T &defaultValue
     }
     return defaultValue;
 }
+
+const int3 directions4[] = {
+    int3(1, 0, 0),
+    int3(0, 1, 0),
+    int3(-1, 0, 0),
+    int3(0, -1, 0),
+};
+
+const int3 directions8[] = {int3(1, 0, 0), int3(0, 1, 0),   int3(-1, 0, 0), int3(0, -1, 0),
+                            int3(1, 1, 0), int3(-1, -1, 0), int3(-1, 1, 0), int3(1, -1, 0)};

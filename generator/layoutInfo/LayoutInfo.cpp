@@ -5,8 +5,10 @@ LayoutInfo::LayoutInfo() {
     description = "";
     mapSize     = "M";
     difficulty  = "";
+    debug       = false;
 }
 
+bool LayoutInfo::getDebug() { return debug; }
 string LayoutInfo::getName() { return name; }
 string LayoutInfo::getDescription() { return description; }
 string LayoutInfo::getMapSize() { return mapSize; }
@@ -16,11 +18,13 @@ vector<ConnectionInfo> LayoutInfo::getConnectionInfoList() { return connectionIn
 
 void LayoutInfo::deserialize(const json &layout) {
 
+    bool debug         = getOrDefault<bool>(layout, "debug", false);
     string name        = getOrError<string>(layout, "name");
     string description = getOrError<string>(layout, "description");
     string mapSize     = layout.value("size", "M");
     string difficulty  = getOrError<string>(layout, "difficulty");
 
+    this->debug       = debug;
     this->name        = name;
     this->description = description;
     this->mapSize     = mapSize;
