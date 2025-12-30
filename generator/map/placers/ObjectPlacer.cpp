@@ -123,9 +123,7 @@ std::map<int, int3> ObjectPlacer::getConnectionsPoints() {
 vector<int3> ObjectPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
-    std::vector<std::vector<int3>> visited(
-        mapWidth, std::vector<int3>(mapHeight, int3(-1, -1, -1))
-    );
+    vector<vector<int3>> visited(mapWidth, vector<int3>(mapHeight, int3(-1, -1, -1)));
     for (int x = 0; x < mapWidth; x++) {
         for (int y = 0; y < mapHeight; y++) {
             visited[x][y] = int3(-1, -1, -1);
@@ -134,7 +132,7 @@ vector<int3> ObjectPlacer::createPath(int3 fromPos, int3 destPos) {
 
     auto objectVector = map.getObjectVector();
     for (const auto &object : objectVector) {
-        if (auto town = std::dynamic_pointer_cast<Town>(object)) {
+        if (auto town = dynamic_pointer_cast<Town>(object)) {
             int3 objPos  = object->getPosition();
             int3 objSize = object->getSize();
 
