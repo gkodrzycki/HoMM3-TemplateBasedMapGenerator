@@ -39,7 +39,7 @@ void generateLuaScript(Map map, string &saveLocation) {
 
     AddBorderObstacles(luaFile, map);
 
-    // AddConnections(luaFile, map);
+    AddRoads(luaFile, map);
 
     // Finishing luaScript
     string homeDir = getenv("HOME");

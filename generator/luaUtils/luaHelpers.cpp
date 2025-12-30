@@ -1,5 +1,4 @@
 #include "./luaHelpers.hpp"
-#include <sstream>
 
 // #include "../gameInfo/Tile.hpp"
 // #include "../templateInfo/TemplateInfo.hpp"
@@ -86,28 +85,33 @@ void AddTowns(ofstream &luaFile, Map &map) {
 
 // }
 
-// // @function    AddRoads
-// // @tparam      ofstream    luaFile         file where we save lua script
-// parts.
-// // @tparam      Map         map             object of map class with finished
-// setup. void AddRoads(ofstream& luaFile, Map& map){
+// @function    AddRoad
+// @tparam      ofstream    luaFile          file where we save lua script.
+// @tparam      int         tier             tier of road.
+// @tparam      int3        pos              position of road.
+void AddRoad(ofstream &luaFile, const int &tier, int3 pos) {
+    luaFile << "    if x == " << pos.x << " and y == " << pos.y << " then return nil, " << tier
+            << " end\n";
+}
 
-//     luaFile << "-- Dynamic terrain adjustments for linear paths between
-//     towns\n"; luaFile << "instance:terrain(function (x, y, z)\n";
+// @function    AddRoads
+// @tparam      ofstream    luaFile         file where we save lua script.
+// @tparam      Map         map             object of map class with finished setup.
+void AddRoads(ofstream &luaFile, Map &map) {
+    luaFile << "-- Dynamic terrain adjustments for linear paths between towns\n";
+    luaFile << "instance:terrain(function (x, y, z)\n";
 
-//     for (int x = 0; x < map.getWidth(); x++){
-//         for (int y = 0; y < map.getHeight(); y++){
-//             auto TilePtr = map.getTile(x, y);
-//             if (TilePtr->getIsRoad()) {
-//                 luaFile << "    if x == " << x << " and y == " << y << " then
-//                 return nil, " << TilePtr->getTier() << " end\n";
-//             }
-//         }
-//     }
+    ObjectVector objectVector = map.getObjectVector();
 
-//     luaFile << "    return nil\n"; // Default terrain
-//     luaFile << "end)\n";
-// }
+    for (const auto &object : objectVector) {
+        if (auto road = std::dynamic_pointer_cast<Road>(object)) {
+            AddRoad(luaFile, road->getRoadTier(), road->getPosition());
+        }
+    }
+
+    luaFile << "    return nil\n"; // Default terrain
+    luaFile << "end)\n";
+}
 
 // @function    AddTerrain
 // @tparam      ofstream    luaFile     file where we save lua script.

@@ -32,14 +32,14 @@
       "size": "M",
       "zones": [
         {
-          "id": 3,
+          "id": 4,
           "terrain": "snow",
           "faction": "Rampart",
           "owner_id": "2",
           "type": "starting_zone"
         },
         {
-          "id": 4,
+          "id": 3,
           "terrain": "lava",
           "faction": "Rampart",
           "owner_id": "0",

@@ -30,6 +30,8 @@ void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
 void AddTerrainTiles(ofstream &luaFile, Map &map);
 void AddBorderObstacles(ofstream &luaFile, Map &map);
 void AddHeader(ofstream &luaFile);
+void AddRoad(ofstream &luaFile, const int &tier, int3 pos);
+void AddRoads(ofstream &luaFile, Map &map);
 // void AddCreature(ofstream& luaFile, Creature creature);
 // void AddMine(ofstream& luaFile, Mine mine, Map &map);
 // void AddResource(ofstream& luaFile, Treasure treasure);
@@ -37,7 +39,6 @@ void AddHeader(ofstream &luaFile);
 // void AddBuildingTreasure(ofstream& luaFile, Treasure treasure);
 // void AddObstacle(ofstream& luaFile, string obstacle, int3 pos);
 // void AddSign(ofstream& luaFile, string text, int x, int y, int z);
-// void AddRoads(ofstream &luaFile, Map &map);
 // void AddMapObjects(ofstream &luaFile, Map& map);
 
 #endif

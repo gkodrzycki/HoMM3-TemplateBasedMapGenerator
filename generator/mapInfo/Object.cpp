@@ -12,9 +12,9 @@ Object::Object(int3 position, string name) {
 }
 
 Object::Object(int3 position, string name, int3 size) {
-    this->name = name;
-    this->size = size;
-    setPosition(position);
+    this->name     = name;
+    this->size     = size;
+    this->position = position;
 }
 
 int3 Object::getSize() const { return size; }
@@ -25,12 +25,7 @@ string Object::getName() const { return name; }
 
 void Object::setSize(int3 size) { this->size = size; }
 
-void Object::setPosition(int3 position) {
-
-    this->position = position;
-    this->position.x += size.x / 2;
-    this->position.y += (size.y - 1) / 2;
-}
+void Object::setPosition(int3 position) { this->position = position; }
 
 void Object::setName(string name) { this->name = name; }
 

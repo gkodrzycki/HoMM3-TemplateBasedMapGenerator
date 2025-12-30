@@ -1,11 +1,13 @@
 #include "./Town.hpp"
 
-Town::Town() : Object(int3(5, 3, 1), "Town") { faction = Faction::NONE; }
+Town::Town() : Object(int3(1, 1, 1), "Town", int3(5, 3, 1)) { faction = Faction::NONE; }
 
-Town::Town(Faction faction) : Object(int3(5, 3, 1), "Town") { this->faction = faction; }
+Town::Town(Faction faction) : Object(int3(1, 1, 1), "Town", int3(5, 3, 1)) {
+    this->faction = faction;
+}
 
 Town::Town(Faction faction, const string &owner, const int3 &position, const string &name)
-    : Object(position, name) {
+    : Object(position, name, int3(5, 3, 1)) {
     this->faction = faction;
     this->owner   = owner;
 }
