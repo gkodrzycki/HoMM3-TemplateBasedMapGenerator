@@ -88,7 +88,7 @@ void AddTowns(ofstream &luaFile, Map &map) {
 // @function    AddRoad
 // @tparam      ofstream    luaFile          file where we save lua script.
 // @tparam      int         tier             tier of road.
-// @tparam      int3        pos              position of obstacle.
+// @tparam      int3        pos              position of road.
 void AddRoad(ofstream &luaFile, const int &tier, int3 pos) {
     luaFile << "    if x == " << pos.x << " and y == " << pos.y << " then return nil, " << tier
             << " end\n";
