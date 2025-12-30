@@ -1,6 +1,6 @@
 #include "./Tile.hpp"
 
-Tile::Tile() {}
+Tile::Tile() : road(nullptr) {}
 
 Tile::Tile(int zoneID, string terrain) : zoneID(zoneID), terrain(terrain), road(nullptr) {}
 
