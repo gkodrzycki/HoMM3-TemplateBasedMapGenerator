@@ -2,7 +2,8 @@
 
 Road::Road() : Object(int3(1, 1, 1), "Road") { roadTier = 0; }
 
-Road::Road(const int &roadTier, const int3 &position, const string &name) : Object(position, name) {
+Road::Road(const int &roadTier, const int3 &position, const string &name)
+    : Object(position, name, int3(1, 1, 1)) {
     this->roadTier = roadTier;
 }
 
