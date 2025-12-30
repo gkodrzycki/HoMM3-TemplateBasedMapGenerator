@@ -45,6 +45,7 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
 			  $(MAP_INFO_DIR)/Object.cpp \
 			  $(MAP_INFO_DIR)/Town.cpp \
 			  $(MAP_INFO_DIR)/Obstacle.cpp \
+			  $(MAP_INFO_DIR)/Road.cpp \
 			  $(MAP_INFO_DIR)/Region.cpp
 
 # Object files for Generator

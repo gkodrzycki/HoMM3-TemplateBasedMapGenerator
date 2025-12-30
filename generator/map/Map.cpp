@@ -57,7 +57,7 @@ void Map::generateMap() {
 
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeTowns();
-
+    objectPlacer.placeRoads();
     objectPlacer.placeBorders();
 }
 
