@@ -2,7 +2,7 @@
 HoMM3-MapGen is a **procedural Heroes of Might and Magic III map generator** that turns a high-level **JSON layout template** (regions, zones, and their connections) into a playable **.H3M** map. The generator is implemented in **C++**, uses a **seedable RNG** for reproducibility, and emits a **Lua script** that builds the map via **homm3lua**, producing an output compatible with **VCMI**.
 
 ## Background / Motivation
-This project is aiming to refactor and improve work done as [Engeneering Thesis](https://github.com/Sko0owi/HOMM3-mapgen/tree/main).
+This project is aiming to refactor and improve work done as [Engineering Thesis](https://github.com/Sko0owi/HOMM3-mapgen/tree/main).
 
 ### Important References / Bibliography
 - **Designing a Template-Based Map Generator for Heroes of Might & Magic III** [Thesis](https://jakubkowalski.tech/Supervising/Skowronek2025DesigningTemplateBased.pdf)
