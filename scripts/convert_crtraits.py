@@ -58,7 +58,7 @@ def _maybe_int(value: str) -> int | str:
         digits = v[1:]
         if digits.isdigit():
             return int(v)
-        return value
+        return v
     if v.isdigit():
         return int(v)
     return v
@@ -109,7 +109,7 @@ def write_csv(out_path: Path, keys: list[str], rows: list[list[str]]) -> None:
         writer = csv.writer(f)
         writer.writerow(keys)
         for row in rows:
-            writer.writerow(["" if v is None else str(v) for v in row])
+            writer.writerow([str(v) for v in row])
 
 
 def write_json(out_path: Path, keys: list[str], rows: list[list[str]]) -> None:
@@ -151,7 +151,7 @@ def main() -> int:
         ap.error("At least one of --out-csv or --out-json must be provided")
 
     try:
-        keys, rows = parse_crtraits_selected(in_path, args.fields or [])
+        keys, rows = parse_crtraits_selected(in_path, args.fields)
     except ValueError as e:
         ap.error(str(e))
 
