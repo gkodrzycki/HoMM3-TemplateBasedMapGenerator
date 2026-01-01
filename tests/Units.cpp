@@ -88,7 +88,6 @@ void executeLuaScript(const string &script_name) {
     if (luaL_dofile(L, script_name.c_str())) {
         cerr << "Error executing Lua script '" << script_name << "': " << lua_tostring(L, -1)
              << endl;
-        lua_close(L);
     }
 
     lua_close(L);
