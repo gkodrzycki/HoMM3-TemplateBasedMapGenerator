@@ -1,0 +1,151 @@
+singular,plural,fight_value,ai_value
+Pikeman,Pikemen,100,80
+Halberdier,Halberdiers,115,115
+Archer,Archers,115,126
+Marksman,Marksmen,115,184
+Griffin,Griffins,324,351
+Royal Griffin,Royal Griffins,364,448
+Swordsman,Swordsmen,445,445
+Crusader,Crusaders,588,588
+Monk,Monks,485,485
+Zealot,Zealots,500,750
+Cavalier,Cavaliers,1668,1946
+Champion,Champions,1800,2100
+Angel,Angels,3585,5019
+Archangel,Archangels,6033,8776
+Centaur,Centaurs,100,100
+Centaur Captain,Centaur Captains,115,138
+Dwarf,Dwarves,194,138
+Battle Dwarf,Battle Dwarves,209,209
+Wood Elf,Wood Elves,195,234
+Grand Elf,Grand Elves,195,331
+Pegasus,Pegasi,407,518
+Silver Pegasus,Silver Pegasi,418,532
+Dendroid Guard,Dendroid Guards,690,517
+Dendroid Soldier,Dendroid Soldiers,765,803
+Unicorn,Unicorns,1548,1806
+War Unicorn,War Unicorns,1740,2030
+Green Dragon,Green Dragons,3654,4872
+Gold Dragon,Gold Dragons,6220,8613
+Gremlin,Gremlins,55,44
+Master Gremlin,Master Gremlins,55,66
+Stone Gargoyle,Stone Gargoyles,150,165
+Obsidian Gargoyle,Obsidian Gargoyles,155,201
+Stone Golem,Stone Golems,339,250
+Iron Golem,Iron Golems,412,412
+Mage,Magi,418,570
+Arch Mage,Arch Magi,467,680
+Genie,Genies,680,884
+Master Genie,Master Genies,748,942
+Naga,Nagas,2016,2016
+Naga Queen,Naga Queens,2485,2840
+Giant,Giants,3146,3718
+Titan,Titans,5000,7500
+Imp,Imps,50,50
+Familiar,Familiars,60,60
+Gog,Gogs,145,159
+Magog,Magogs,210,240
+Hell Hound,Hell Hounds,275,357
+Cerberus,Cerberi,308,392
+Demon,Demons,445,445
+Horned Demon,Horned Demons,480,480
+Pit Fiend,Pit Fiends,765,765
+Pit Lord,Pit Lords,1071,1224
+Efreeti,Efreet,1413,1670
+Efreet Sultan,Efreet Sultans,1584,1848
+Devil,Devils,3759,5101
+Arch Devil,Arch Devils,5243,7115
+Skeleton,Skeletons,75,60
+Skeleton Warrior,Skeleton Warriors,85,85
+Walking Dead,Walking Dead,140,98
+Zombie,Zombies,160,128
+Wight,Wights,231,252
+Wraith,Wraiths,252,315
+Vampire,Vampires,518,555
+Vampire Lord,Vampire Lords,652,783
+Lich,Liches,742,848
+Power Lich,Power Liches,889,1079
+Black Knight,Black Knights,1753,2087
+Dread Knight,Dread Knights,2029,2382
+Bone Dragon,Bone Dragons,2420,3388
+Ghost Dragon,Ghost Dragons,3228,4696
+Troglodyte,Troglodytes,73,59
+Infernal Troglodyte,Infernal Troglodytes,84,84
+Harpy,Harpies,140,154
+Harpy Hag,Harpy Hags,196,238
+Beholder,Beholders,240,336
+Evil Eye,Evil Eyes,245,367
+Medusa,Medusas,379,517
+Medusa Queen,Medusa Queens,423,577
+Minotaur,Minotaurs,835,835
+Minotaur King,Minotaur Kings,890,1068
+Manticore,Manticores,1215,1547
+Scorpicore,Scorpicores,1248,1589
+Red Dragon,Red Dragons,3762,4702
+Black Dragon,Black Dragons,6783,8721
+Goblin,Goblins,60,60
+Hobgoblin,Hobgoblins,65,78
+Wolf Rider,Wolf Riders,130,130
+Wolf Raider,Wolf Raiders,174,203
+Orc,Orcs,175,192
+Orc Chieftain,Orc Chieftains,200,240
+Ogre,Ogres,520,416
+Ogre Mage,Ogre Magi,672,672
+Roc,Rocs,790,1027
+Thunderbird,Thunderbirds,869,1106
+Cyclops,Cyclopes,1055,1266
+Cyclops King,Cyclops Kings,1110,1443
+Behemoth,Behemoths,3162,3162
+Ancient Behemoth,Ancient Behemoths,5397,6168
+Gnoll,Gnolls,70,56
+Gnoll Marauder,Gnoll Marauders,90,90
+Lizardman,Lizardmen,115,126
+Lizard Warrior,Lizard Warriors,130,156
+Gorgon,Gorgons,890,890
+Mighty Gorgon,Mighty Gorgons,1028,1028
+Serpent Fly,Serpent Flies,215,268
+Dragon Fly,Dragon Flies,250,312
+Basilisk,Basilisks,506,552
+Greater Basilisk,Greater Basilisks,561,714
+Wyvern,Wyverns,1050,1350
+Wyvern Monarch,Wyvern Monarchs,1181,1518
+Hydra,Hydras,4120,4120
+Chaos Hydra,Chaos Hydras,5272,5931
+Air Elemental,Air Elementals,324,356
+Earth Elemental,Earth Elementals,415,330
+Fire Elemental,Fire Elementals,345,345
+Water Elemental,Water Elementals,315,315
+Gold Golem,Gold Golems,600,600
+Diamond Golem,Diamond Golems,775,775
+Pixie,Pixies,40,55
+Sprite,Sprites,70,95
+Psychic Elemental,Psychic Elementals,1431,1669
+Magic Elemental,Magic Elementals,1724,2012
+NOT USED (1),NOT USED (1),0,0
+Ice Elemental,Ice Elementals,315,380
+NOT USED (2) ,NOT USED (2),0,0
+Magma Elemental,Magma Elementals,490,490
+NOT USED (3),NOT USED (3),0,0
+Storm Elemental,Storm Elementals,324,486
+NOT USED (4),NOT USED (4),0,0
+Energy Elemental,Energy Elementals,360,470
+Firebird,Firebirds,3248,4547
+Phoenix,Phoenixes,4929,6721
+Azure Dragon,Azure Dragons,56315,78845
+Crystal Dragon,Crystal Dragons,30260,39338
+Faerie Dragon,Faerie Dragons,16317,19580
+Rust Dragon,Rust Dragons,24030,26433
+Enchanter,Enchanters,805,1210
+Sharpshooter,Sharpshooters,415,585
+Halfling,Halflings,60,75
+Peasant,Peasants,15,15
+Boar,Boars,145,145
+Mummy,Mummies,270,270
+Nomad,Nomads,285,345
+Rogue,Rogues,135,135
+Troll,Trolls,1024,1024
+Catapult,Catapults,10,500
+Ballista,Ballistas,650,600
+First Aid Tent,First Aid Tents,10,300
+Ammo Cart,Ammo Carts,5,400
+Arrow Tower,Arrow Towers,5,400

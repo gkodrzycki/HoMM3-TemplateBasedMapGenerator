@@ -1,0 +1,902 @@
+[
+  {
+    "singular": "Pikeman",
+    "plural": "Pikemen",
+    "fight_value": 100,
+    "ai_value": 80
+  },
+  {
+    "singular": "Halberdier",
+    "plural": "Halberdiers",
+    "fight_value": 115,
+    "ai_value": 115
+  },
+  {
+    "singular": "Archer",
+    "plural": "Archers",
+    "fight_value": 115,
+    "ai_value": 126
+  },
+  {
+    "singular": "Marksman",
+    "plural": "Marksmen",
+    "fight_value": 115,
+    "ai_value": 184
+  },
+  {
+    "singular": "Griffin",
+    "plural": "Griffins",
+    "fight_value": 324,
+    "ai_value": 351
+  },
+  {
+    "singular": "Royal Griffin",
+    "plural": "Royal Griffins",
+    "fight_value": 364,
+    "ai_value": 448
+  },
+  {
+    "singular": "Swordsman",
+    "plural": "Swordsmen",
+    "fight_value": 445,
+    "ai_value": 445
+  },
+  {
+    "singular": "Crusader",
+    "plural": "Crusaders",
+    "fight_value": 588,
+    "ai_value": 588
+  },
+  {
+    "singular": "Monk",
+    "plural": "Monks",
+    "fight_value": 485,
+    "ai_value": 485
+  },
+  {
+    "singular": "Zealot",
+    "plural": "Zealots",
+    "fight_value": 500,
+    "ai_value": 750
+  },
+  {
+    "singular": "Cavalier",
+    "plural": "Cavaliers",
+    "fight_value": 1668,
+    "ai_value": 1946
+  },
+  {
+    "singular": "Champion",
+    "plural": "Champions",
+    "fight_value": 1800,
+    "ai_value": 2100
+  },
+  {
+    "singular": "Angel",
+    "plural": "Angels",
+    "fight_value": 3585,
+    "ai_value": 5019
+  },
+  {
+    "singular": "Archangel",
+    "plural": "Archangels",
+    "fight_value": 6033,
+    "ai_value": 8776
+  },
+  {
+    "singular": "Centaur",
+    "plural": "Centaurs",
+    "fight_value": 100,
+    "ai_value": 100
+  },
+  {
+    "singular": "Centaur Captain",
+    "plural": "Centaur Captains",
+    "fight_value": 115,
+    "ai_value": 138
+  },
+  {
+    "singular": "Dwarf",
+    "plural": "Dwarves",
+    "fight_value": 194,
+    "ai_value": 138
+  },
+  {
+    "singular": "Battle Dwarf",
+    "plural": "Battle Dwarves",
+    "fight_value": 209,
+    "ai_value": 209
+  },
+  {
+    "singular": "Wood Elf",
+    "plural": "Wood Elves",
+    "fight_value": 195,
+    "ai_value": 234
+  },
+  {
+    "singular": "Grand Elf",
+    "plural": "Grand Elves",
+    "fight_value": 195,
+    "ai_value": 331
+  },
+  {
+    "singular": "Pegasus",
+    "plural": "Pegasi",
+    "fight_value": 407,
+    "ai_value": 518
+  },
+  {
+    "singular": "Silver Pegasus",
+    "plural": "Silver Pegasi",
+    "fight_value": 418,
+    "ai_value": 532
+  },
+  {
+    "singular": "Dendroid Guard",
+    "plural": "Dendroid Guards",
+    "fight_value": 690,
+    "ai_value": 517
+  },
+  {
+    "singular": "Dendroid Soldier",
+    "plural": "Dendroid Soldiers",
+    "fight_value": 765,
+    "ai_value": 803
+  },
+  {
+    "singular": "Unicorn",
+    "plural": "Unicorns",
+    "fight_value": 1548,
+    "ai_value": 1806
+  },
+  {
+    "singular": "War Unicorn",
+    "plural": "War Unicorns",
+    "fight_value": 1740,
+    "ai_value": 2030
+  },
+  {
+    "singular": "Green Dragon",
+    "plural": "Green Dragons",
+    "fight_value": 3654,
+    "ai_value": 4872
+  },
+  {
+    "singular": "Gold Dragon",
+    "plural": "Gold Dragons",
+    "fight_value": 6220,
+    "ai_value": 8613
+  },
+  {
+    "singular": "Gremlin",
+    "plural": "Gremlins",
+    "fight_value": 55,
+    "ai_value": 44
+  },
+  {
+    "singular": "Master Gremlin",
+    "plural": "Master Gremlins",
+    "fight_value": 55,
+    "ai_value": 66
+  },
+  {
+    "singular": "Stone Gargoyle",
+    "plural": "Stone Gargoyles",
+    "fight_value": 150,
+    "ai_value": 165
+  },
+  {
+    "singular": "Obsidian Gargoyle",
+    "plural": "Obsidian Gargoyles",
+    "fight_value": 155,
+    "ai_value": 201
+  },
+  {
+    "singular": "Stone Golem",
+    "plural": "Stone Golems",
+    "fight_value": 339,
+    "ai_value": 250
+  },
+  {
+    "singular": "Iron Golem",
+    "plural": "Iron Golems",
+    "fight_value": 412,
+    "ai_value": 412
+  },
+  {
+    "singular": "Mage",
+    "plural": "Magi",
+    "fight_value": 418,
+    "ai_value": 570
+  },
+  {
+    "singular": "Arch Mage",
+    "plural": "Arch Magi",
+    "fight_value": 467,
+    "ai_value": 680
+  },
+  {
+    "singular": "Genie",
+    "plural": "Genies",
+    "fight_value": 680,
+    "ai_value": 884
+  },
+  {
+    "singular": "Master Genie",
+    "plural": "Master Genies",
+    "fight_value": 748,
+    "ai_value": 942
+  },
+  {
+    "singular": "Naga",
+    "plural": "Nagas",
+    "fight_value": 2016,
+    "ai_value": 2016
+  },
+  {
+    "singular": "Naga Queen",
+    "plural": "Naga Queens",
+    "fight_value": 2485,
+    "ai_value": 2840
+  },
+  {
+    "singular": "Giant",
+    "plural": "Giants",
+    "fight_value": 3146,
+    "ai_value": 3718
+  },
+  {
+    "singular": "Titan",
+    "plural": "Titans",
+    "fight_value": 5000,
+    "ai_value": 7500
+  },
+  {
+    "singular": "Imp",
+    "plural": "Imps",
+    "fight_value": 50,
+    "ai_value": 50
+  },
+  {
+    "singular": "Familiar",
+    "plural": "Familiars",
+    "fight_value": 60,
+    "ai_value": 60
+  },
+  {
+    "singular": "Gog",
+    "plural": "Gogs",
+    "fight_value": 145,
+    "ai_value": 159
+  },
+  {
+    "singular": "Magog",
+    "plural": "Magogs",
+    "fight_value": 210,
+    "ai_value": 240
+  },
+  {
+    "singular": "Hell Hound",
+    "plural": "Hell Hounds",
+    "fight_value": 275,
+    "ai_value": 357
+  },
+  {
+    "singular": "Cerberus",
+    "plural": "Cerberi",
+    "fight_value": 308,
+    "ai_value": 392
+  },
+  {
+    "singular": "Demon",
+    "plural": "Demons",
+    "fight_value": 445,
+    "ai_value": 445
+  },
+  {
+    "singular": "Horned Demon",
+    "plural": "Horned Demons",
+    "fight_value": 480,
+    "ai_value": 480
+  },
+  {
+    "singular": "Pit Fiend",
+    "plural": "Pit Fiends",
+    "fight_value": 765,
+    "ai_value": 765
+  },
+  {
+    "singular": "Pit Lord",
+    "plural": "Pit Lords",
+    "fight_value": 1071,
+    "ai_value": 1224
+  },
+  {
+    "singular": "Efreeti",
+    "plural": "Efreet",
+    "fight_value": 1413,
+    "ai_value": 1670
+  },
+  {
+    "singular": "Efreet Sultan",
+    "plural": "Efreet Sultans",
+    "fight_value": 1584,
+    "ai_value": 1848
+  },
+  {
+    "singular": "Devil",
+    "plural": "Devils",
+    "fight_value": 3759,
+    "ai_value": 5101
+  },
+  {
+    "singular": "Arch Devil",
+    "plural": "Arch Devils",
+    "fight_value": 5243,
+    "ai_value": 7115
+  },
+  {
+    "singular": "Skeleton",
+    "plural": "Skeletons",
+    "fight_value": 75,
+    "ai_value": 60
+  },
+  {
+    "singular": "Skeleton Warrior",
+    "plural": "Skeleton Warriors",
+    "fight_value": 85,
+    "ai_value": 85
+  },
+  {
+    "singular": "Walking Dead",
+    "plural": "Walking Dead",
+    "fight_value": 140,
+    "ai_value": 98
+  },
+  {
+    "singular": "Zombie",
+    "plural": "Zombies",
+    "fight_value": 160,
+    "ai_value": 128
+  },
+  {
+    "singular": "Wight",
+    "plural": "Wights",
+    "fight_value": 231,
+    "ai_value": 252
+  },
+  {
+    "singular": "Wraith",
+    "plural": "Wraiths",
+    "fight_value": 252,
+    "ai_value": 315
+  },
+  {
+    "singular": "Vampire",
+    "plural": "Vampires",
+    "fight_value": 518,
+    "ai_value": 555
+  },
+  {
+    "singular": "Vampire Lord",
+    "plural": "Vampire Lords",
+    "fight_value": 652,
+    "ai_value": 783
+  },
+  {
+    "singular": "Lich",
+    "plural": "Liches",
+    "fight_value": 742,
+    "ai_value": 848
+  },
+  {
+    "singular": "Power Lich",
+    "plural": "Power Liches",
+    "fight_value": 889,
+    "ai_value": 1079
+  },
+  {
+    "singular": "Black Knight",
+    "plural": "Black Knights",
+    "fight_value": 1753,
+    "ai_value": 2087
+  },
+  {
+    "singular": "Dread Knight",
+    "plural": "Dread Knights",
+    "fight_value": 2029,
+    "ai_value": 2382
+  },
+  {
+    "singular": "Bone Dragon",
+    "plural": "Bone Dragons",
+    "fight_value": 2420,
+    "ai_value": 3388
+  },
+  {
+    "singular": "Ghost Dragon",
+    "plural": "Ghost Dragons",
+    "fight_value": 3228,
+    "ai_value": 4696
+  },
+  {
+    "singular": "Troglodyte",
+    "plural": "Troglodytes",
+    "fight_value": 73,
+    "ai_value": 59
+  },
+  {
+    "singular": "Infernal Troglodyte",
+    "plural": "Infernal Troglodytes",
+    "fight_value": 84,
+    "ai_value": 84
+  },
+  {
+    "singular": "Harpy",
+    "plural": "Harpies",
+    "fight_value": 140,
+    "ai_value": 154
+  },
+  {
+    "singular": "Harpy Hag",
+    "plural": "Harpy Hags",
+    "fight_value": 196,
+    "ai_value": 238
+  },
+  {
+    "singular": "Beholder",
+    "plural": "Beholders",
+    "fight_value": 240,
+    "ai_value": 336
+  },
+  {
+    "singular": "Evil Eye",
+    "plural": "Evil Eyes",
+    "fight_value": 245,
+    "ai_value": 367
+  },
+  {
+    "singular": "Medusa",
+    "plural": "Medusas",
+    "fight_value": 379,
+    "ai_value": 517
+  },
+  {
+    "singular": "Medusa Queen",
+    "plural": "Medusa Queens",
+    "fight_value": 423,
+    "ai_value": 577
+  },
+  {
+    "singular": "Minotaur",
+    "plural": "Minotaurs",
+    "fight_value": 835,
+    "ai_value": 835
+  },
+  {
+    "singular": "Minotaur King",
+    "plural": "Minotaur Kings",
+    "fight_value": 890,
+    "ai_value": 1068
+  },
+  {
+    "singular": "Manticore",
+    "plural": "Manticores",
+    "fight_value": 1215,
+    "ai_value": 1547
+  },
+  {
+    "singular": "Scorpicore",
+    "plural": "Scorpicores",
+    "fight_value": 1248,
+    "ai_value": 1589
+  },
+  {
+    "singular": "Red Dragon",
+    "plural": "Red Dragons",
+    "fight_value": 3762,
+    "ai_value": 4702
+  },
+  {
+    "singular": "Black Dragon",
+    "plural": "Black Dragons",
+    "fight_value": 6783,
+    "ai_value": 8721
+  },
+  {
+    "singular": "Goblin",
+    "plural": "Goblins",
+    "fight_value": 60,
+    "ai_value": 60
+  },
+  {
+    "singular": "Hobgoblin",
+    "plural": "Hobgoblins",
+    "fight_value": 65,
+    "ai_value": 78
+  },
+  {
+    "singular": "Wolf Rider",
+    "plural": "Wolf Riders",
+    "fight_value": 130,
+    "ai_value": 130
+  },
+  {
+    "singular": "Wolf Raider",
+    "plural": "Wolf Raiders",
+    "fight_value": 174,
+    "ai_value": 203
+  },
+  {
+    "singular": "Orc",
+    "plural": "Orcs",
+    "fight_value": 175,
+    "ai_value": 192
+  },
+  {
+    "singular": "Orc Chieftain",
+    "plural": "Orc Chieftains",
+    "fight_value": 200,
+    "ai_value": 240
+  },
+  {
+    "singular": "Ogre",
+    "plural": "Ogres",
+    "fight_value": 520,
+    "ai_value": 416
+  },
+  {
+    "singular": "Ogre Mage",
+    "plural": "Ogre Magi",
+    "fight_value": 672,
+    "ai_value": 672
+  },
+  {
+    "singular": "Roc",
+    "plural": "Rocs",
+    "fight_value": 790,
+    "ai_value": 1027
+  },
+  {
+    "singular": "Thunderbird",
+    "plural": "Thunderbirds",
+    "fight_value": 869,
+    "ai_value": 1106
+  },
+  {
+    "singular": "Cyclops",
+    "plural": "Cyclopes",
+    "fight_value": 1055,
+    "ai_value": 1266
+  },
+  {
+    "singular": "Cyclops King",
+    "plural": "Cyclops Kings",
+    "fight_value": 1110,
+    "ai_value": 1443
+  },
+  {
+    "singular": "Behemoth",
+    "plural": "Behemoths",
+    "fight_value": 3162,
+    "ai_value": 3162
+  },
+  {
+    "singular": "Ancient Behemoth",
+    "plural": "Ancient Behemoths",
+    "fight_value": 5397,
+    "ai_value": 6168
+  },
+  {
+    "singular": "Gnoll",
+    "plural": "Gnolls",
+    "fight_value": 70,
+    "ai_value": 56
+  },
+  {
+    "singular": "Gnoll Marauder",
+    "plural": "Gnoll Marauders",
+    "fight_value": 90,
+    "ai_value": 90
+  },
+  {
+    "singular": "Lizardman",
+    "plural": "Lizardmen",
+    "fight_value": 115,
+    "ai_value": 126
+  },
+  {
+    "singular": "Lizard Warrior",
+    "plural": "Lizard Warriors",
+    "fight_value": 130,
+    "ai_value": 156
+  },
+  {
+    "singular": "Gorgon",
+    "plural": "Gorgons",
+    "fight_value": 890,
+    "ai_value": 890
+  },
+  {
+    "singular": "Mighty Gorgon",
+    "plural": "Mighty Gorgons",
+    "fight_value": 1028,
+    "ai_value": 1028
+  },
+  {
+    "singular": "Serpent Fly",
+    "plural": "Serpent Flies",
+    "fight_value": 215,
+    "ai_value": 268
+  },
+  {
+    "singular": "Dragon Fly",
+    "plural": "Dragon Flies",
+    "fight_value": 250,
+    "ai_value": 312
+  },
+  {
+    "singular": "Basilisk",
+    "plural": "Basilisks",
+    "fight_value": 506,
+    "ai_value": 552
+  },
+  {
+    "singular": "Greater Basilisk",
+    "plural": "Greater Basilisks",
+    "fight_value": 561,
+    "ai_value": 714
+  },
+  {
+    "singular": "Wyvern",
+    "plural": "Wyverns",
+    "fight_value": 1050,
+    "ai_value": 1350
+  },
+  {
+    "singular": "Wyvern Monarch",
+    "plural": "Wyvern Monarchs",
+    "fight_value": 1181,
+    "ai_value": 1518
+  },
+  {
+    "singular": "Hydra",
+    "plural": "Hydras",
+    "fight_value": 4120,
+    "ai_value": 4120
+  },
+  {
+    "singular": "Chaos Hydra",
+    "plural": "Chaos Hydras",
+    "fight_value": 5272,
+    "ai_value": 5931
+  },
+  {
+    "singular": "Air Elemental",
+    "plural": "Air Elementals",
+    "fight_value": 324,
+    "ai_value": 356
+  },
+  {
+    "singular": "Earth Elemental",
+    "plural": "Earth Elementals",
+    "fight_value": 415,
+    "ai_value": 330
+  },
+  {
+    "singular": "Fire Elemental",
+    "plural": "Fire Elementals",
+    "fight_value": 345,
+    "ai_value": 345
+  },
+  {
+    "singular": "Water Elemental",
+    "plural": "Water Elementals",
+    "fight_value": 315,
+    "ai_value": 315
+  },
+  {
+    "singular": "Gold Golem",
+    "plural": "Gold Golems",
+    "fight_value": 600,
+    "ai_value": 600
+  },
+  {
+    "singular": "Diamond Golem",
+    "plural": "Diamond Golems",
+    "fight_value": 775,
+    "ai_value": 775
+  },
+  {
+    "singular": "Pixie",
+    "plural": "Pixies",
+    "fight_value": 40,
+    "ai_value": 55
+  },
+  {
+    "singular": "Sprite",
+    "plural": "Sprites",
+    "fight_value": 70,
+    "ai_value": 95
+  },
+  {
+    "singular": "Psychic Elemental",
+    "plural": "Psychic Elementals",
+    "fight_value": 1431,
+    "ai_value": 1669
+  },
+  {
+    "singular": "Magic Elemental",
+    "plural": "Magic Elementals",
+    "fight_value": 1724,
+    "ai_value": 2012
+  },
+  {
+    "singular": "NOT USED (1)",
+    "plural": "NOT USED (1)",
+    "fight_value": 0,
+    "ai_value": 0
+  },
+  {
+    "singular": "Ice Elemental",
+    "plural": "Ice Elementals",
+    "fight_value": 315,
+    "ai_value": 380
+  },
+  {
+    "singular": "NOT USED (2)",
+    "plural": "NOT USED (2)",
+    "fight_value": 0,
+    "ai_value": 0
+  },
+  {
+    "singular": "Magma Elemental",
+    "plural": "Magma Elementals",
+    "fight_value": 490,
+    "ai_value": 490
+  },
+  {
+    "singular": "NOT USED (3)",
+    "plural": "NOT USED (3)",
+    "fight_value": 0,
+    "ai_value": 0
+  },
+  {
+    "singular": "Storm Elemental",
+    "plural": "Storm Elementals",
+    "fight_value": 324,
+    "ai_value": 486
+  },
+  {
+    "singular": "NOT USED (4)",
+    "plural": "NOT USED (4)",
+    "fight_value": 0,
+    "ai_value": 0
+  },
+  {
+    "singular": "Energy Elemental",
+    "plural": "Energy Elementals",
+    "fight_value": 360,
+    "ai_value": 470
+  },
+  {
+    "singular": "Firebird",
+    "plural": "Firebirds",
+    "fight_value": 3248,
+    "ai_value": 4547
+  },
+  {
+    "singular": "Phoenix",
+    "plural": "Phoenixes",
+    "fight_value": 4929,
+    "ai_value": 6721
+  },
+  {
+    "singular": "Azure Dragon",
+    "plural": "Azure Dragons",
+    "fight_value": 56315,
+    "ai_value": 78845
+  },
+  {
+    "singular": "Crystal Dragon",
+    "plural": "Crystal Dragons",
+    "fight_value": 30260,
+    "ai_value": 39338
+  },
+  {
+    "singular": "Faerie Dragon",
+    "plural": "Faerie Dragons",
+    "fight_value": 16317,
+    "ai_value": 19580
+  },
+  {
+    "singular": "Rust Dragon",
+    "plural": "Rust Dragons",
+    "fight_value": 24030,
+    "ai_value": 26433
+  },
+  {
+    "singular": "Enchanter",
+    "plural": "Enchanters",
+    "fight_value": 805,
+    "ai_value": 1210
+  },
+  {
+    "singular": "Sharpshooter",
+    "plural": "Sharpshooters",
+    "fight_value": 415,
+    "ai_value": 585
+  },
+  {
+    "singular": "Halfling",
+    "plural": "Halflings",
+    "fight_value": 60,
+    "ai_value": 75
+  },
+  {
+    "singular": "Peasant",
+    "plural": "Peasants",
+    "fight_value": 15,
+    "ai_value": 15
+  },
+  {
+    "singular": "Boar",
+    "plural": "Boars",
+    "fight_value": 145,
+    "ai_value": 145
+  },
+  {
+    "singular": "Mummy",
+    "plural": "Mummies",
+    "fight_value": 270,
+    "ai_value": 270
+  },
+  {
+    "singular": "Nomad",
+    "plural": "Nomads",
+    "fight_value": 285,
+    "ai_value": 345
+  },
+  {
+    "singular": "Rogue",
+    "plural": "Rogues",
+    "fight_value": 135,
+    "ai_value": 135
+  },
+  {
+    "singular": "Troll",
+    "plural": "Trolls",
+    "fight_value": 1024,
+    "ai_value": 1024
+  },
+  {
+    "singular": "Catapult",
+    "plural": "Catapults",
+    "fight_value": 10,
+    "ai_value": 500
+  },
+  {
+    "singular": "Ballista",
+    "plural": "Ballistas",
+    "fight_value": 650,
+    "ai_value": 600
+  },
+  {
+    "singular": "First Aid Tent",
+    "plural": "First Aid Tents",
+    "fight_value": 10,
+    "ai_value": 300
+  },
+  {
+    "singular": "Ammo Cart",
+    "plural": "Ammo Carts",
+    "fight_value": 5,
+    "ai_value": 400
+  },
+  {
+    "singular": "Arrow Tower",
+    "plural": "Arrow Towers",
+    "fight_value": 5,
+    "ai_value": 400
+  }
+]
