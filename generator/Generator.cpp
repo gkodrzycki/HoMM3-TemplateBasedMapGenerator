@@ -92,7 +92,6 @@ int main(int argc, char *argv[]) {
             rng.setSeed(seed);
         }
         if (strcmp(argv[i], "--location") == 0) {
-            cerr << "AHA";
             saveLocation = argv[i + 1];
         }
     }

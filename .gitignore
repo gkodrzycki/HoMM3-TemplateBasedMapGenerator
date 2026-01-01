@@ -2,6 +2,8 @@
 *.so
 **/generated_script.lua
 **/Generator
+**/units.lua
+**/Units
 **/debug.txt
 **/.vscode
 build/

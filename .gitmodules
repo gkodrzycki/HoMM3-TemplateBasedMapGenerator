@@ -1,6 +1,7 @@
 [submodule "homm3tools"]
 	path = homm3tools
 	url = git@github.com:gkodrzycki/homm3tools.git
+	branch = master
 
 # [submodule "vcmi"]
 # 	path = vcmi
