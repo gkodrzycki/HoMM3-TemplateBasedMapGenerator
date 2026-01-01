@@ -61,7 +61,7 @@ def _maybe_int(value: str) -> int | str:
         return value
     if v.isdigit():
         return int(v)
-    return value
+    return v
 
 
 def parse_crtraits_selected(path: Path, fields: list[str]) -> tuple[list[str], list[list[str]]]:
@@ -151,7 +151,7 @@ def main() -> int:
         ap.error("At least one of --out-csv or --out-json must be provided")
 
     try:
-        keys, rows = parse_crtraits_selected(in_path, args.fFields or [])
+        keys, rows = parse_crtraits_selected(in_path, args.fields or [])
     except ValueError as e:
         ap.error(str(e))
 
