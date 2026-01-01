@@ -36,14 +36,33 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
               $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
               $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
               $(GLOBAL_DIR)/Random.cpp \
-			  $(MAP_DIR)/Map.cpp \
 			  $(PLACERS_DIR)/RegionPlacer.cpp \
 			  $(PLACERS_DIR)/ObjectPlacer.cpp \
               $(UTILS_DIR)/luaHelpers.cpp \
+			  $(MAP_DIR)/Map.cpp \
 			  $(MAP_INFO_DIR)/Tile.cpp \
-			  $(MAP_INFO_DIR)/Zone.cpp \
 			  $(MAP_INFO_DIR)/Object.cpp \
 			  $(MAP_INFO_DIR)/Town.cpp \
+			  $(MAP_INFO_DIR)/Zone.cpp \
+			  $(MAP_INFO_DIR)/Obstacle.cpp \
+			  $(MAP_INFO_DIR)/Road.cpp \
+			  $(MAP_INFO_DIR)/Region.cpp
+
+# Source files for Units generator
+UNITS_SOURCES = ./tests/Units.cpp \
+              $(LAYOUT_INFO_DIR)/LayoutInfo.cpp \
+              $(LAYOUT_INFO_DIR)/ZoneInfo.cpp \
+              $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
+              $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
+              $(GLOBAL_DIR)/Random.cpp \
+			  $(PLACERS_DIR)/RegionPlacer.cpp \
+			  $(PLACERS_DIR)/ObjectPlacer.cpp \
+              $(UTILS_DIR)/luaHelpers.cpp \
+			  $(MAP_DIR)/Map.cpp \
+			  $(MAP_INFO_DIR)/Tile.cpp \
+			  $(MAP_INFO_DIR)/Object.cpp \
+			  $(MAP_INFO_DIR)/Town.cpp \
+			  $(MAP_INFO_DIR)/Zone.cpp \
 			  $(MAP_INFO_DIR)/Obstacle.cpp \
 			  $(MAP_INFO_DIR)/Road.cpp \
 			  $(MAP_INFO_DIR)/Region.cpp
@@ -51,11 +70,14 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
 # Object files for Generator
 GEN_OBJECTS = $(GEN_SOURCES:.cpp=.o)
 
+# Object files for Units
+UNITS_OBJECTS = $(UNITS_SOURCES:.cpp=.o)
+
 # Create necessary directories for object files
-OBJECT_DIRS = $(sort $(dir $(GEN_OBJECTS))) dist
+OBJECT_DIRS = $(sort $(dir $(GEN_OBJECTS) $(UNITS_OBJECTS))) dist
 
 # Main targets
-all: dist/homm3lua.so Generator
+all: dist/homm3lua.so Generator Units
 
 # Create directories
 $(OBJECT_DIRS):
@@ -64,6 +86,10 @@ $(OBJECT_DIRS):
 # Generator target
 Generator: $(GEN_OBJECTS)
 	$(CXX) $(GEN_OBJECTS) -o $@ $(LDFLAGS)
+
+# Units target
+Units: $(UNITS_OBJECTS)
+	$(CXX) $(UNITS_OBJECTS) -o $@ $(LDFLAGS)
 
 # HOMM3 libraries
 .PHONY: libs
@@ -92,12 +118,16 @@ doc/index.html: $(HOMM3_SRC)
 clean:
 	$(MAKE) -C homm3tools/h3m/h3mtilespritegen/BUILD/gcc clean
 	$(MAKE) -C homm3tools/h3m/h3mlib/BUILD/gcc clean
-	rm -rf dist doc $(GEN_OBJECTS) Generator
+	rm -rf dist doc $(GEN_OBJECTS) $(UNITS_OBJECTS) Generator Units
 
 # Build and run Generator
 .PHONY: run
 run: Generator
 	./Generator
+
+.PHONY: units
+units: dist/homm3lua.so Units
+	./Units
 
 FMT_SRCS := $(shell find . \
     -name '*.c' -o -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | \
@@ -125,4 +155,4 @@ lint:
 		.
 
 # Phony targets
-.PHONY: all doc clean run
+.PHONY: all doc clean run units

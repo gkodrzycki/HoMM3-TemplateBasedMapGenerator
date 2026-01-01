@@ -179,28 +179,27 @@ void AddHeader(ofstream &luaFile) {
     luaFile << R"(
 package.cpath = package.cpath .. ';dist/?.so;../dist/?.so'
 local homm3lua = require('homm3lua'))";
+    luaFile << "\n";
 }
 
-// // @function    AddCreature
-// // @tparam      ofstream    luaFile          file where we save lua script.
-// // @tparam      Creature    creature         Creature object to place.
-// void AddCreature(ofstream& luaFile, Creature creature){
+// @function    AddCreature
+// @tparam      ofstream    luaFile          file where we save lua script.
+// @tparam      string      name             name of creature.
+// @tparam      int3        position         position of creature.
+// @tparam      integer     quantity         quantity of creature.
+// @tparam      string      disposition      disposition of creature.
+// @tparam      boolean     never_flees      if creature never flees.
+// @tparam      boolean     does_not_grow    if creature does not grow.
+void AddCreature(ofstream &luaFile, const string &name, int3 position, int quantity,
+                 const string &disposition, bool never_flees, bool does_not_grow) {
+    string disp = disposition;
+    transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
 
-//     string creatureName = creature.getName();
-//     int x = creature.getPosition().x;
-//     int y = creature.getPosition().y;
-//     int z = creature.getPosition().z;
-
-//     int quantity = creature.getQuantity();
-//     string disposition = creature.getDisposition();
-//     bool never_flees = creature.getNeverFlees();
-//     bool does_not_grow = creature.getDoesNotGrow();
-
-//     luaFile << "instance:creature(homm3lua.CREATURE_" << creatureName << ",
-//     {x=" << x << ", y=" << y << ", z=" << z << "}, " << quantity << ",
-//     homm3lua.DISPOSITION_" << disposition << ", " << never_flees << ", " <<
-//     does_not_grow <<  ")\n";
-// }
+    luaFile << "instance:creature('" << name << "', {x=" << position.x << ", y=" << position.y
+            << ", z=" << position.z << "}, " << quantity << ", homm3lua.DISPOSITION_" << disp
+            << ", " << (never_flees ? "true" : "false") << ", "
+            << (does_not_grow ? "true" : "false") << ")\n";
+}
 
 // // @function    AddResource
 // // @tparam      ofstream    luaFile          file where we save lua script.
