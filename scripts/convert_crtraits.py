@@ -19,66 +19,34 @@ Notes:
 import argparse
 import csv
 import json
-import re
 from pathlib import Path
 from typing import Any
 
-_NON_ALNUM_RE = re.compile(r"[^0-9a-zA-Z]+")
+def _normalize_header(name: str) -> str:
+    """Normalize a column header to a stable key.
 
+    Examples:
+      "Fight Value" -> "fight_value"
+      "AI Value" -> "ai_value"
+    """
 
-def _slugify(name: str) -> str:
-    name = name.strip()
-    name = _NON_ALNUM_RE.sub("_", name)
-    name = name.strip("_")
-    name = re.sub(r"_+", "_", name)
-    return name.lower() or "col"
-
-
-def _propagate_groups(group_row: list[str], ncols: int) -> list[str]:
-    groups: list[str] = [""] * ncols
-    current = ""
-    for i in range(ncols):
-        cell = group_row[i].strip() if i < len(group_row) else ""
-        if cell:
-            current = cell
-        groups[i] = current
-    return groups
-
-
-def _make_unique_keys(groups: list[str], header: list[str]) -> list[str]:
-    """Return stable, unique column keys based on group + header names."""
-
-    keys: list[str] = []
-    seen: dict[str, int] = {}
-
-    for i, raw_name in enumerate(header):
-        base = raw_name.strip()
-        group = groups[i].strip() if i < len(groups) else ""
-
-        if not base:
-            base = f"Column {i + 1}"
-
-        # Prefer group prefix when name is very generic or duplicated.
-        base_key = _slugify(base)
-        if group:
-            group_key = _slugify(group)
-            if base_key in {"low", "high"}:
-                candidate = f"{group_key}_{base_key}"
-            else:
-                candidate = base_key
+    s = name.strip().lower()
+    s = "_".join(s.split())
+    out: list[str] = []
+    prev_us = False
+    for ch in s:
+        ok = ("a" <= ch <= "z") or ("0" <= ch <= "9")
+        if ok:
+            out.append(ch)
+            prev_us = False
         else:
-            candidate = base_key
-
-        # Ensure uniqueness.
-        count = seen.get(candidate, 0)
-        if count == 0:
-            unique = candidate
-        else:
-            unique = f"{candidate}_{count + 1}"
-        seen[candidate] = count + 1
-        keys.append(unique)
-
-    return keys
+            if not prev_us:
+                out.append("_")
+                prev_us = True
+    normalized = "".join(out).strip("_")
+    while "__" in normalized:
+        normalized = normalized.replace("__", "_")
+    return normalized
 
 
 def _maybe_int(value: str) -> int | str:
@@ -96,63 +64,43 @@ def _maybe_int(value: str) -> int | str:
     return value
 
 
-def parse_crtraits(path: Path) -> tuple[list[str], list[list[str]]]:
-    """Parse CRTRAITS.TXT into (keys, rows) where rows are raw string lists."""
+def parse_crtraits_selected(path: Path, fields: list[str]) -> tuple[list[str], list[list[str]]]:
+    """Parse CRTRAITS.TXT and return only requested columns.
+
+    CRTRAITS.TXT has two header rows. We use the *second* row (actual column names).
+    The file is TSV but may contain quoted fields with embedded newlines.
+    """
 
     with path.open("r", encoding="utf-8", errors="replace", newline="") as f:
         reader = csv.reader(f, delimiter="\t", quotechar='"')
 
         try:
-            group_header = next(reader)
+            _ = next(reader)
             column_header = next(reader)
         except StopIteration as e:
+            raise ValueError(f"{path} does not contain the expected 2 header rows") from e
+
+        normalized_to_index: dict[str, int] = {}
+        for i, name in enumerate(column_header):
+            key = _normalize_header(name)
+            if key and key not in normalized_to_index:
+                normalized_to_index[key] = i
+
+        missing = [k for k in fields if k not in normalized_to_index]
+        if missing:
+            available = ", ".join(sorted(normalized_to_index.keys()))
             raise ValueError(
-                f"{path} does not contain the expected 2 header rows"
-            ) from e
+                f"Requested fields not found: {missing}. Available fields: {available}"
+            )
 
-        ncols = max(len(group_header), len(column_header))
-        groups = _propagate_groups(group_header, ncols)
-        keys = _make_unique_keys(
-            groups, column_header + [""] * (ncols - len(column_header))
-        )
-
+        indices = [normalized_to_index[k] for k in fields]
         rows: list[list[str]] = []
         for row in reader:
             if not row or all(c.strip() == "" for c in row):
                 continue
-            if len(row) < ncols:
-                row = row + [""] * (ncols - len(row))
-            elif len(row) > ncols:
-                # Keep extra columns rather than dropping data.
-                extra = len(row) - ncols
-                for j in range(extra):
-                    keys.append(f"extra_{j + 1}")
-                ncols = len(row)
-            rows.append(row)
+            rows.append([row[i] if i < len(row) else "" for i in indices])
 
-        return keys, rows
-
-
-def select_fields(
-    keys: list[str], rows: list[list[str]], fields: list[str]
-) -> tuple[list[str], list[list[str]]]:
-    """Filter (keys, rows) down to the requested fields, preserving order."""
-
-    if not fields:
-        return keys, rows
-
-    key_to_index = {k: i for i, k in enumerate(keys)}
-    missing = [f for f in fields if f not in key_to_index]
-    if missing:
-        available = ", ".join(keys)
-        raise ValueError(
-            f"Requested fields not found: {missing}. Available keys: {available}"
-        )
-
-    indices = [key_to_index[f] for f in fields]
-    out_keys = [keys[i] for i in indices]
-    out_rows = [[row[i] if i < len(row) else "" for i in indices] for row in rows]
-    return out_keys, out_rows
+        return fields, rows
 
 
 def write_csv(out_path: Path, keys: list[str], rows: list[list[str]]) -> None:
@@ -161,7 +109,6 @@ def write_csv(out_path: Path, keys: list[str], rows: list[list[str]]) -> None:
         writer = csv.writer(f)
         writer.writerow(keys)
         for row in rows:
-            # Always keep CSV as strings.
             writer.writerow(["" if v is None else str(v) for v in row])
 
 
@@ -203,9 +150,10 @@ def main() -> int:
     if not args.out_csv and not args.out_json:
         ap.error("At least one of --out-csv or --out-json must be provided")
 
-    keys, rows = parse_crtraits(in_path)
-    if args.fields:
-        keys, rows = select_fields(keys, rows, args.fields)
+    try:
+        keys, rows = parse_crtraits_selected(in_path, args.fFields or [])
+    except ValueError as e:
+        ap.error(str(e))
 
     if args.out_csv:
         write_csv(Path(args.out_csv), keys, rows)
