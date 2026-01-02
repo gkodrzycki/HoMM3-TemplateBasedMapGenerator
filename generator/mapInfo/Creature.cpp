@@ -1,10 +1,10 @@
 #include "./Creature.hpp"
 
 Creature::Creature() : Object(int3(1, 1, 1), "Creature") {
-    quantity      = 1;
-    position      = int3(5, 5, 0);
-    name          = "Pikeman";
-    disposition   = "COMPLIANT";
+    quantity      = 0;
+    position      = int3(0, 0, 0);
+    name          = "";
+    disposition   = "";
     never_flees   = false;
     does_not_grow = false;
 };
