@@ -61,7 +61,7 @@ void Map::generateMap() {
     objectPlacer.placeRoads();
     objectPlacer.placeBorders();
 
-    Creature creature = Creature();
+    Creature creature = Creature("Pikeman", int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
     creatureVector.push_back(std::make_shared<Creature>(creature));
 }
 

@@ -6,17 +6,14 @@
 class Creature : public Object {
   public:
     Creature();
-    Creature(const string &name, const int3 &position, const int &quantity,
-             const string &disposition, const bool &never_flees, const bool &does_not_grow);
+    Creature(const string &creatureName, const int3 &position, int quantity,
+             const string &disposition, bool never_flees, bool does_not_grow, const string &name);
 
     void setQuantity(int quantity);
     int getQuantity() const;
 
-    void setPosition(int3 position);
-    int3 getPosition() const;
-
-    void setName(string name);
-    string getName() const;
+    void setCreatureName(string creatureName);
+    string getCreatureName() const;
     void setDisposition(string disposition);
     string getDisposition() const;
 
@@ -30,9 +27,7 @@ class Creature : public Object {
   private:
     int quantity;
 
-    int3 position;
-
-    string name;
+    string creatureName;
     string disposition;
 
     bool never_flees;
