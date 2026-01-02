@@ -184,21 +184,35 @@ local homm3lua = require('homm3lua'))";
 
 // @function    AddCreature
 // @tparam      ofstream    luaFile          file where we save lua script.
+// @tparam      Creature    creature         Creature object to place.
+
 // @tparam      string      name             name of creature.
 // @tparam      int3        position         position of creature.
 // @tparam      integer     quantity         quantity of creature.
 // @tparam      string      disposition      disposition of creature.
 // @tparam      boolean     never_flees      if creature never flees.
 // @tparam      boolean     does_not_grow    if creature does not grow.
-void AddCreature(ofstream &luaFile, const string &name, int3 position, int quantity,
-                 const string &disposition, bool never_flees, bool does_not_grow) {
-    string disp = disposition;
+void AddCreature(ofstream &luaFile, const Creature &creature) {
+    string disp = creature.getDisposition();
     transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
 
-    luaFile << "instance:creature('" << name << "', {x=" << position.x << ", y=" << position.y
-            << ", z=" << position.z << "}, " << quantity << ", homm3lua.DISPOSITION_" << disp
-            << ", " << (never_flees ? "true" : "false") << ", "
-            << (does_not_grow ? "true" : "false") << ")\n";
+    luaFile << "instance:creature('" << creature.getName() << "', {x=" << creature.getPosition().x
+            << ", y=" << creature.getPosition().y << ", z=" << creature.getPosition().z << "}, "
+            << creature.getQuantity() << ", homm3lua.DISPOSITION_" << disp << ", "
+            << (creature.getNeverFlees() ? "true" : "false") << ", "
+            << (creature.getDoesNotGrow() ? "true" : "false") << ")\n";
+}
+
+// @function    AddCreatures
+// @tparam      ofstream    luaFile         file where we save lua script.
+// @tparam      Map         map             object of map class with finished setup.
+void AddCreatures(ofstream &luaFile, Map &map) {
+    CreatureVector creatureVector = map.getCreatureVector();
+    for (const auto &object : creatureVector) {
+        if (auto creature = std::dynamic_pointer_cast<Creature>(object)) {
+            AddCreature(luaFile, *creature);
+        }
+    }
 }
 
 // // @function    AddResource

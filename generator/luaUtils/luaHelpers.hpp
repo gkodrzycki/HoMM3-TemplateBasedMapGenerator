@@ -32,9 +32,11 @@ void AddBorderObstacles(ofstream &luaFile, Map &map);
 void AddHeader(ofstream &luaFile);
 void AddRoad(ofstream &luaFile, const int &tier, int3 pos);
 void AddRoads(ofstream &luaFile, Map &map);
-void AddCreature(ofstream &luaFile, const string &name, int3 position, int quantity = 1,
-                 const string &disposition = "COMPLIANT", bool never_flees = true,
-                 bool does_not_grow = true);
+void AddCreature(ofstream &luaFile, const Creature &creature);
+void AddCreatures(ofstream &luaFile, Map &map);
+// void AddCreature(ofstream &luaFile, const string &name, int3 position, int quantity = 1,
+//                  const string &disposition = "COMPLIANT", bool never_flees = true,
+//                  bool does_not_grow = true);
 // void AddMine(ofstream& luaFile, Mine mine, Map &map);
 // void AddResource(ofstream& luaFile, Treasure treasure);
 // void AddArtifact(ofstream& luaFile, Treasure treasure);

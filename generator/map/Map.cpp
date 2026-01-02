@@ -26,6 +26,7 @@ RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
 const TileMap &Map::getTileMap() { return tileMap; }
 ObjectVector Map::getObjectVector() { return objectVector; }
+CreatureVector Map::getCreatureVector() { return creatureVector; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
@@ -59,6 +60,9 @@ void Map::generateMap() {
     objectPlacer.placeTowns();
     objectPlacer.placeRoads();
     objectPlacer.placeBorders();
+
+    Creature creature = Creature();
+    creatureVector.push_back(std::make_shared<Creature>(creature));
 }
 
 void Map::printMap() {
