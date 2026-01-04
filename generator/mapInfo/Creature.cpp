@@ -16,7 +16,7 @@ Creature::Creature(const string &creatureName, const int3 &position, int quantit
     this->disposition  = disposition;
     this->neverFlees   = neverFlees;
     this->doesNotGrow  = doesNotGrow;
-};
+}
 
 void Creature::setQuantity(int quantity) { this->quantity = quantity; }
 int Creature::getQuantity() const { return quantity; }
