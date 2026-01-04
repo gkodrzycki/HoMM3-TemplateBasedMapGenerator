@@ -3,33 +3,19 @@
 
 #include "../global/Global.hpp"
 #include "../global/Random.hpp"
-
 #include "../map/Map.hpp"
 
 #include </usr/include/lua/lua.hpp>
 
-// #include "../gameInfo/Object.hpp"
-
 string encodeMapSize(string size);
-// using MapObjects = vector<Object>;
 
-class Map;
-// class Zone;
-// class Town;
-// class Treasure;
-// class Mine;
-// class GuardPlacer;
-// class RNG;
-// class TemplateInfo;
-// class Creature;
-
+void AddHeader(ofstream &luaFile);
 void AddPlayer(ofstream &luaFile, string playerId);
 void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main = true);
 void AddTowns(ofstream &luaFile, Map &map);
 void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
 void AddTerrainTiles(ofstream &luaFile, Map &map);
 void AddBorderObstacles(ofstream &luaFile, Map &map);
-void AddHeader(ofstream &luaFile);
 void AddRoad(ofstream &luaFile, const int &tier, int3 pos);
 void AddRoads(ofstream &luaFile, Map &map);
 void AddCreature(ofstream &luaFile, const Creature &creature);
