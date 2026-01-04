@@ -190,8 +190,8 @@ local homm3lua = require('homm3lua'))";
 // @tparam      int3        position         position of creature.
 // @tparam      integer     quantity         quantity of creature.
 // @tparam      string      disposition      disposition of creature.
-// @tparam      boolean     never_flees      if creature never flees.
-// @tparam      boolean     does_not_grow    if creature does not grow.
+// @tparam      boolean     neverFlees      if creature never flees.
+// @tparam      boolean     doesNotGrow    if creature does not grow.
 void AddCreature(ofstream &luaFile, const Creature &creature) {
     string disp = creature.getDisposition();
     transform(disp.begin(), disp.end(), disp.begin(), ::toupper);

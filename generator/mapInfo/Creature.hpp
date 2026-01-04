@@ -7,7 +7,7 @@ class Creature : public Object {
   public:
     Creature();
     Creature(const string &creatureName, const int3 &position, int quantity,
-             const string &disposition, bool never_flees, bool does_not_grow, const string &name);
+             const string &disposition, bool neverFlees, bool doesNotGrow, const string &name);
 
     void setQuantity(int quantity);
     int getQuantity() const;
@@ -17,9 +17,9 @@ class Creature : public Object {
     void setDisposition(const string &disposition);
     string getDisposition() const;
 
-    void setNeverFlees(bool never_flees);
+    void setNeverFlees(bool neverFlees);
     bool getNeverFlees() const;
-    void setDoesNotGrow(bool does_not_grow);
+    void setDoesNotGrow(bool doesNotGrow);
     bool getDoesNotGrow() const;
 
     void printObject() const override;
@@ -30,6 +30,6 @@ class Creature : public Object {
     string creatureName;
     string disposition;
 
-    bool never_flees;
-    bool does_not_grow;
+    bool neverFlees;
+    bool doesNotGrow;
 };
