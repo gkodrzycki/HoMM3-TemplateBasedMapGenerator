@@ -30,6 +30,7 @@ class Map {
     void addRegion(shared_ptr<Region> region);
     void addZone(shared_ptr<Zone> zone);
     void addObject(shared_ptr<Object> object);
+    void addCreature(shared_ptr<Creature> creature);
 
     shared_ptr<Tile> getTile(int3 pos);
     LayoutInfo getLayoutInfo();
