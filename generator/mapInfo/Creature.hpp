@@ -12,9 +12,9 @@ class Creature : public Object {
     void setQuantity(int quantity);
     int getQuantity() const;
 
-    void setCreatureName(string creatureName);
+    void setCreatureName(const string &creatureName);
     string getCreatureName() const;
-    void setDisposition(string disposition);
+    void setDisposition(const string &disposition);
     string getDisposition() const;
 
     void setNeverFlees(bool never_flees);

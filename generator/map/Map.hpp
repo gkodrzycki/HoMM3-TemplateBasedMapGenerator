@@ -11,14 +11,6 @@
 #include "./placers/ObjectPlacer.hpp"
 #include "./placers/RegionPlacer.hpp"
 
-class RNG;
-class LayoutInfo;
-class Tile;
-class Region;
-class Zone;
-class Object;
-class Creature;
-
 using ZoneMap        = map<int, shared_ptr<Zone>>;
 using RegionMap      = map<int, shared_ptr<Region>>;
 using TileMap        = map<int, map<int, shared_ptr<Tile>>>;

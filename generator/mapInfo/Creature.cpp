@@ -22,9 +22,9 @@ Creature::Creature(const string &creatureName, const int3 &position, int quantit
 void Creature::setQuantity(int quantity) { this->quantity = quantity; }
 int Creature::getQuantity() const { return quantity; }
 
-void Creature::setCreatureName(string creatureName) { this->creatureName = creatureName; }
+void Creature::setCreatureName(const string &creatureName) { this->creatureName = creatureName; }
 string Creature::getCreatureName() const { return creatureName; }
-void Creature::setDisposition(string disposition) { this->disposition = disposition; }
+void Creature::setDisposition(const string &disposition) { this->disposition = disposition; }
 string Creature::getDisposition() const { return disposition; }
 
 void Creature::setNeverFlees(bool never_flees) { this->never_flees = never_flees; }
