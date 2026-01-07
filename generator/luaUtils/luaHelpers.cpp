@@ -177,9 +177,9 @@ void AddCreature(ofstream &luaFile, const Creature &creature) {
 // @tparam      Map         map             object of map class with finished setup.
 void AddCreatures(ofstream &luaFile, Map &map) {
     CreatureVector creatureVector = map.getCreatureVector();
-    for (const auto &creature : creatureVector) {
-        if (auto creaturePtr = std::dynamic_pointer_cast<Creature>(creature)) {
-            AddCreature(luaFile, *creaturePtr);
+    for (const auto &object : creatureVector) {
+        if (auto creature = std::dynamic_pointer_cast<Creature>(object)) {
+            AddCreature(luaFile, *creature);
         }
     }
 }
