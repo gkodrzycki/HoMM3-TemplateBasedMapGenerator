@@ -211,3 +211,62 @@ void ObjectPlacer::placeRoads() {
         }
     }
 }
+
+void ObjectPlacer::placeBasicMines() {
+    auto objectVector = map.getObjectVector();
+
+    int mapWidth = map.getWidth();
+    int mapHeight = map.getHeight();
+
+    for (const auto &object : objectVector) {
+        if (auto town = dynamic_pointer_cast<Town>(object)) {
+            int3 anchorPoint  = object->getPosition();
+            anchorPoint.x -= 2;
+            
+            pair<int3,int3> BC;
+            int maxIter = 100;
+            while (maxIter--) {
+
+                BC = map.getRNG().getRandomTriangle(anchorPoint, 30);
+                auto [B,C] = BC;
+                
+                if (!isInside(2, 2, mapWidth-2, mapHeight-2, B))
+                    continue;
+                if (!isInside(2, 2, mapWidth-2, mapHeight-2, C))
+                    continue;
+
+                if (map.getTile(B)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
+                    continue;
+                if (map.getTile(C)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
+                    continue;
+                
+                if (anchorPoint.distance2DSQ(B) <= 5) 
+                    continue;
+                if (anchorPoint.distance2DSQ(C) <= 5) 
+                    continue;
+                if (B.distance2DSQ(C) <= 3) 
+                    continue;
+                
+                // if (B and C inside and good)
+                break;
+            }
+
+            auto [B,C] = BC;
+            int a = anchorPoint.distance2DSQ(B);
+            int b = anchorPoint.distance2DSQ(C);
+            int c = B.distance2DSQ(C);
+
+            cerr << "Triangle A: " << anchorPoint.toString() << " B: " << B.toString() << " C: " << C.toString() << "\n";  
+            cerr << "Perimeter of created triangle: " << a + b + c << "\n";
+
+            Mine mineSawmill(MineType::MINE_SAWMILL, B, "Mine");
+            auto mineSawmillPtr = make_shared<Mine>(mineSawmill);
+            map.addObject(mineSawmillPtr);
+
+            Mine mineOrePit(MineType::MINE_ORE_PIT, C, "Mine");
+            auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
+            map.addObject(mineOrePitPtr);
+        }
+    }
+
+}

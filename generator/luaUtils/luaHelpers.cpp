@@ -177,6 +177,45 @@ void AddCreatures(ofstream &luaFile, Map &map) {
     }
 }
 
+
+// @function    AddMine
+// @tparam      ofstream    luaFile     file where we save lua script.
+// @tparam      Mine        mine        completed mine object.
+void AddMine(ofstream &luaFile, shared_ptr<Mine> mine) {
+
+    //     i32 x = mine.getPosition().x;
+    //     i32 y = mine.getPosition().y;
+    //     i32 z = mine.getPosition().z;
+
+    //     i32 owner_id = mine.getOwner();
+
+    //     string mineType = mineTypeToString(mine.getMineType());
+
+    //     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" +
+    //     to_string(owner_id); luaFile << "instance:mine(homm3lua." << mineType <<
+    //     ", {x=" << x << ", y=" << y << ", z=" << z << "}, homm3lua." << owner <<
+    //     ")\n";
+    int owner_id = -1;
+    string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" + to_string(owner_id);
+    luaFile << "instance:mine(homm3lua." << mineTypeToString(mine->getMineType()) <<
+        ", {x=" << mine->getPosition().x << ", y=" << mine->getPosition().y << ", z=" << mine->getPosition().z << "}, homm3lua." << owner <<
+        ")\n";
+}
+
+// @function    AddMines
+// @tparam      ofstream    luaFile     file where we save lua script.
+// @tparam      Map         map         object of map class with finished setup
+void AddMines(ofstream &luaFile, Map &map) {
+    ObjectVector objectVector = map.getObjectVector();
+    for (auto object : objectVector) {
+        if (auto mine = std::dynamic_pointer_cast<Mine>(object)) {
+            AddMine(luaFile, mine);
+        }
+    }
+}
+
+
+
 // // @function    AddMine
 // // @tparam      ofstream    luaFile     file where we save lua script.
 // // @tparam      Mine        mine        completed mine object.

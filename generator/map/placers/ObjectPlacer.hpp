@@ -2,6 +2,7 @@
 
 #include "../../global/Global.hpp"
 #include "../../mapInfo/Obstacle.hpp"
+#include "../../mapInfo/Mine.hpp"
 #include "../../mapInfo/Road.hpp"
 #include "../../mapInfo/Town.hpp"
 #include "../Map.hpp"
@@ -15,6 +16,7 @@ class ObjectPlacer {
     void placeTowns();
     void placeBorders();
     void placeRoads();
+    void placeBasicMines();
 
     void expandBorderTiles(vector<int3> &borderTiles, int maxDepth = 3);
     vector<int3> getBorderTiles();
