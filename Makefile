@@ -46,6 +46,8 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
 			  $(MAP_INFO_DIR)/Zone.cpp \
 			  $(MAP_INFO_DIR)/Obstacle.cpp \
 			  $(MAP_INFO_DIR)/Creature.cpp \
+			  $(MAP_INFO_DIR)/MineType.cpp \
+			  $(MAP_INFO_DIR)/Mine.cpp \
 			  $(MAP_INFO_DIR)/Road.cpp \
 			  $(MAP_INFO_DIR)/Region.cpp
 
@@ -66,6 +68,8 @@ UNITS_SOURCES = ./tests/Units.cpp \
 			  $(MAP_INFO_DIR)/Zone.cpp \
 			  $(MAP_INFO_DIR)/Obstacle.cpp \
 			  $(MAP_INFO_DIR)/Creature.cpp \
+			  $(MAP_INFO_DIR)/MineType.cpp \
+			  $(MAP_INFO_DIR)/Mine.cpp \
 			  $(MAP_INFO_DIR)/Road.cpp \
 			  $(MAP_INFO_DIR)/Region.cpp
 
