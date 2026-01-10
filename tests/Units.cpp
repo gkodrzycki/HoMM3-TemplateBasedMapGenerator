@@ -62,7 +62,9 @@ void generateLuaScript(string &saveLocation, const string &crtraitsPath) {
         const int y = yStart + faction * yStep;
         for (int i = 0; i < unitsPerFaction; i++) {
             const int x = xStart + i * xStep;
-            AddCreature(luaFile, creatures[idx], int3(x, y, 0), 1, "COMPLIANT", true, true);
+            auto creature =
+                Creature(creatures[idx], int3(x, y, 0), 1, "COMPLIANT", true, true, "Creature");
+            AddCreature(luaFile, creature);
             idx++;
         }
         luaFile << "\n";

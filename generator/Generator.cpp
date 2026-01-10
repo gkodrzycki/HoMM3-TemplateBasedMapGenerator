@@ -41,6 +41,8 @@ void generateLuaScript(Map map, string &saveLocation) {
 
     AddRoads(luaFile, map);
 
+    AddCreatures(luaFile, map);
+
     // Finishing luaScript
     string homeDir = getenv("HOME");
 
@@ -63,6 +65,7 @@ void executeLuaScript(const string &script_name) {
         cerr << "Error executing Lua script '" << script_name << "': " << lua_tostring(L, -1)
              << endl;
         lua_close(L);
+        return;
     }
 
     lua_close(L);

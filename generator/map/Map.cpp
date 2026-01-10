@@ -26,6 +26,7 @@ RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
 const TileMap &Map::getTileMap() { return tileMap; }
 ObjectVector Map::getObjectVector() { return objectVector; }
+CreatureVector Map::getCreatureVector() { return creatureVector; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
@@ -33,6 +34,7 @@ int Map::getHeight() { return height; }
 void Map::addRegion(shared_ptr<Region> region) { this->regionMap[region->getRegionID()] = region; }
 void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zone; }
 void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(object); }
+void Map::addCreature(shared_ptr<Creature> creature) { this->creatureVector.push_back(creature); }
 
 void Map::initTiles() {
     pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
@@ -59,6 +61,9 @@ void Map::generateMap() {
     objectPlacer.placeTowns();
     objectPlacer.placeRoads();
     objectPlacer.placeBorders();
+
+    Creature creature = Creature("Pikeman", int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
+    addCreature(std::make_shared<Creature>(creature));
 }
 
 void Map::printMap() {

@@ -1,17 +1,5 @@
 #include "./luaHelpers.hpp"
 
-// #include "../gameInfo/Tile.hpp"
-// #include "../templateInfo/TemplateInfo.hpp"
-// #include "../templateInfo/ZoneInfo.hpp"
-// #include "../templateInfo/ConnectionInfo.hpp"
-// #include"../Map.hpp"
-// #include "../gameInfo/Zone.hpp"
-// #include "../gameInfo/Terrain.hpp"
-// #include "../gameInfo/Town.hpp"
-// #include "../gameInfo/Treasure.hpp"
-// #include "../gameInfo/Mine.hpp"
-// #include "../gameInfo/Creature.hpp"
-
 string encodeMapSize(string size) {
     if (size == "S")
         return "SMALL";
@@ -23,7 +11,16 @@ string encodeMapSize(string size) {
         return "EXTRA_LARGE";
     return "UNKNOWN_SIZE";
 }
-// #include "../placers/GuardPlacer.hpp"
+
+// @function    AddHeader
+// @tparam      ofstream    luaFile     file where we save lua script.
+void AddHeader(ofstream &luaFile) {
+    luaFile << R"(
+package.cpath = package.cpath .. ';dist/?.so;../dist/?.so'
+local homm3lua = require('homm3lua'))";
+    luaFile << "\n";
+}
+
 // @function    AddPlayer
 // @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      string      playerId    player ID.
@@ -63,54 +60,6 @@ void AddTowns(ofstream &luaFile, Map &map) {
             AddTown(luaFile, town, true);
         }
     }
-}
-
-// // @function    AddMine
-// // @tparam      ofstream    luaFile     file where we save lua script.
-// // @tparam      Mine        mine        completed mine object.
-// // @tparam      Map         map        object of map class with finished
-// setup. void AddMine(ofstream& luaFile, Mine mine, Map &map){
-//     i32 x = mine.getPosition().x;
-//     i32 y = mine.getPosition().y;
-//     i32 z = mine.getPosition().z;
-
-//     i32 owner_id = mine.getOwner();
-
-//     string mineType = mineTypeToString(mine.getMineType());
-
-//     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" +
-//     to_string(owner_id); luaFile << "instance:mine(homm3lua." << mineType <<
-//     ", {x=" << x << ", y=" << y << ", z=" << z << "}, homm3lua." << owner <<
-//     ")\n";
-
-// }
-
-// @function    AddRoad
-// @tparam      ofstream    luaFile          file where we save lua script.
-// @tparam      int         tier             tier of road.
-// @tparam      int3        pos              position of road.
-void AddRoad(ofstream &luaFile, const int &tier, int3 pos) {
-    luaFile << "    if x == " << pos.x << " and y == " << pos.y << " then return nil, " << tier
-            << " end\n";
-}
-
-// @function    AddRoads
-// @tparam      ofstream    luaFile         file where we save lua script.
-// @tparam      Map         map             object of map class with finished setup.
-void AddRoads(ofstream &luaFile, Map &map) {
-    luaFile << "-- Dynamic terrain adjustments for linear paths between towns\n";
-    luaFile << "instance:terrain(function (x, y, z)\n";
-
-    ObjectVector objectVector = map.getObjectVector();
-
-    for (const auto &object : objectVector) {
-        if (auto road = std::dynamic_pointer_cast<Road>(object)) {
-            AddRoad(luaFile, road->getRoadTier(), road->getPosition());
-        }
-    }
-
-    luaFile << "    return nil\n"; // Default terrain
-    luaFile << "end)\n";
 }
 
 // @function    AddTerrain
@@ -173,33 +122,87 @@ void AddBorderObstacles(ofstream &luaFile, Map &map) {
     //  Mountain
 }
 
-// @function    AddHeader
-// @tparam      ofstream    luaFile     file where we save lua script.
-void AddHeader(ofstream &luaFile) {
-    luaFile << R"(
-package.cpath = package.cpath .. ';dist/?.so;../dist/?.so'
-local homm3lua = require('homm3lua'))";
-    luaFile << "\n";
+// @function    AddRoad
+// @tparam      ofstream    luaFile          file where we save lua script.
+// @tparam      int         tier             tier of road.
+// @tparam      int3        pos              position of road.
+void AddRoad(ofstream &luaFile, const int &tier, int3 pos) {
+    luaFile << "    if x == " << pos.x << " and y == " << pos.y << " then return nil, " << tier
+            << " end\n";
+}
+
+// @function    AddRoads
+// @tparam      ofstream    luaFile         file where we save lua script.
+// @tparam      Map         map             object of map class with finished setup.
+void AddRoads(ofstream &luaFile, Map &map) {
+    luaFile << "-- Dynamic terrain adjustments for linear paths between towns\n";
+    luaFile << "instance:terrain(function (x, y, z)\n";
+
+    ObjectVector objectVector = map.getObjectVector();
+
+    for (const auto &object : objectVector) {
+        if (auto road = std::dynamic_pointer_cast<Road>(object)) {
+            AddRoad(luaFile, road->getRoadTier(), road->getPosition());
+        }
+    }
+
+    luaFile << "    return nil\n"; // Default terrain
+    luaFile << "end)\n";
 }
 
 // @function    AddCreature
 // @tparam      ofstream    luaFile          file where we save lua script.
+// @tparam      Creature    creature         Creature object to place.
+
 // @tparam      string      name             name of creature.
 // @tparam      int3        position         position of creature.
 // @tparam      integer     quantity         quantity of creature.
 // @tparam      string      disposition      disposition of creature.
-// @tparam      boolean     never_flees      if creature never flees.
-// @tparam      boolean     does_not_grow    if creature does not grow.
-void AddCreature(ofstream &luaFile, const string &name, int3 position, int quantity,
-                 const string &disposition, bool never_flees, bool does_not_grow) {
-    string disp = disposition;
+// @tparam      boolean     neverFlees      if creature never flees.
+// @tparam      boolean     doesNotGrow    if creature does not grow.
+void AddCreature(ofstream &luaFile, const Creature &creature) {
+    string disp = creature.getDisposition();
     transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
 
-    luaFile << "instance:creature('" << name << "', {x=" << position.x << ", y=" << position.y
-            << ", z=" << position.z << "}, " << quantity << ", homm3lua.DISPOSITION_" << disp
-            << ", " << (never_flees ? "true" : "false") << ", "
-            << (does_not_grow ? "true" : "false") << ")\n";
+    luaFile << "instance:creature('" << creature.getCreatureName()
+            << "', {x=" << creature.getPosition().x << ", y=" << creature.getPosition().y
+            << ", z=" << creature.getPosition().z << "}, " << creature.getQuantity()
+            << ", homm3lua.DISPOSITION_" << disp << ", "
+            << (creature.getNeverFlees() ? "true" : "false") << ", "
+            << (creature.getDoesNotGrow() ? "true" : "false") << ")\n";
 }
+
+// @function    AddCreatures
+// @tparam      ofstream    luaFile         file where we save lua script.
+// @tparam      Map         map             object of map class with finished setup.
+void AddCreatures(ofstream &luaFile, Map &map) {
+    CreatureVector creatureVector = map.getCreatureVector();
+    for (const auto &object : creatureVector) {
+        if (auto creature = std::dynamic_pointer_cast<Creature>(object)) {
+            AddCreature(luaFile, *creature);
+        }
+    }
+}
+
+// // @function    AddMine
+// // @tparam      ofstream    luaFile     file where we save lua script.
+// // @tparam      Mine        mine        completed mine object.
+// // @tparam      Map         map        object of map class with finished
+// setup. void AddMine(ofstream& luaFile, Mine mine, Map &map){
+//     i32 x = mine.getPosition().x;
+//     i32 y = mine.getPosition().y;
+//     i32 z = mine.getPosition().z;
+
+//     i32 owner_id = mine.getOwner();
+
+//     string mineType = mineTypeToString(mine.getMineType());
+
+//     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" +
+//     to_string(owner_id); luaFile << "instance:mine(homm3lua." << mineType <<
+//     ", {x=" << x << ", y=" << y << ", z=" << z << "}, homm3lua." << owner <<
+//     ")\n";
+
+// }
 
 // // @function    AddResource
 // // @tparam      ofstream    luaFile          file where we save lua script.
