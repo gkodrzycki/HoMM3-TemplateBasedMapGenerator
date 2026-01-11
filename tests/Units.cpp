@@ -61,9 +61,9 @@ void generateLuaScript(string &saveLocation, const string &crtraitsPath) {
     for (int faction = 0; faction < factionsCount; faction++) {
         const int y = yStart + faction * yStep;
         for (int i = 0; i < unitsPerFaction; i++) {
-            const int x = xStart + i * xStep;
-            auto creature =
-                Creature(creatures[idx], int3(x, y, 0), 1, "COMPLIANT", true, true, "Creature");
+            const int x   = xStart + i * xStep;
+            auto creature = std::make_shared<Creature>(creatures[idx], int3(x, y, 0), 1,
+                                                       "COMPLIANT", true, true, "Creature");
             AddCreature(luaFile, creature);
             idx++;
         }
