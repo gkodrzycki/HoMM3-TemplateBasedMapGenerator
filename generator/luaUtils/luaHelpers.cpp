@@ -29,9 +29,9 @@ void AddPlayer(ofstream &luaFile, string playerId) {
 }
 
 // @function    AddTown
-// @tparam      ofstream    luaFile     file where we save lua script.
-// @tparam      Town        town        completed town object.
-// @tparam      boolean     is_main     tells if is main town.
+// @tparam      ofstream                luaFile     file where we save lua script.
+// @tparam      shared_ptr<Town>        town        pointer to town.
+// @tparam      boolean                 is_main     tells if is main town.
 void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
 
     string nameOfObject = "TOWN_" + factionToString(town->getFaction());
@@ -151,25 +151,18 @@ void AddRoads(ofstream &luaFile, Map &map) {
 }
 
 // @function    AddCreature
-// @tparam      ofstream    luaFile          file where we save lua script.
-// @tparam      Creature    creature         Creature object to place.
-
-// @tparam      string      name             name of creature.
-// @tparam      int3        position         position of creature.
-// @tparam      integer     quantity         quantity of creature.
-// @tparam      string      disposition      disposition of creature.
-// @tparam      boolean     neverFlees      if creature never flees.
-// @tparam      boolean     doesNotGrow    if creature does not grow.
-void AddCreature(ofstream &luaFile, const Creature &creature) {
-    string disp = creature.getDisposition();
+// @tparam      ofstream                luaFile          file where we save lua script.
+// @tparam      shared_ptr<Creature>    creature         pointer to creature.
+void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature) {
+    string disp = creature->getDisposition();
     transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
 
-    luaFile << "instance:creature('" << creature.getCreatureName()
-            << "', {x=" << creature.getPosition().x << ", y=" << creature.getPosition().y
-            << ", z=" << creature.getPosition().z << "}, " << creature.getQuantity()
+    luaFile << "instance:creature('" << creature->getCreatureName()
+            << "', {x=" << creature->getPosition().x << ", y=" << creature->getPosition().y
+            << ", z=" << creature->getPosition().z << "}, " << creature->getQuantity()
             << ", homm3lua.DISPOSITION_" << disp << ", "
-            << (creature.getNeverFlees() ? "true" : "false") << ", "
-            << (creature.getDoesNotGrow() ? "true" : "false") << ")\n";
+            << (creature->getNeverFlees() ? "true" : "false") << ", "
+            << (creature->getDoesNotGrow() ? "true" : "false") << ")\n";
 }
 
 // @function    AddCreatures
@@ -179,7 +172,7 @@ void AddCreatures(ofstream &luaFile, Map &map) {
     CreatureVector creatureVector = map.getCreatureVector();
     for (const auto &object : creatureVector) {
         if (auto creature = std::dynamic_pointer_cast<Creature>(object)) {
-            AddCreature(luaFile, *creature);
+            AddCreature(luaFile, creature);
         }
     }
 }

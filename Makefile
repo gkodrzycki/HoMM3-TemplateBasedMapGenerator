@@ -29,8 +29,7 @@ LAYOUT_INFO_DIR = $(GENERATOR_DIR)/layoutInfo
 MAP_DIR = $(GENERATOR_DIR)/map
 PLACERS_DIR = $(MAP_DIR)/placers
 
-# Source files for Generator
-GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
+COMMON_SOURCES = \
               $(LAYOUT_INFO_DIR)/LayoutInfo.cpp \
               $(LAYOUT_INFO_DIR)/ZoneInfo.cpp \
               $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
@@ -49,25 +48,11 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp \
 			  $(MAP_INFO_DIR)/Road.cpp \
 			  $(MAP_INFO_DIR)/Region.cpp
 
+# Source files for Generator
+GEN_SOURCES = $(SRC_DIR)/Generator.cpp $(COMMON_SOURCES)
+
 # Source files for Units generator
-UNITS_SOURCES = ./tests/Units.cpp \
-              $(LAYOUT_INFO_DIR)/LayoutInfo.cpp \
-              $(LAYOUT_INFO_DIR)/ZoneInfo.cpp \
-              $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
-              $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
-              $(GLOBAL_DIR)/Random.cpp \
-			  $(PLACERS_DIR)/RegionPlacer.cpp \
-			  $(PLACERS_DIR)/ObjectPlacer.cpp \
-              $(UTILS_DIR)/luaHelpers.cpp \
-			  $(MAP_DIR)/Map.cpp \
-			  $(MAP_INFO_DIR)/Tile.cpp \
-			  $(MAP_INFO_DIR)/Object.cpp \
-			  $(MAP_INFO_DIR)/Town.cpp \
-			  $(MAP_INFO_DIR)/Zone.cpp \
-			  $(MAP_INFO_DIR)/Obstacle.cpp \
-			  $(MAP_INFO_DIR)/Creature.cpp \
-			  $(MAP_INFO_DIR)/Road.cpp \
-			  $(MAP_INFO_DIR)/Region.cpp
+UNITS_SOURCES = ./tests/Units.cpp $(COMMON_SOURCES)
 
 # Object files for Generator
 GEN_OBJECTS = $(GEN_SOURCES:.cpp=.o)

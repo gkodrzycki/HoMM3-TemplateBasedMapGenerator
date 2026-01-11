@@ -18,7 +18,7 @@ void AddTerrainTiles(ofstream &luaFile, Map &map);
 void AddBorderObstacles(ofstream &luaFile, Map &map);
 void AddRoad(ofstream &luaFile, const int &tier, int3 pos);
 void AddRoads(ofstream &luaFile, Map &map);
-void AddCreature(ofstream &luaFile, const Creature &creature);
+void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature);
 void AddCreatures(ofstream &luaFile, Map &map);
 // void AddCreature(ofstream &luaFile, const string &name, int3 position, int quantity = 1,
 //                  const string &disposition = "COMPLIANT", bool neverFlees = true,
