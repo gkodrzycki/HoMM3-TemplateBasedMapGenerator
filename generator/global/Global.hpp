@@ -43,5 +43,6 @@ const int3 directions8[] = {int3(1, 0, 0), int3(0, 1, 0),   int3(-1, 0, 0), int3
                             int3(1, 1, 0), int3(-1, -1, 0), int3(-1, 1, 0), int3(1, -1, 0)};
 
 inline bool isInside(int startWidth, int startHeight, int endWidth, int endHeight, int3 position) {
-    return !(position.x < startWidth || position.y < startHeight || position.x >= endWidth || position.y >= endHeight);
+    return !(position.x < startWidth || position.y < startHeight || position.x >= endWidth ||
+             position.y >= endHeight);
 }

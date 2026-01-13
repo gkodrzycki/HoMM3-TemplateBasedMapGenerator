@@ -83,6 +83,9 @@ void ObjectPlacer::placeBorders() {
         if (map.getTile(pos)->getRoad() != nullptr)
             continue;
 
+        if (map.getTile(pos)->getTileType() == TileType::TILE_TAKEN)
+            continue;
+
         auto upperTile = map.getTile(pos + int3(0, -1, 0));
         if (upperTile != nullptr && upperTile->getRoad() != nullptr)
             continue;
@@ -165,6 +168,13 @@ vector<int3> ObjectPlacer::createPath(int3 fromPos, int3 destPos) {
             if (newPos.x < 0 || newPos.y < 0 || newPos.x >= mapWidth || newPos.y >= mapHeight)
                 continue;
 
+            auto tilePtr = map.getTile(newPos);
+            if (tilePtr == nullptr)
+                continue;
+
+            if (tilePtr->getTileType() == TileType::TILE_TAKEN && tilePtr->getRoad() == nullptr)
+                continue;
+
             if (visited[newPos.x][newPos.y] != int3(-1, -1, -1) ||
                 visited[newPos.x][newPos.y] == int3(-2, -2, -2))
                 continue;
@@ -208,6 +218,26 @@ void ObjectPlacer::placeRoads() {
             auto roadPtr = make_shared<Road>(road);
             map.addObject(roadPtr);
             map.getTile(pos)->setRoad(roadPtr);
+            map.getTile(pos)->setTileType(TileType::TILE_TAKEN);
+        }
+    }
+}
+
+void ObjectPlacer::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID) {
+    auto zoneMap       = map.getZoneMap();
+    string zoneTerrain = zoneMap[zoneID]->getTerrain();
+
+    for (int dx = 0; dx <= size.x; dx++) {
+        for (int dy = 0; dy <= size.y; dy++) {
+            int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
+            auto tilePtr = map.getTile(tilePos);
+
+            if (tilePtr == nullptr)
+                continue;
+
+            tilePtr->setTileType(TileType::TILE_TAKEN);
+            tilePtr->setZoneID(zoneID);
+            tilePtr->setTerrain(zoneTerrain);
         }
     }
 }
@@ -215,58 +245,62 @@ void ObjectPlacer::placeRoads() {
 void ObjectPlacer::placeBasicMines() {
     auto objectVector = map.getObjectVector();
 
-    int mapWidth = map.getWidth();
+    int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
 
     for (const auto &object : objectVector) {
         if (auto town = dynamic_pointer_cast<Town>(object)) {
-            int3 anchorPoint  = object->getPosition();
+            int3 anchorPoint = object->getPosition();
             anchorPoint.x -= 2;
-            
-            pair<int3,int3> BC;
+
+            pair<int3, int3> BC;
             int maxIter = 100;
             while (maxIter--) {
 
-                BC = map.getRNG().getRandomTriangle(anchorPoint, 30);
-                auto [B,C] = BC;
-                
-                if (!isInside(2, 2, mapWidth-2, mapHeight-2, B))
+                BC          = map.getRNG().getRandomTriangle(anchorPoint, 30);
+                auto [B, C] = BC;
+
+                if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, B))
                     continue;
-                if (!isInside(2, 2, mapWidth-2, mapHeight-2, C))
+                if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, C))
                     continue;
 
                 if (map.getTile(B)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
                     continue;
                 if (map.getTile(C)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
                     continue;
-                
-                if (anchorPoint.distance2DSQ(B) <= 5) 
+
+                if (anchorPoint.distance2DSQ(B) <= 5)
                     continue;
-                if (anchorPoint.distance2DSQ(C) <= 5) 
+                if (anchorPoint.distance2DSQ(C) <= 5)
                     continue;
-                if (B.distance2DSQ(C) <= 3) 
+                if (B.distance2DSQ(C) <= 3)
                     continue;
-                
+
                 // if (B and C inside and good)
                 break;
             }
 
-            auto [B,C] = BC;
-            int a = anchorPoint.distance2DSQ(B);
-            int b = anchorPoint.distance2DSQ(C);
-            int c = B.distance2DSQ(C);
+            auto [B, C] = BC;
+            int a       = anchorPoint.distance2DSQ(B);
+            int b       = anchorPoint.distance2DSQ(C);
+            int c       = B.distance2DSQ(C);
 
-            cerr << "Triangle A: " << anchorPoint.toString() << " B: " << B.toString() << " C: " << C.toString() << "\n";  
+            cerr << "Triangle A: " << anchorPoint.toString() << " B: " << B.toString()
+                 << " C: " << C.toString() << "\n";
             cerr << "Perimeter of created triangle: " << a + b + c << "\n";
+
+            int anchorZoneID = map.getTile(anchorPoint)->getZoneID();
 
             Mine mineSawmill(MineType::MINE_SAWMILL, B, "Mine");
             auto mineSawmillPtr = make_shared<Mine>(mineSawmill);
             map.addObject(mineSawmillPtr);
+            fixNeighbourTiles(B, getMineSize(mineSawmill.getMineType()), anchorZoneID);
 
             Mine mineOrePit(MineType::MINE_ORE_PIT, C, "Mine");
             auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
             map.addObject(mineOrePitPtr);
+            fixNeighbourTiles(C, getMineSize(mineOrePit.getMineType()), anchorZoneID);
         }
     }
-
 }
