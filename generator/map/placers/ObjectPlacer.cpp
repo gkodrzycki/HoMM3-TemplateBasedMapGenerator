@@ -62,7 +62,7 @@ void ObjectPlacer::expandBorderTiles(vector<int3> &borderTiles, int maxDepth) {
 
         for (auto direction : directions8) {
             int3 newPos = currentPos + direction;
-            if (newPos.x < 0 || newPos.y < 0 || newPos.x >= mapWidth || newPos.y >= mapHeight)
+            if (!isInside(0, 0, mapWidth, mapHeight, newPos))
                 continue;
 
             if (visited.find(newPos) != visited.end())
@@ -142,9 +142,10 @@ vector<int3> ObjectPlacer::createPath(int3 fromPos, int3 destPos) {
             // TODO: use real Town size here
             for (int x = objPos.x - objSize.x + 1; x <= objPos.x; x++) {
                 for (int y = objPos.y - objSize.y + 1; y <= objPos.y; y++) {
-                    if (x >= 0 && y >= 0 && x < mapWidth && y < mapHeight) {
-                        visited[x][y] = int3(-2, -2, -2);
-                    }
+                    if (!isInside(0,0,mapWidth, mapHeight, int3(x,y,0))) continue;
+
+                    visited[x][y] = int3(-2, -2, -2);
+                    
                 }
             }
         }
@@ -165,7 +166,7 @@ vector<int3> ObjectPlacer::createPath(int3 fromPos, int3 destPos) {
 
         for (auto direction : directions4) {
             int3 newPos = currentPos + direction;
-            if (newPos.x < 0 || newPos.y < 0 || newPos.x >= mapWidth || newPos.y >= mapHeight)
+            if (!isInside(0, 0, mapWidth, mapHeight, newPos))
                 continue;
 
             auto tilePtr = map.getTile(newPos);
