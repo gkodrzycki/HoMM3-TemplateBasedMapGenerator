@@ -149,7 +149,7 @@ enum class CreatureType {
     FIRST_AID_TENT,
     AMMO_CART,
     ARROW_TOWER,
-    UNKNOWN
+    CREATURE_UNKNOWN
 };
 
 inline string creatureTypeToString(CreatureType creatureType) {
@@ -447,7 +447,7 @@ inline string creatureTypeToString(CreatureType creatureType) {
     case CreatureType::ARROW_TOWER:
         return "Arrow Tower";
     default:
-        return "Unknown";
+        return "CREATURE_UNKNOWN";
     }
 }
 
@@ -744,5 +744,5 @@ inline CreatureType stringToCreatureType(string creatureType) {
         return CreatureType::AMMO_CART;
     if (creatureType == "Arrow Tower")
         return CreatureType::ARROW_TOWER;
-    return CreatureType::UNKNOWN;
+    return CreatureType::CREATURE_UNKNOWN;
 }

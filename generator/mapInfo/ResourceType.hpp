@@ -30,7 +30,7 @@ inline string resourceTypeToString(ResourceType resourceType) {
     case ResourceType::RESOURCE_GOLD:
         return "RESOURCE_GOLD";
     default:
-        return NULL;
+        return "RESOURCE_UNKNOWN";
     }
 }
 

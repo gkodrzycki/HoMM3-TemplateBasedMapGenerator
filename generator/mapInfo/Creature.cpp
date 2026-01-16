@@ -2,7 +2,7 @@
 
 Creature::Creature() : Object(int3(1, 1, 1), "Creature") {
     quantity     = 0;
-    creatureType = CreatureType::UNKNOWN;
+    creatureType = CreatureType::CREATURE_UNKNOWN;
     disposition  = "";
     neverFlees   = false;
     doesNotGrow  = false;

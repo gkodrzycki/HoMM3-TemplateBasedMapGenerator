@@ -30,7 +30,7 @@ inline string mineTypeToString(MineType mineType) {
     case MineType::MINE_SULFUR_DUNE:
         return "MINE_SULFUR_DUNE";
     default:
-        return NULL;
+        return "MINE_UNKNOWN";
     }
 }
 
