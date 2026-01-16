@@ -345,7 +345,7 @@ void ObjectPlacer::placeBasicMines() {
             int3 right                        = int3(0, 1, 0);
             int3 down                         = int3(-1, 1, 0);
 
-            Mine mineSawmill(MineType::MINE_SAWMILL, B, "Mine");
+            Mine mineSawmill(MineType::MINE_SAWMILL, -1, B, "Mine");
             auto mineSawmillPtr = make_shared<Mine>(mineSawmill);
             map.addObject(mineSawmillPtr);
             fixNeighbourTiles(B, getMineSize(mineSawmill.getMineType()), anchorZoneID);
@@ -353,7 +353,7 @@ void ObjectPlacer::placeBasicMines() {
             placeResource(ResourceType::RESOURCE_WOOD, B + right, basicResourceCount[1]);
             placeCreature(CreatureType::PIKEMAN, B + down, 5);
 
-            Mine mineOrePit(MineType::MINE_ORE_PIT, C, "Mine");
+            Mine mineOrePit(MineType::MINE_ORE_PIT, -1, C, "Mine");
             auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
             map.addObject(mineOrePitPtr);
             fixNeighbourTiles(C, getMineSize(mineOrePit.getMineType()), anchorZoneID);

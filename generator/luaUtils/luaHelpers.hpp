@@ -24,9 +24,6 @@ void AddMine(ofstream &luaFile, shared_ptr<Mine> mine);
 void AddMines(ofstream &luaFile, Map &map);
 void AddResource(ofstream &luaFile, shared_ptr<Resource> resource);
 void AddResources(ofstream &luaFile, Map &map);
-// void AddCreature(ofstream &luaFile, const string &name, int3 position, int quantity = 1,
-//                  const string &disposition = "COMPLIANT", bool neverFlees = true,
-//                  bool doesNotGrow = true);
 // void AddMine(ofstream& luaFile, Mine mine, Map &map);
 // void AddResource(ofstream& luaFile, Treasure treasure);
 // void AddArtifact(ofstream& luaFile, Treasure treasure);

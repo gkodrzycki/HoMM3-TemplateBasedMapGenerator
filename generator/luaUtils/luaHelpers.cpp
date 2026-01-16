@@ -179,7 +179,7 @@ void AddCreatures(ofstream &luaFile, Map &map) {
 // @tparam      ofstream                luaFile     file where we save lua script.
 // @tparam      shared_ptr<Mine>        mine        completed mine object.
 void AddMine(ofstream &luaFile, shared_ptr<Mine> mine) {
-    int owner_id = -1;
+    int owner_id = mine->getOwner();
     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" + to_string(owner_id);
     luaFile << "instance:mine(homm3lua." << mineTypeToString(mine->getMineType())
             << ", {x=" << mine->getPosition().x << ", y=" << mine->getPosition().y
