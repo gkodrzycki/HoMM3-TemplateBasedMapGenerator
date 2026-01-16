@@ -176,8 +176,8 @@ void AddCreatures(ofstream &luaFile, Map &map) {
 }
 
 // @function    AddMine
-// @tparam      ofstream    luaFile     file where we save lua script.
-// @tparam      Mine        mine        completed mine object.
+// @tparam      ofstream                luaFile     file where we save lua script.
+// @tparam      shared_ptr<Mine>        mine        completed mine object.
 void AddMine(ofstream &luaFile, shared_ptr<Mine> mine) {
     int owner_id = -1;
     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" + to_string(owner_id);
@@ -199,8 +199,8 @@ void AddMines(ofstream &luaFile, Map &map) {
 }
 
 // @function    AddResource
-// @tparam      ofstream    luaFile         file where we save lua script.
-// @tparam      Resource    resource        completed resource object.
+// @tparam      ofstream                luaFile         file where we save lua script.
+// @tparam      shared_ptr<Resource>    resource        completed resource object.
 void AddResource(ofstream &luaFile, shared_ptr<Resource> resource) {
     luaFile << "instance:resource(homm3lua." << resourceTypeToString(resource->getResourceType())
             << ", {x=" << resource->getPosition().x << ", y=" << resource->getPosition().y
