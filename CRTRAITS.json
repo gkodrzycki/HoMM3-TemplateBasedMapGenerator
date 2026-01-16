@@ -732,22 +732,10 @@
     "ai_value": 2012
   },
   {
-    "singular": "NOT USED (1)",
-    "plural": "NOT USED (1)",
-    "fight_value": 0,
-    "ai_value": 0
-  },
-  {
     "singular": "Ice Elemental",
     "plural": "Ice Elementals",
     "fight_value": 315,
     "ai_value": 380
-  },
-  {
-    "singular": "NOT USED (2)",
-    "plural": "NOT USED (2)",
-    "fight_value": 0,
-    "ai_value": 0
   },
   {
     "singular": "Magma Elemental",
@@ -756,22 +744,10 @@
     "ai_value": 490
   },
   {
-    "singular": "NOT USED (3)",
-    "plural": "NOT USED (3)",
-    "fight_value": 0,
-    "ai_value": 0
-  },
-  {
     "singular": "Storm Elemental",
     "plural": "Storm Elementals",
     "fight_value": 324,
     "ai_value": 486
-  },
-  {
-    "singular": "NOT USED (4)",
-    "plural": "NOT USED (4)",
-    "fight_value": 0,
-    "ai_value": 0
   },
   {
     "singular": "Energy Elemental",

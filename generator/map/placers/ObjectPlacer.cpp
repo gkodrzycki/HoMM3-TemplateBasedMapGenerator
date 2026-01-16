@@ -4,6 +4,7 @@ ObjectPlacer::ObjectPlacer(Map &map) : map(map) {}
 
 void ObjectPlacer::placeTowns() {
     ZoneMap zoneMap = map.getZoneMap();
+    int3 offset(0, 0, 0);
 
     for (auto [zoneID, zone] : zoneMap) {
         string zoneType = zone->getType();
@@ -12,6 +13,10 @@ void ObjectPlacer::placeTowns() {
             Town town(zone->getFaction(), zone->getOwner(), zone->getCenter(), "Town");
             auto townPtr = make_shared<Town>(town);
             map.addObject(townPtr);
+
+            fixNeighbourTiles(townPtr->getPosition(), townPtr->getSize(), zoneID, offset);
+            int3 entrancePos = townPtr->getPosition() - int3(townPtr->getSize().x / 2, 0, 0);
+            map.getTile(entrancePos)->setTileType(TileType::TILE_FREE);
         }
     }
 }
@@ -142,10 +147,10 @@ vector<int3> ObjectPlacer::createPath(int3 fromPos, int3 destPos) {
             // TODO: use real Town size here
             for (int x = objPos.x - objSize.x + 1; x <= objPos.x; x++) {
                 for (int y = objPos.y - objSize.y + 1; y <= objPos.y; y++) {
-                    if (!isInside(0,0,mapWidth, mapHeight, int3(x,y,0))) continue;
+                    if (!isInside(0, 0, mapWidth, mapHeight, int3(x, y, 0)))
+                        continue;
 
                     visited[x][y] = int3(-2, -2, -2);
-                    
                 }
             }
         }
@@ -224,12 +229,13 @@ void ObjectPlacer::placeRoads() {
     }
 }
 
-void ObjectPlacer::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID) {
+void ObjectPlacer::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID,
+                                     const int3 &offset) {
     auto zoneMap       = map.getZoneMap();
     string zoneTerrain = zoneMap[zoneID]->getTerrain();
 
-    for (int dx = 0; dx <= size.x; dx++) {
-        for (int dy = 0; dy <= size.y; dy++) {
+    for (int dx = 0; dx < size.x + offset.x; dx++) {
+        for (int dy = 0; dy < size.y + offset.y; dy++) {
             int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
             auto tilePtr = map.getTile(tilePos);
 
@@ -241,6 +247,43 @@ void ObjectPlacer::fixNeighbourTiles(const int3 &pos, const int3 &size, int zone
             tilePtr->setTerrain(zoneTerrain);
         }
     }
+}
+
+bool ObjectPlacer::checkPlacementConflict(const int3 &pos, const int3 &size) {
+    auto zoneMap = map.getZoneMap();
+
+    for (int dx = 0; dx < size.x; dx++) {
+        for (int dy = 0; dy < size.y; dy++) {
+            int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
+            auto tilePtr = map.getTile(tilePos);
+
+            if (tilePtr == nullptr)
+                continue;
+
+            if (tilePtr->getTileType() == TileType::TILE_TAKEN) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void ObjectPlacer::placeResource(ResourceType resourceType, int3 pos, int quantity) {
+    if (quantity <= 0)
+        return;
+
+    Resource resource(resourceType, quantity, pos, "Resource");
+    auto resourcePtr = make_shared<Resource>(resource);
+    map.addResource(resourcePtr);
+}
+
+void ObjectPlacer::placeCreature(CreatureType creatureType, int3 pos, int quantity) {
+    if (quantity <= 0)
+        return;
+
+    Creature creature(creatureType, pos, quantity, "COMPLIANT", true, true, "Creature");
+    auto creaturePtr = make_shared<Creature>(creature);
+    map.addCreature(creaturePtr);
 }
 
 void ObjectPlacer::placeBasicMines() {
@@ -278,6 +321,11 @@ void ObjectPlacer::placeBasicMines() {
                 if (B.distance2DSQ(C) <= 3)
                     continue;
 
+                if (checkPlacementConflict(B, getMineSize(MineType::MINE_SAWMILL)))
+                    continue;
+
+                if (checkPlacementConflict(C, getMineSize(MineType::MINE_ORE_PIT)))
+                    continue;
                 // if (B and C inside and good)
                 break;
             }
@@ -291,17 +339,27 @@ void ObjectPlacer::placeBasicMines() {
                  << " C: " << C.toString() << "\n";
             cerr << "Perimeter of created triangle: " << a + b + c << "\n";
 
-            int anchorZoneID = map.getTile(anchorPoint)->getZoneID();
+            int anchorZoneID                  = map.getTile(anchorPoint)->getZoneID();
+            array<int, 4> &basicResourceCount = map.getBasicResourceCount();
+            int3 left                         = int3(-2, 1, 0);
+            int3 right                        = int3(0, 1, 0);
+            int3 down                         = int3(-1, 1, 0);
 
             Mine mineSawmill(MineType::MINE_SAWMILL, B, "Mine");
             auto mineSawmillPtr = make_shared<Mine>(mineSawmill);
             map.addObject(mineSawmillPtr);
             fixNeighbourTiles(B, getMineSize(mineSawmill.getMineType()), anchorZoneID);
+            placeResource(ResourceType::RESOURCE_WOOD, B + left, basicResourceCount[0]);
+            placeResource(ResourceType::RESOURCE_WOOD, B + right, basicResourceCount[1]);
+            placeCreature(CreatureType::PIKEMAN, B + down, 5);
 
             Mine mineOrePit(MineType::MINE_ORE_PIT, C, "Mine");
             auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
             map.addObject(mineOrePitPtr);
             fixNeighbourTiles(C, getMineSize(mineOrePit.getMineType()), anchorZoneID);
+            placeResource(ResourceType::RESOURCE_ORE, C + left, basicResourceCount[2]);
+            placeResource(ResourceType::RESOURCE_ORE, C + right, basicResourceCount[3]);
+            placeCreature(CreatureType::PIKEMAN, C + down, 5);
         }
     }
 }

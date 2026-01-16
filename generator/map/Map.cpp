@@ -27,6 +27,8 @@ ZoneMap Map::getZoneMap() { return zoneMap; }
 const TileMap &Map::getTileMap() { return tileMap; }
 ObjectVector Map::getObjectVector() { return objectVector; }
 CreatureVector Map::getCreatureVector() { return creatureVector; }
+ResourceVector Map::getResourceVector() { return resourceVector; }
+array<int, 4> &Map::getBasicResourceCount() { return basicResourceCount; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
@@ -35,7 +37,7 @@ void Map::addRegion(shared_ptr<Region> region) { this->regionMap[region->getRegi
 void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zone; }
 void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(object); }
 void Map::addCreature(shared_ptr<Creature> creature) { this->creatureVector.push_back(creature); }
-
+void Map::addResource(shared_ptr<Resource> resource) { this->resourceVector.push_back(resource); }
 void Map::initTiles() {
     pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
 
@@ -49,9 +51,18 @@ void Map::initTiles() {
     }
 }
 
+void Map::initMap() {
+    initTiles();
+
+    // TODO Choose values based on layout/blueprint info richness?
+    for (int i = 0; i < 4; i++) {
+        basicResourceCount[i] = rng.nextInt(0, 15);
+    }
+}
+
 void Map::generateMap() {
 
-    initTiles();
+    initMap();
 
     RegionPlacer regionPlacer(*this);
     regionPlacer.generateRegions();
@@ -59,11 +70,12 @@ void Map::generateMap() {
 
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeTowns();
-    objectPlacer.placeBasicMines();
     objectPlacer.placeRoads();
+    objectPlacer.placeBasicMines();
     objectPlacer.placeBorders();
 
-    Creature creature = Creature("Pikeman", int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
+    Creature creature =
+        Creature(CreatureType::PIKEMAN, int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
     addCreature(std::make_shared<Creature>(creature));
 }
 
@@ -76,5 +88,17 @@ void Map::printMap() {
     cerr << "==== Objects ====\n";
     for (auto &object : objectVector) {
         object->printObject();
+    }
+
+    cerr << "==== Tiles ====\n";
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            if (tileMap[i][j]->getTileType() == TileType::TILE_FREE) {
+                cerr << "0";
+            } else {
+                cerr << "1";
+            }
+        }
+        cerr << "\n";
     }
 }

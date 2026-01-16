@@ -1,19 +1,20 @@
 #pragma once
 
 #include "../global/int3.hpp"
+#include "./CreatureType.hpp"
 #include "./Object.hpp"
 
 class Creature : public Object {
   public:
     Creature();
-    Creature(const string &creatureName, const int3 &position, int quantity,
+    Creature(CreatureType creatureType, const int3 &position, int quantity,
              const string &disposition, bool neverFlees, bool doesNotGrow, const string &name);
 
     void setQuantity(int quantity);
     int getQuantity() const;
 
-    void setCreatureName(const string &creatureName);
-    string getCreatureName() const;
+    void setCreatureType(CreatureType creatureType);
+    CreatureType getCreatureType() const;
     void setDisposition(const string &disposition);
     string getDisposition() const;
 
@@ -27,7 +28,7 @@ class Creature : public Object {
   private:
     int quantity;
 
-    string creatureName;
+    CreatureType creatureType;
     string disposition;
 
     bool neverFlees;
