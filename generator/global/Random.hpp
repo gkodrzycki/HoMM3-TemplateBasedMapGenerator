@@ -18,6 +18,8 @@ class RNG {
     void setSeed(int seed);
     int getSeed();
 
+    pair<int3, int3> getRandomTriangle(int3 anchorPoint, int perimeter);
+
     template <typename T> void shuffle(vector<T> &vec);
 
   private:

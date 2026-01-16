@@ -165,13 +165,9 @@ Pixie	Pixies	0	0	0	0	0	0	25	40	55	20	10	3	7	2	2	1	2	0	0	20	50		FLYING_ARMY
 Sprite	Sprites	0	0	0	0	0	0	30	70	95	20	10	3	9	2	2	1	3	0	0	20	30	No enemy retaliation.	FLYING_ARMY | const_free_attack
 Psychic Elemental	Psychic Elementals	0	0	0	0	0	0	750	1431	1669	2	0	75	7	15	13	10	20	0	0	8	16	Attacks all adjacent enemies w/o retaliation. Mind spell immunity.	IMMUNE_TO_MIND_SPELLS | DOUBLE_WIDE | const_free_attack | MULTI_HEADED
 Magic Elemental	Magic Elementals	0	0	0	0	0	0	800	1724	2012	2	0	80	9	15	13	15	25	0	0	8	12	Attacks all adjacent enemies w/o retaliation. Spell immunity.	IMMUNE_TO_MIND_SPELLS | DOUBLE_WIDE | const_free_attack | MULTI_HEADED
-NOT USED (1)	NOT USED (1)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 Ice Elemental	Ice Elementals	0	0	0	0	0	0	375	315	380	6	0	30	6	8	10	3	7	24	3	12	20	Mind spell immunity. Ice immunity. Fire vulnerability.	IMMUNE_TO_MIND_SPELLS | SHOOTING_ARMY
-NOT USED (2) 	NOT USED (2)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 Magma Elemental	Magma Elementals	0	0	0	0	0	0	500	490	490	4	0	40	6	11	11	6	10	0	3	16	25	Mind spell immunity.  Casts protection from Earth.	IMMUNE_TO_MIND_SPELLS
-NOT USED (3)	NOT USED (3)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 Storm Elemental	Storm Elementals	0	0	0	0	0	0	275	324	486	6	0	25	8	9	9	2	8	24	3	6	12	No melee penalty.  Lightning and firestorm vulnerability.	IMMUNE_TO_MIND_SPELLS | SHOOTING_ARMY
-NOT USED (4)	NOT USED (4)	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 Energy Elemental	Energy Elementals	0	0	0	0	0	0	400	360	470	5	0	35	8	12	8	4	6	0	3	12	25	"Casts Protect from Fire. Mind & fire immunity, cold vulnerability."	IMMUNE_TO_MIND_SPELLS | IMMUNE_TO_FIRE_SPELLS | FLYING_ARMY
 Firebird	Firebirds	0	0	0	0	0	0	1500	3248	4547	2	0	150	15	18	18	30	40	0	0	4	10	Breath attack.  Fire spell immunity.	IMMUNE_TO_FIRE_SPELLS | DOUBLE_WIDE | FLYING_ARMY | KING_1 | HAS_EXTENDED_ATTACK
 Phoenix	Phoenixes	0	1	0	0	0	0	2000	4929	6721	2	0	200	21	21	18	30	40	0	1	4	10	Breath attack.  Fire spell immunity.  Rebirth.	IMMUNE_TO_FIRE_SPELLS | DOUBLE_WIDE | FLYING_ARMY | KING_1 | HAS_EXTENDED_ATTACK

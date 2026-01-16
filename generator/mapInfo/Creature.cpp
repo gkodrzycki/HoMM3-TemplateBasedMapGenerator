@@ -2,17 +2,17 @@
 
 Creature::Creature() : Object(int3(1, 1, 1), "Creature") {
     quantity     = 0;
-    creatureName = "";
+    creatureType = CreatureType::CREATURE_UNKNOWN;
     disposition  = "";
     neverFlees   = false;
     doesNotGrow  = false;
 };
 
-Creature::Creature(const string &creatureName, const int3 &position, int quantity,
+Creature::Creature(CreatureType creatureType, const int3 &position, int quantity,
                    const string &disposition, bool neverFlees, bool doesNotGrow, const string &name)
     : Object(position, name) {
     this->quantity     = quantity;
-    this->creatureName = creatureName;
+    this->creatureType = creatureType;
     this->disposition  = disposition;
     this->neverFlees   = neverFlees;
     this->doesNotGrow  = doesNotGrow;
@@ -21,8 +21,8 @@ Creature::Creature(const string &creatureName, const int3 &position, int quantit
 void Creature::setQuantity(int quantity) { this->quantity = quantity; }
 int Creature::getQuantity() const { return quantity; }
 
-void Creature::setCreatureName(const string &creatureName) { this->creatureName = creatureName; }
-string Creature::getCreatureName() const { return creatureName; }
+void Creature::setCreatureType(CreatureType creatureType) { this->creatureType = creatureType; }
+CreatureType Creature::getCreatureType() const { return creatureType; }
 void Creature::setDisposition(const string &disposition) { this->disposition = disposition; }
 string Creature::getDisposition() const { return disposition; }
 
@@ -32,8 +32,8 @@ void Creature::setDoesNotGrow(bool doesNotGrow) { this->doesNotGrow = doesNotGro
 bool Creature::getDoesNotGrow() const { return doesNotGrow; }
 
 void Creature::printObject() const {
-    cerr << "Creature '" << creatureName << "' x" << quantity << " disposition '" << disposition
-         << "' never flees: " << (neverFlees ? "true" : "false")
+    cerr << "Creature '" << creatureTypeToString(creatureType) << "' x" << quantity
+         << " disposition '" << disposition << "' never flees: " << (neverFlees ? "true" : "false")
          << " does not grow: " << (doesNotGrow ? "true" : "false") << " at "
          << getPosition().toString() << "\n";
 }

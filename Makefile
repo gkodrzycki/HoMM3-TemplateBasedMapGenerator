@@ -45,6 +45,8 @@ COMMON_SOURCES = \
 			  $(MAP_INFO_DIR)/Zone.cpp \
 			  $(MAP_INFO_DIR)/Obstacle.cpp \
 			  $(MAP_INFO_DIR)/Creature.cpp \
+			  $(MAP_INFO_DIR)/Resource.cpp \
+			  $(MAP_INFO_DIR)/Mine.cpp \
 			  $(MAP_INFO_DIR)/Road.cpp \
 			  $(MAP_INFO_DIR)/Region.cpp
 
