@@ -157,11 +157,19 @@ void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature) {
     string disp = creature->getDisposition();
     transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
 
-    string creatureName = getEnumName<CreatureType>(creature->getCreatureType());
-    std::transform(creatureName.begin() + 1, creatureName.end(), creatureName.begin() + 1,
-                   ::tolower);
+    string creatureType = getEnumName<CreatureType>(creature->getCreatureType());
 
-    luaFile << "instance:creature('" << creatureName << "', {x=" << creature->getPosition().x
+    transform(creatureType.begin(), creatureType.end(), creatureType.begin(), ::tolower);
+
+    replace(creatureType.begin(), creatureType.end(), '_', ' ');
+    creatureType[0] = toupper(creatureType[0]);
+    for (size_t i = 1; i < creatureType.length(); i++) {
+        if (creatureType[i - 1] == ' ') {
+            creatureType[i] = toupper(creatureType[i]);
+        }
+    }
+
+    luaFile << "instance:creature('" << creatureType << "', {x=" << creature->getPosition().x
             << ", y=" << creature->getPosition().y << ", z=" << creature->getPosition().z << "}, "
             << creature->getQuantity() << ", homm3lua.DISPOSITION_" << disp << ", "
             << (creature->getNeverFlees() ? "true" : "false") << ", "

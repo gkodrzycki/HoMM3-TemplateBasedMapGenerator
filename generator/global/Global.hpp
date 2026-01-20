@@ -33,16 +33,19 @@ T getOrDefault(const nlohmann::json &j, const string &key, const T &defaultValue
     return defaultValue;
 }
 
-template <typename T> std::string getEnumName(T value) {
-    std::string_view sv = magic_enum::enum_name(value);
-    return std::string{sv};
+template <typename T> string getEnumName(T value) {
+    string_view sv = magic_enum::enum_name(value);
+    return string{sv};
 }
 
-template <typename T> T getEnumFromNameOrThrow(const std::string &name) {
-    if (auto v = magic_enum::enum_cast<T>(name, magic_enum::case_insensitive)) {
+template <typename T> T getEnumFromNameOrThrow(const string &name) {
+    string normalized = name;
+    replace(normalized.begin(), normalized.end(), ' ', '_');
+
+    if (auto v = magic_enum::enum_cast<T>(normalized, magic_enum::case_insensitive)) {
         return *v;
     }
-    throw std::runtime_error("Unknown enum name: " + name);
+    throw runtime_error("Unknown enum name: " + name);
 }
 
 const int3 directions4[] = {
