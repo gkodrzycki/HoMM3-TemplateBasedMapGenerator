@@ -71,8 +71,8 @@ void Map::generateMap() {
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeTowns();
     objectPlacer.placeRoads();
-    objectPlacer.placeBasicMines();
     objectPlacer.placeBorders();
+    objectPlacer.placeBasicMines();
 
     Creature creature =
         Creature(CreatureType::PIKEMAN, int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
@@ -93,10 +93,32 @@ void Map::printMap() {
     cerr << "==== Tiles ====\n";
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            if (tileMap[i][j]->getTileType() == TileType::TILE_FREE) {
-                cerr << "0";
-            } else {
-                cerr << "1";
+            TileType tileType = tileMap[i][j]->getTileType();
+            switch (tileType) {
+                case TileType::TILE_FREE:
+                    printColor(GREEN, tileTypeToChar(tileType));
+                    break;
+                case TileType::TILE_OCCUPIED:
+                    printColor(YELLOW, tileTypeToChar(tileType));
+                    break;
+                case TileType::TILE_RESERVED:
+                    cerr << tileTypeToChar(tileType);
+                    break;
+                case TileType::TILE_TAKEN:
+                    printColor(RED, tileTypeToChar(tileType));
+                    break;
+                case TileType::TILE_ROAD:
+                    cerr << tileTypeToChar(tileType);
+                    break;
+                case TileType::TILE_BORDER_INNER:
+                    cerr << tileTypeToChar(tileType);
+                    break;
+                case TileType::TILE_BORDER_OUTER:
+                    cerr << tileTypeToChar(tileType);
+                    break;
+                default:
+                    cerr << tileTypeToChar(tileType);
+
             }
         }
         cerr << "\n";
