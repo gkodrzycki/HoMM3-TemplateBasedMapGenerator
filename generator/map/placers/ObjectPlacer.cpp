@@ -345,15 +345,7 @@ void ObjectPlacer::placeBasicMines() {
                 break;
             }
 
-            auto [B, C]    = BC;
-            int distanceAB = anchorPoint.distance2DSQ(B);
-            int distanceAC = anchorPoint.distance2DSQ(C);
-            int distanceBC = B.distance2DSQ(C);
-
-            cerr << "Triangle A: " << anchorPoint.toString() << " B: " << B.toString()
-                 << " C: " << C.toString() << "\n";
-            cerr << "Perimeter of created triangle: " << distanceAB + distanceAC + distanceBC
-                 << "\n";
+            auto [B, C] = BC;
 
             int anchorZoneID                  = map.getTile(anchorPoint)->getZoneID();
             array<int, 4> &basicResourceCount = map.getBasicResourceCount();

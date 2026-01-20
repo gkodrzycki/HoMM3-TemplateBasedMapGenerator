@@ -16,9 +16,6 @@ enum class TileType {
 char tileTypeToChar(TileType tileType);
 TileType charToTileType(char c);
 
-string tileTypeToString(TileType tileType);
-TileType stringToTileType(string tileType);
-
 class Tile {
   public:
     Tile();

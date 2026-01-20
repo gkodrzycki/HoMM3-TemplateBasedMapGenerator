@@ -32,7 +32,7 @@ void Creature::setDoesNotGrow(bool doesNotGrow) { this->doesNotGrow = doesNotGro
 bool Creature::getDoesNotGrow() const { return doesNotGrow; }
 
 void Creature::printObject() const {
-    cerr << "Creature '" << creatureTypeToString(creatureType) << "' x" << quantity
+    cerr << "Creature '" << getEnumName<CreatureType>(creatureType) << "' x" << quantity
          << " disposition '" << disposition << "' never flees: " << (neverFlees ? "true" : "false")
          << " does not grow: " << (doesNotGrow ? "true" : "false") << " at "
          << getPosition().toString() << "\n";

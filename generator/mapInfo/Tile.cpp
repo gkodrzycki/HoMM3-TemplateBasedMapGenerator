@@ -25,45 +25,7 @@ bool Tile::isTileType(string types) {
 void Tile::printTile() {
     cerr << "    Tile Zone ID: " << zoneID << "\n";
     cerr << "    Tile Terrain: " << terrain << "\n";
-    cerr << "    Tile Type: " << tileTypeToString(tileType) << "\n";
-}
-
-string tileTypeToString(TileType tileType) {
-    switch (tileType) {
-    case TileType::TILE_FREE:
-        return "TILE_FREE";
-    case TileType::TILE_TAKEN:
-        return "TILE_TAKEN";
-    case TileType::TILE_BORDER_INNER:
-        return "TILE_BORDER_INNER";
-    case TileType::TILE_BORDER_OUTER:
-        return "TILE_BORDER_OUTER";
-    case TileType::TILE_OCCUPIED:
-        return "TILE_OCCUPIED";
-    case TileType::TILE_RESERVED:
-        return "TILE_RESERVED";
-    case TileType::TILE_ROAD:
-        return "TILE_ROAD";
-    default:
-        return "UNKNOWN_TILE_TYPE";
-    }
-}
-TileType stringToTileType(string tileType) {
-    if (tileType == "TILE_FREE")
-        return TileType::TILE_FREE;
-    if (tileType == "TILE_TAKEN")
-        return TileType::TILE_TAKEN;
-    if (tileType == "TILE_BORDER_INNER")
-        return TileType::TILE_BORDER_INNER;
-    if (tileType == "TILE_BORDER_OUTER")
-        return TileType::TILE_BORDER_OUTER;
-    if (tileType == "TILE_OCCUPIED")
-        return TileType::TILE_OCCUPIED;
-    if (tileType == "TILE_ROAD")
-        return TileType::TILE_ROAD;
-    if (tileType == "TILE_RESERVED")
-        return TileType::TILE_RESERVED;
-    return TileType::TILE_FREE;
+    cerr << "    Tile Type: " << getEnumName<TileType>(tileType) << "\n";
 }
 
 char tileTypeToChar(TileType tileType) {
