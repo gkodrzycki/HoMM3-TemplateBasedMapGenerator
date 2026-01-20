@@ -4,11 +4,11 @@
 `git submodule update --recursive --init`
 
 ## Prerequisites
-* `Lua5.4`, `qt5-tools`, `boost`, `nlohmann`
+* `Lua5.4`, `qt5-tools`, `boost`, `nlohmann`, `magic-enum`
 
 On Ubuntu you can run the following command to install needed dependencies
 
-`sudo apt-get install lua5.4 liblua5.4-dev libtbb-dev libsdl2-ttf-dev qttools5-dev libsdl2-mixer-dev libsdl2-image-dev nlohmann-json3-dev`
+`sudo apt-get install lua5.4 liblua5.4-dev libtbb-dev libsdl2-ttf-dev qttools5-dev libsdl2-mixer-dev libsdl2-image-dev nlohmann-json3-dev libmagicenum-dev`
 
 Also, it may be useful to create a symlink for lua5.4 installed in previous step
 ```

@@ -18,6 +18,6 @@ void Mine::setOwner(const int &ownerID) { this->ownerID = ownerID; }
 int Mine::getOwner() const { return ownerID; }
 
 void Mine::printObject() const {
-    cerr << "Object '" << getName() << "' Mine type '" << mineTypeToString(mineType)
+    cerr << "Object '" << getName() << "' Mine type '" << getEnumName<MineType>(mineType)
          << "' owned by player " << ownerID << " at " << getPosition().toString() << "\n";
 }

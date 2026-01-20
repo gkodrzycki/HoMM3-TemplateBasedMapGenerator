@@ -1,7 +1,7 @@
 #include "./Zone.hpp"
 
 Zone::Zone(ZoneInfo zoneInfo) {
-    this->setFaction(stringToFaction(zoneInfo.getFaction()));
+    this->setFaction(getEnumFromNameOrThrow<Faction>(zoneInfo.getFaction()));
     this->setOwner(zoneInfo.getOwner());
     this->setSize(zoneInfo.getSize());
     this->setTerrain(zoneInfo.getTerrain());
@@ -41,7 +41,7 @@ void Zone::printZone() {
     cerr << "    Zone id: " << zoneID << "\n";
     cerr << "      Size: " << size << "\n";
     cerr << "      Terrain: " << terrain << "\n";
-    cerr << "      Faction: " << factionToString(faction) << "\n";
+    cerr << "      Faction: " << getEnumName<Faction>(faction) << "\n";
     cerr << "      Owner: " << owner << "\n";
     cerr << "      Type: " << type << "\n";
     cerr << "      Center: " << center.toString() << "\n";

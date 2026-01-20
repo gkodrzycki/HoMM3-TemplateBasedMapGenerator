@@ -21,6 +21,6 @@ void Town::setOwner(const string &owner) { this->owner = owner; }
 string Town::getOwner() { return owner; }
 
 void Town::printObject() const {
-    cerr << "Town '" << getName() << "' owned by '" << owner << "' (" << factionToString(faction)
-         << ") at " << getPosition().toString() << "\n";
+    cerr << "Town '" << getName() << "' owned by '" << owner << "' ("
+         << getEnumName<Faction>(faction) << ") at " << getPosition().toString() << "\n";
 }

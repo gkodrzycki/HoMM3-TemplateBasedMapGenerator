@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bits/stdc++.h>
+#include <magic_enum/magic_enum.hpp>
 #include <nlohmann/json.hpp>
 
 #include "./float3.hpp"
@@ -30,6 +31,18 @@ T getOrDefault(const nlohmann::json &j, const string &key, const T &defaultValue
         }
     }
     return defaultValue;
+}
+
+template <typename T> std::string getEnumName(T value) {
+    std::string_view sv = magic_enum::enum_name(value);
+    return std::string{sv};
+}
+
+template <typename T> T getEnumFromNameOrThrow(const std::string &name) {
+    if (auto v = magic_enum::enum_cast<T>(name, magic_enum::case_insensitive)) {
+        return *v;
+    }
+    throw std::runtime_error("Unknown enum name: " + name);
 }
 
 const int3 directions4[] = {
