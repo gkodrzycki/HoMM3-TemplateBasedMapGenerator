@@ -27,7 +27,7 @@ We plan to raise the stage of placing mines in the generation order. Instead of 
 3) Adding several random treasures on the map.
 
 # What changed from the initial plan
-We are planing to use two different templates (layout, blueprint), but for the sake of this project we decided to focus more on generating simple map rather than deciding in which template specific parameter will be. Therefore we won't be utilizing blueprint. 
+We are planing to use two different templates (layout, blueprint), but for the sake of this project we decided to focus more on generating simple map rather than deciding in which template specific parameter will be. Therefore we won't be utilizing blueprint.
 
 # Difficulties
 Probably nothing unusual, sometimes problems with deciding what should be in the template and what not, etc. :D

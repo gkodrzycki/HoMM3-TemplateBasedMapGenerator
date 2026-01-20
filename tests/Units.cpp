@@ -63,8 +63,8 @@ void generateLuaScript(string &saveLocation, const string &crtraitsPath) {
         for (int i = 0; i < unitsPerFaction; i++) {
             const int x = xStart + i * xStep;
             auto creature =
-                std::make_shared<Creature>(stringToCreatureType(creatures[idx]), int3(x, y, 0), 1,
-                                           "COMPLIANT", true, true, "Creature");
+                std::make_shared<Creature>(getEnumFromNameOrThrow<CreatureType>(creatures[idx]),
+                                           int3(x, y, 0), 1, "COMPLIANT", true, true, "Creature");
             AddCreature(luaFile, creature);
             idx++;
         }

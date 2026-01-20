@@ -19,6 +19,6 @@ void Resource::setResourceType(ResourceType resourceType) { this->resourceType =
 ResourceType Resource::getResourceType() const { return resourceType; }
 
 void Resource::printObject() const {
-    cerr << "Resource '" << resourceTypeToString(resourceType) << "' x" << quantity << " at "
+    cerr << "Resource '" << getEnumName<ResourceType>(resourceType) << "' x" << quantity << " at "
          << getPosition().toString() << "\n";
 }

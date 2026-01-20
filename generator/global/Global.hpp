@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bits/stdc++.h>
+#include <magic_enum/magic_enum.hpp>
 #include <nlohmann/json.hpp>
 
 #include "./float3.hpp"
@@ -32,6 +33,21 @@ T getOrDefault(const nlohmann::json &j, const string &key, const T &defaultValue
     return defaultValue;
 }
 
+template <typename T> string getEnumName(T value) {
+    string_view sv = magic_enum::enum_name(value);
+    return string{sv};
+}
+
+template <typename T> T getEnumFromNameOrThrow(const string &name) {
+    string normalized = name;
+    replace(normalized.begin(), normalized.end(), ' ', '_');
+
+    if (auto v = magic_enum::enum_cast<T>(normalized, magic_enum::case_insensitive)) {
+        return *v;
+    }
+    throw runtime_error("Unknown enum name: " + name);
+}
+
 const int3 directions4[] = {
     int3(1, 0, 0),
     int3(0, 1, 0),
@@ -45,4 +61,14 @@ const int3 directions8[] = {int3(1, 0, 0), int3(0, 1, 0),   int3(-1, 0, 0), int3
 inline bool isInside(int startWidth, int startHeight, int endWidth, int endHeight, int3 position) {
     return !(position.x < startWidth || position.y < startHeight || position.x >= endWidth ||
              position.y >= endHeight);
+}
+
+const string RED    = "\033[31m";
+const string GREEN  = "\033[32m";
+const string YELLOW = "\033[33m";
+const string BLUE   = "\033[34m";
+const string RESET  = "\033[0m";
+
+template <typename T> void printColor(const string &color, const T message) {
+    cerr << color << message << RESET;
 }

@@ -3,7 +3,18 @@
 #include "../global/Global.hpp"
 #include "./Road.hpp"
 
-enum class TileType { TILE_FREE = 0, TILE_TAKEN };
+enum class TileType {
+    TILE_FREE = 0,
+    TILE_TAKEN,
+    TILE_RESERVED,
+    TILE_OCCUPIED,
+    TILE_ROAD,
+    TILE_BORDER_INNER,
+    TILE_BORDER_OUTER
+};
+
+char tileTypeToChar(TileType tileType);
+TileType charToTileType(char c);
 
 class Tile {
   public:
@@ -13,22 +24,17 @@ class Tile {
 
     void setZoneID(int zoneID);
     void setTerrain(string terrain);
-    void setRoad(shared_ptr<Road> road);
     void setTileType(TileType tileType);
 
     int getZoneID();
     string getTerrain();
-    shared_ptr<Road> getRoad();
     TileType getTileType();
     void printTile();
 
-    string tileTypeToString(TileType tileType);
-    TileType stringToTileType(string tileType);
+    bool isTileType(string types);
 
   private:
     int zoneID;
     string terrain;
     TileType tileType;
-
-    shared_ptr<Road> road;
 };

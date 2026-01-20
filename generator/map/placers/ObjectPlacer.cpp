@@ -16,7 +16,7 @@ void ObjectPlacer::placeTowns() {
 
             fixNeighbourTiles(townPtr->getPosition(), townPtr->getSize(), zoneID, offset);
             int3 entrancePos = townPtr->getPosition() - int3(townPtr->getSize().x / 2, 0, 0);
-            map.getTile(entrancePos)->setTileType(TileType::TILE_FREE);
+            map.getTile(entrancePos)->setTileType(TileType::TILE_OCCUPIED);
         }
     }
 }
@@ -82,17 +82,28 @@ void ObjectPlacer::expandBorderTiles(vector<int3> &borderTiles, int maxDepth) {
 
 void ObjectPlacer::placeBorders() {
     vector<int3> borderTiles = getBorderTiles();
+
+    for (const int3 &pos : borderTiles) {
+        if (map.getTile(pos)->isTileType("OTRr"))
+            continue;
+        map.getTile(pos)->setTileType(TileType::TILE_BORDER_INNER);
+    }
+
     expandBorderTiles(borderTiles);
 
     for (const int3 &pos : borderTiles) {
-        if (map.getTile(pos)->getRoad() != nullptr)
+        if (map.getTile(pos)->isTileType("BOTRr"))
             continue;
+        map.getTile(pos)->setTileType(TileType::TILE_BORDER_OUTER);
+    }
 
-        if (map.getTile(pos)->getTileType() == TileType::TILE_TAKEN)
+    for (const int3 &pos : borderTiles) {
+
+        if (map.getTile(pos)->isTileType("OTRr"))
             continue;
 
         auto upperTile = map.getTile(pos + int3(0, -1, 0));
-        if (upperTile != nullptr && upperTile->getRoad() != nullptr)
+        if (upperTile != nullptr && upperTile->isTileType("r"))
             continue;
 
         Obstacle obstacle("Pine Trees", pos, "Obstacle");
@@ -178,7 +189,7 @@ vector<int3> ObjectPlacer::createPath(int3 fromPos, int3 destPos) {
             if (tilePtr == nullptr)
                 continue;
 
-            if (tilePtr->getTileType() == TileType::TILE_TAKEN && tilePtr->getRoad() == nullptr)
+            if (tilePtr->isTileType("T"))
                 continue;
 
             if (visited[newPos.x][newPos.y] != int3(-1, -1, -1) ||
@@ -223,8 +234,7 @@ void ObjectPlacer::placeRoads() {
             Road road(1, pos, "Road");
             auto roadPtr = make_shared<Road>(road);
             map.addObject(roadPtr);
-            map.getTile(pos)->setRoad(roadPtr);
-            map.getTile(pos)->setTileType(TileType::TILE_TAKEN);
+            map.getTile(pos)->setTileType(TileType::TILE_ROAD);
         }
     }
 }
@@ -242,14 +252,19 @@ void ObjectPlacer::fixNeighbourTiles(const int3 &pos, const int3 &size, int zone
             if (tilePtr == nullptr)
                 continue;
 
-            tilePtr->setTileType(TileType::TILE_TAKEN);
+            if (offset.x >= 1 && offset.y >= 1 &&
+                (dx == size.x + offset.x - 1 || dy == size.y + offset.y - 1)) {
+                tilePtr->setTileType(TileType::TILE_RESERVED);
+            } else {
+                tilePtr->setTileType(TileType::TILE_TAKEN);
+            }
             tilePtr->setZoneID(zoneID);
             tilePtr->setTerrain(zoneTerrain);
         }
     }
 }
 
-bool ObjectPlacer::checkPlacementConflict(const int3 &pos, const int3 &size) {
+bool ObjectPlacer::checkPlacementConflict(const int3 &pos, const int3 &size, const string &types) {
     auto zoneMap = map.getZoneMap();
 
     for (int dx = 0; dx < size.x; dx++) {
@@ -260,7 +275,7 @@ bool ObjectPlacer::checkPlacementConflict(const int3 &pos, const int3 &size) {
             if (tilePtr == nullptr)
                 continue;
 
-            if (tilePtr->getTileType() == TileType::TILE_TAKEN) {
+            if (tilePtr->isTileType(types)) {
                 return true;
             }
         }
@@ -331,13 +346,6 @@ void ObjectPlacer::placeBasicMines() {
             }
 
             auto [B, C] = BC;
-            int distanceAB       = anchorPoint.distance2DSQ(B);
-            int distanceAC       = anchorPoint.distance2DSQ(C);
-            int distanceBC       = B.distance2DSQ(C);
-
-            cerr << "Triangle A: " << anchorPoint.toString() << " B: " << B.toString()
-                 << " C: " << C.toString() << "\n";
-            cerr << "Perimeter of created triangle: " << distanceAB + distanceAC + distanceBC << "\n";
 
             int anchorZoneID                  = map.getTile(anchorPoint)->getZoneID();
             array<int, 4> &basicResourceCount = map.getBasicResourceCount();

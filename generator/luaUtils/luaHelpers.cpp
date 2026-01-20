@@ -34,7 +34,7 @@ void AddPlayer(ofstream &luaFile, string playerId) {
 // @tparam      boolean                 is_main     tells if is main town.
 void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
 
-    string nameOfObject = "TOWN_" + factionToString(town->getFaction());
+    string nameOfObject = "TOWN_" + getEnumName<Faction>(town->getFaction());
     string ID           = town->getOwner();
     int X               = town->getPosition().x;
     int Y               = town->getPosition().y;
@@ -157,10 +157,21 @@ void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature) {
     string disp = creature->getDisposition();
     transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
 
-    luaFile << "instance:creature('" << creatureTypeToString(creature->getCreatureType())
-            << "', {x=" << creature->getPosition().x << ", y=" << creature->getPosition().y
-            << ", z=" << creature->getPosition().z << "}, " << creature->getQuantity()
-            << ", homm3lua.DISPOSITION_" << disp << ", "
+    string creatureType = getEnumName<CreatureType>(creature->getCreatureType());
+
+    transform(creatureType.begin(), creatureType.end(), creatureType.begin(), ::tolower);
+
+    replace(creatureType.begin(), creatureType.end(), '_', ' ');
+    creatureType[0] = toupper(creatureType[0]);
+    for (size_t i = 1; i < creatureType.length(); i++) {
+        if (creatureType[i - 1] == ' ') {
+            creatureType[i] = toupper(creatureType[i]);
+        }
+    }
+
+    luaFile << "instance:creature('" << creatureType << "', {x=" << creature->getPosition().x
+            << ", y=" << creature->getPosition().y << ", z=" << creature->getPosition().z << "}, "
+            << creature->getQuantity() << ", homm3lua.DISPOSITION_" << disp << ", "
             << (creature->getNeverFlees() ? "true" : "false") << ", "
             << (creature->getDoesNotGrow() ? "true" : "false") << ")\n";
 }
@@ -181,7 +192,7 @@ void AddCreatures(ofstream &luaFile, Map &map) {
 void AddMine(ofstream &luaFile, shared_ptr<Mine> mine) {
     int owner_id = mine->getOwner();
     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" + to_string(owner_id);
-    luaFile << "instance:mine(homm3lua." << mineTypeToString(mine->getMineType())
+    luaFile << "instance:mine(homm3lua." << getEnumName<MineType>(mine->getMineType())
             << ", {x=" << mine->getPosition().x << ", y=" << mine->getPosition().y
             << ", z=" << mine->getPosition().z << "}, homm3lua." << owner << ")\n";
 }
@@ -202,7 +213,8 @@ void AddMines(ofstream &luaFile, Map &map) {
 // @tparam      ofstream                luaFile         file where we save lua script.
 // @tparam      shared_ptr<Resource>    resource        completed resource object.
 void AddResource(ofstream &luaFile, shared_ptr<Resource> resource) {
-    luaFile << "instance:resource(homm3lua." << resourceTypeToString(resource->getResourceType())
+    luaFile << "instance:resource(homm3lua."
+            << getEnumName<ResourceType>(resource->getResourceType())
             << ", {x=" << resource->getPosition().x << ", y=" << resource->getPosition().y
             << ", z=" << resource->getPosition().z << "}, " << resource->getQuantity() << ")\n";
 }
