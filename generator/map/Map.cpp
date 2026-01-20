@@ -95,30 +95,29 @@ void Map::printMap() {
         for (int j = 0; j < width; j++) {
             TileType tileType = tileMap[i][j]->getTileType();
             switch (tileType) {
-                case TileType::TILE_FREE:
-                    printColor(GREEN, tileTypeToChar(tileType));
-                    break;
-                case TileType::TILE_OCCUPIED:
-                    printColor(YELLOW, tileTypeToChar(tileType));
-                    break;
-                case TileType::TILE_RESERVED:
-                    cerr << tileTypeToChar(tileType);
-                    break;
-                case TileType::TILE_TAKEN:
-                    printColor(RED, tileTypeToChar(tileType));
-                    break;
-                case TileType::TILE_ROAD:
-                    cerr << tileTypeToChar(tileType);
-                    break;
-                case TileType::TILE_BORDER_INNER:
-                    cerr << tileTypeToChar(tileType);
-                    break;
-                case TileType::TILE_BORDER_OUTER:
-                    cerr << tileTypeToChar(tileType);
-                    break;
-                default:
-                    cerr << tileTypeToChar(tileType);
-
+            case TileType::TILE_FREE:
+                printColor(GREEN, tileTypeToChar(tileType));
+                break;
+            case TileType::TILE_OCCUPIED:
+                printColor(YELLOW, tileTypeToChar(tileType));
+                break;
+            case TileType::TILE_RESERVED:
+                cerr << tileTypeToChar(tileType);
+                break;
+            case TileType::TILE_TAKEN:
+                printColor(RED, tileTypeToChar(tileType));
+                break;
+            case TileType::TILE_ROAD:
+                cerr << tileTypeToChar(tileType);
+                break;
+            case TileType::TILE_BORDER_INNER:
+                cerr << tileTypeToChar(tileType);
+                break;
+            case TileType::TILE_BORDER_OUTER:
+                cerr << tileTypeToChar(tileType);
+                break;
+            default:
+                cerr << tileTypeToChar(tileType);
             }
         }
         cerr << "\n";

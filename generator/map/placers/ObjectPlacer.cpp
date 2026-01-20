@@ -95,7 +95,7 @@ void ObjectPlacer::placeBorders() {
         if (map.getTile(pos)->isTileType("BOTRr"))
             continue;
         map.getTile(pos)->setTileType(TileType::TILE_BORDER_OUTER);
-    } 
+    }
 
     for (const int3 &pos : borderTiles) {
 
@@ -244,7 +244,6 @@ void ObjectPlacer::fixNeighbourTiles(const int3 &pos, const int3 &size, int zone
     auto zoneMap       = map.getZoneMap();
     string zoneTerrain = zoneMap[zoneID]->getTerrain();
 
-
     for (int dx = 0; dx < size.x + offset.x; dx++) {
         for (int dy = 0; dy < size.y + offset.y; dy++) {
             int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
@@ -253,7 +252,8 @@ void ObjectPlacer::fixNeighbourTiles(const int3 &pos, const int3 &size, int zone
             if (tilePtr == nullptr)
                 continue;
 
-            if (offset.x >= 1 && offset.y >= 1 && (dx == size.x + offset.x - 1 || dy == size.y + offset.y -1)) {
+            if (offset.x >= 1 && offset.y >= 1 &&
+                (dx == size.x + offset.x - 1 || dy == size.y + offset.y - 1)) {
                 tilePtr->setTileType(TileType::TILE_RESERVED);
             } else {
                 tilePtr->setTileType(TileType::TILE_TAKEN);
@@ -345,14 +345,15 @@ void ObjectPlacer::placeBasicMines() {
                 break;
             }
 
-            auto [B, C] = BC;
-            int distanceAB       = anchorPoint.distance2DSQ(B);
-            int distanceAC       = anchorPoint.distance2DSQ(C);
-            int distanceBC       = B.distance2DSQ(C);
+            auto [B, C]    = BC;
+            int distanceAB = anchorPoint.distance2DSQ(B);
+            int distanceAC = anchorPoint.distance2DSQ(C);
+            int distanceBC = B.distance2DSQ(C);
 
             cerr << "Triangle A: " << anchorPoint.toString() << " B: " << B.toString()
                  << " C: " << C.toString() << "\n";
-            cerr << "Perimeter of created triangle: " << distanceAB + distanceAC + distanceBC << "\n";
+            cerr << "Perimeter of created triangle: " << distanceAB + distanceAC + distanceBC
+                 << "\n";
 
             int anchorZoneID                  = map.getTile(anchorPoint)->getZoneID();
             array<int, 4> &basicResourceCount = map.getBasicResourceCount();

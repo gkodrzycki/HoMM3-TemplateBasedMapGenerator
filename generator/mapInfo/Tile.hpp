@@ -3,7 +3,15 @@
 #include "../global/Global.hpp"
 #include "./Road.hpp"
 
-enum class TileType { TILE_FREE = 0, TILE_TAKEN, TILE_RESERVED, TILE_OCCUPIED, TILE_ROAD, TILE_BORDER_INNER, TILE_BORDER_OUTER };
+enum class TileType {
+    TILE_FREE = 0,
+    TILE_TAKEN,
+    TILE_RESERVED,
+    TILE_OCCUPIED,
+    TILE_ROAD,
+    TILE_BORDER_INNER,
+    TILE_BORDER_OUTER
+};
 
 char tileTypeToChar(TileType tileType);
 TileType charToTileType(char c);
