@@ -37,6 +37,9 @@ COMMON_SOURCES = \
               $(GLOBAL_DIR)/Random.cpp \
 			  $(PLACERS_DIR)/RegionPlacer.cpp \
 			  $(PLACERS_DIR)/ObjectPlacer.cpp \
+			  $(PLACERS_DIR)/TownPlacer.cpp \
+			  $(PLACERS_DIR)/RoadPlacer.cpp \
+			  $(PLACERS_DIR)/BorderPlacer.cpp \
               $(UTILS_DIR)/luaHelpers.cpp \
 			  $(MAP_DIR)/Map.cpp \
 			  $(MAP_INFO_DIR)/Tile.cpp \
@@ -102,11 +105,16 @@ doc: doc/index.html
 doc/index.html: $(HOMM3_SRC)
 	ldoc -c /dev/null homm3lua
 
-# Clean
-.PHONY: clean
-clean:
+# Hard Clean
+.PHONY: hard_clean
+hard_clean:
 	$(MAKE) -C homm3tools/h3m/h3mtilespritegen/BUILD/gcc clean
 	$(MAKE) -C homm3tools/h3m/h3mlib/BUILD/gcc clean
+	rm -rf dist doc $(GEN_OBJECTS) $(UNITS_OBJECTS) Generator Units
+
+# (Soft) Clean
+.PHONY: clean
+clean:
 	rm -rf dist doc $(GEN_OBJECTS) $(UNITS_OBJECTS) Generator Units
 
 # Build and run Generator
@@ -144,4 +152,4 @@ lint:
 		.
 
 # Phony targets
-.PHONY: all doc clean run units
+.PHONY: all doc clean run units hard_clean

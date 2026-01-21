@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../global/Global.hpp"
+#include "../../global/GridSearch.hpp"
 #include "../Map.hpp"
 
 class Map;

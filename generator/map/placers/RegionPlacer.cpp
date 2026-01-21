@@ -32,34 +32,18 @@ void RegionPlacer::generateRegions() {
 }
 
 void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneCenters) {
+    int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
-    int width  = map.getWidth();
-    int height = map.getHeight();
-    int currentClaim[height][width][2];
+    auto neighbors4 = [&](const int3 &p) {
+        std::array<int3, 4> out;
+        for (int i = 0; i < 4; i++)
+            out[i] = p + directions4[i];
+        return out;
+    };
 
-    fill(&currentClaim[0][0][0], &currentClaim[0][0][0] + height * width * 2, 0);
+    auto passable = [&](const int3 &p) { return true; };
 
-    queue<int3> q;
-    for (auto [zoneID, zoneCenter] : zoneCenters) {
-        currentClaim[zoneCenter.y][zoneCenter.x][zoneCenter.z] = zoneID;
-        q.push(zoneCenter);
-    }
-
-    while (q.size()) {
-        int3 currentPos = q.front();
-        q.pop();
-        int currentID = currentClaim[currentPos.y][currentPos.x][currentPos.z];
-
-        for (auto direction : directions4) {
-            int3 newPos = currentPos + direction;
-            if (newPos.x < 0 || newPos.y < 0 || newPos.x >= width || newPos.y >= height)
-                continue;
-            if (currentClaim[newPos.y][newPos.x][newPos.z] != 0)
-                continue;
-            currentClaim[newPos.y][newPos.x][newPos.z] = currentID;
-            q.push(newPos);
-        }
-    }
+    auto claim = bfs_claim_xyz2(mapWidth, mapHeight, zoneCenters, neighbors4, passable);
 
     ZoneMap zoneMap = map.getZoneMap();
 
@@ -67,9 +51,9 @@ void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneCenters) {
     if (debug)
         cerr << "==== ZoneIDs on Map ====\n";
 
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            int zoneID = currentClaim[y][x][0];
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            int zoneID = claim[x][y][0];
             if (debug)
                 cerr << zoneID << " ";
             auto tilePtr = map.getTile(int3(x, y, 0));
