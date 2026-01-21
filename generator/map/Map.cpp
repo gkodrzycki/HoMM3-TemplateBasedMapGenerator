@@ -68,15 +68,64 @@ void Map::generateMap() {
     regionPlacer.generateRegions();
     regionPlacer.placeRegions();
 
+    TownPlacer townPlacer(*this);
+    townPlacer.placeTowns();
+
+    RoadPlacer roadPlacer(*this);
+    roadPlacer.placeRoads();
+
+    BorderPlacer borderPlacer(*this);
+    borderPlacer.placeBorders();
+
     ObjectPlacer objectPlacer(*this);
-    objectPlacer.placeTowns();
-    objectPlacer.placeRoads();
-    objectPlacer.placeBorders();
     objectPlacer.placeBasicMines();
 
     Creature creature =
         Creature(CreatureType::PIKEMAN, int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
     addCreature(std::make_shared<Creature>(creature));
+}
+
+void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {
+    auto zoneMap       = getZoneMap();
+    string zoneTerrain = zoneMap[zoneID]->getTerrain();
+
+    for (int dx = 0; dx < size.x + offset.x; dx++) {
+        for (int dy = 0; dy < size.y + offset.y; dy++) {
+            int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
+            auto tilePtr = getTile(tilePos);
+
+            if (tilePtr == nullptr)
+                continue;
+
+            if (offset.x >= 1 && offset.y >= 1 &&
+                (dx == size.x + offset.x - 1 || dy == size.y + offset.y - 1)) {
+                tilePtr->setTileType(TileType::TILE_RESERVED);
+            } else {
+                tilePtr->setTileType(TileType::TILE_TAKEN);
+            }
+            tilePtr->setZoneID(zoneID);
+            tilePtr->setTerrain(zoneTerrain);
+        }
+    }
+}
+
+bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string &types) {
+    auto zoneMap = getZoneMap();
+
+    for (int dx = 0; dx < size.x; dx++) {
+        for (int dy = 0; dy < size.y; dy++) {
+            int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
+            auto tilePtr = getTile(tilePos);
+
+            if (tilePtr == nullptr)
+                continue;
+
+            if (tilePtr->isTileType(types)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void Map::printMap() {

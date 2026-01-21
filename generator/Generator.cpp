@@ -112,6 +112,7 @@ int main(int argc, char *argv[]) {
     if (layoutInfo.getDebug()) {
         cerr << "========== MAP ==========\n";
         map.printMap();
+        cerr << "Map printed!\n";
     }
 
     generateLuaScript(map, saveLocation);

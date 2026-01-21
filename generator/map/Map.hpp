@@ -9,8 +9,11 @@
 #include "../mapInfo/Resource.hpp"
 #include "../mapInfo/Tile.hpp"
 #include "../mapInfo/Zone.hpp"
+#include "./placers/BorderPlacer.hpp"
 #include "./placers/ObjectPlacer.hpp"
 #include "./placers/RegionPlacer.hpp"
+#include "./placers/RoadPlacer.hpp"
+#include "./placers/TownPlacer.hpp"
 
 using ZoneMap        = map<int, shared_ptr<Zone>>;
 using RegionMap      = map<int, shared_ptr<Region>>;
@@ -47,6 +50,10 @@ class Map {
     RNG &getRNG();
     int getWidth();
     int getHeight();
+
+    void fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID,
+                           const int3 &offset = int3(1, 1, 0));
+    bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BOTRr");
 
   private:
     RNG &rng;
