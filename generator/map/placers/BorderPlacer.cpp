@@ -18,7 +18,7 @@ vector<int3> BorderPlacer::getBorderTiles() {
                 if (neighTilePtr == nullptr)
                     continue;
 
-                if (neighTilePtr->getTerrain() != currentTilePtr->getTerrain()) {
+                if (neighTilePtr->getZoneID() != currentTilePtr->getZoneID()) {
                     borderTiles.push_back(currentPos);
                     break;
                 }
@@ -30,35 +30,19 @@ vector<int3> BorderPlacer::getBorderTiles() {
 }
 
 void BorderPlacer::expandBorderTiles(vector<int3> &borderTiles, int maxDepth) {
-    queue<pair<int, int3>> q;
-    set<int3> visited;
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
-    for (const int3 &pos : borderTiles) {
-        q.push({0, pos});
-        visited.insert(pos);
-    }
+    auto neighbors8 = [&](const int3 &p) {
+        std::array<int3, 8> out;
+        for (int i = 0; i < 8; i++)
+            out[i] = p + directions8[i];
+        return out;
+    };
 
-    while (q.size()) {
-        auto [depth, currentPos] = q.front();
-        q.pop();
+    auto passable = [&](const int3 &p) { return true; };
 
-        if (depth >= maxDepth)
-            continue;
-
-        for (auto direction : directions8) {
-            int3 newPos = currentPos + direction;
-            if (!isInside(0, 0, mapWidth, mapHeight, newPos))
-                continue;
-
-            if (visited.find(newPos) != visited.end())
-                continue;
-
-            borderTiles.push_back(newPos);
-            visited.insert(newPos);
-            q.push({depth + 1, newPos});
-        }
-    }
+    borderTiles =
+        bfs_collect_depth_xy(mapWidth, mapHeight, borderTiles, maxDepth, neighbors8, passable);
 }
 
 void BorderPlacer::placeBorders() {

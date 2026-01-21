@@ -7,7 +7,6 @@ void TownPlacer::placeTowns() {
     int3 offset(0, 0, 0);
 
     for (auto [zoneID, zone] : zoneMap) {
-        cerr << "XD: " << zoneID << "\n";
         string zoneType = zone->getType();
 
         if (zoneType == "starting_zone") {

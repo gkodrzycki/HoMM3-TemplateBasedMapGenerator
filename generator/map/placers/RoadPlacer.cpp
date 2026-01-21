@@ -24,80 +24,51 @@ void RoadPlacer::placeRoads() {
 vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
-    vector<vector<int3>> visited(mapWidth, vector<int3>(mapHeight, int3(-1, -1, -1)));
-    for (int x = 0; x < mapWidth; x++) {
-        for (int y = 0; y < mapHeight; y++) {
-            visited[x][y] = int3(-1, -1, -1);
-        }
-    }
+    vector<vector<bool>> blocked(mapWidth, vector<bool>(mapHeight, false));
 
-    auto objectVector = map.getObjectVector();
-    for (const auto &object : objectVector) {
+    for (const auto &object : map.getObjectVector()) {
         if (auto town = dynamic_pointer_cast<Town>(object)) {
             int3 objPos  = object->getPosition();
             int3 objSize = object->getSize();
 
-            // TODO: use real Town size here
+            // TODO: real town footprint
             for (int x = objPos.x - objSize.x + 1; x <= objPos.x; x++) {
                 for (int y = objPos.y - objSize.y + 1; y <= objPos.y; y++) {
                     if (!isInside(0, 0, mapWidth, mapHeight, int3(x, y, 0)))
                         continue;
-
-                    visited[x][y] = int3(-2, -2, -2);
+                    blocked[x][y] = true;
                 }
             }
         }
     }
 
-    queue<int3> q;
-    q.push(fromPos);
-    visited[fromPos.x][fromPos.y] = fromPos;
-    visited[destPos.x][destPos.y] = int3(-1, -1, -1);
+    if (isInside(0, 0, mapWidth, mapHeight, fromPos))
+        blocked[fromPos.x][fromPos.y] = false;
+    if (isInside(0, 0, mapWidth, mapHeight, destPos))
+        blocked[destPos.x][destPos.y] = false;
 
-    while (q.size()) {
-        int3 currentPos = q.front();
-        q.pop();
+    auto neighbors4 = [&](const int3 &p) {
+        std::array<int3, 4> out;
+        for (int i = 0; i < 4; i++)
+            out[i] = p + directions4[i];
+        return out;
+    };
 
-        if (currentPos == destPos) {
-            break;
-        }
+    auto passable = [&](const int3 &p) {
+        if (!isInside(0, 0, mapWidth, mapHeight, p))
+            return false;
+        if (blocked[p.x][p.y])
+            return false;
 
-        for (auto direction : directions4) {
-            int3 newPos = currentPos + direction;
-            if (!isInside(0, 0, mapWidth, mapHeight, newPos))
-                continue;
+        auto tile = map.getTile(p);
+        if (!tile)
+            return false;
+        if (tile->isTileType("T"))
+            return false;
 
-            auto tilePtr = map.getTile(newPos);
-            if (tilePtr == nullptr)
-                continue;
-
-            if (tilePtr->isTileType("T"))
-                continue;
-
-            if (visited[newPos.x][newPos.y] != int3(-1, -1, -1) ||
-                visited[newPos.x][newPos.y] == int3(-2, -2, -2))
-                continue;
-
-            visited[newPos.x][newPos.y] = currentPos;
-            q.push(newPos);
-        }
-    }
-
-    vector<int3> path;
-    int3 tracePos = destPos;
-    while (tracePos != fromPos) {
-        path.push_back(tracePos);
-        tracePos = visited[tracePos.x][tracePos.y];
-
-        if (tracePos == int3(-1, -1, -1) || tracePos == int3(-2, -2, -2)) {
-            cerr << "[ERROR] No valid path found from " << fromPos.toString() << " to "
-                 << destPos.toString() << "\n";
-            return vector<int3>();
-        }
-    }
-
-    path.push_back(fromPos);
-    reverse(path.begin(), path.end());
+        return true;
+    };
+    auto path = bfs_path_xy(mapWidth, mapHeight, fromPos, destPos, neighbors4, passable);
 
     return path;
 }
