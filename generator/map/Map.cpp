@@ -82,10 +82,6 @@ void Map::generateMap() {
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
-
-    Creature creature =
-        Creature(CreatureType::PIKEMAN, int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
-    addCreature(std::make_shared<Creature>(creature));
 }
 
 void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {
@@ -131,15 +127,19 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
     return false;
 }
 
-void Map::printMap() {
-    cerr << "==== Regions ====\n";
-    for (auto &[regionID, region] : regionMap) {
-        region->printRegion();
+void Map::printMap(int debugLevel) {
+    if (debugLevel > 1) {
+        cerr << "==== Regions ====\n";
+        for (auto &[regionID, region] : regionMap) {
+            region->printRegion();
+        }
     }
 
-    cerr << "==== Objects ====\n";
-    for (auto &object : objectVector) {
-        object->printObject();
+    if (debugLevel > 2) {
+        cerr << "==== Objects ====\n";
+        for (auto &object : objectVector) {
+            object->printObject();
+        }
     }
 
     cerr << "==== Tiles ====\n";

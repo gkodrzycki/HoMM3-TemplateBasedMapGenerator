@@ -104,14 +104,14 @@ int main(int argc, char *argv[]) {
     }
 
     LayoutInfo layoutInfo = parseLayout(layout);
-    if (layoutInfo.getDebug())
+    if (layoutInfo.getDebug() > 1)
         layoutInfo.printLayout();
 
     Map map(rng, layoutInfo);
     map.generateMap();
-    if (layoutInfo.getDebug()) {
+    if (layoutInfo.getDebug() > 0) {
         cerr << "========== MAP ==========\n";
-        map.printMap();
+        map.printMap(layoutInfo.getDebug());
         cerr << "Map printed!\n";
     }
 

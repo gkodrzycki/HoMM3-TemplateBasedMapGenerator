@@ -327,3 +327,34 @@ inline vector<int3> astar_path_xy(int W, int H, const int3 &start, const int3 &g
 
     return reconstruct_path_xy(start, goal, parent);
 }
+
+/**
+ * BFS liczący dystans
+ *
+ */
+template <typename Node, typename NeighFn>
+inline std::unordered_map<Node, int> bfs_distances(const Node &start, NeighFn neighbors) {
+    std::unordered_map<Node, int> dist;
+    std::queue<Node> q;
+
+    dist[start] = 0;
+    q.push(start);
+
+    while (!q.empty()) {
+        Node cur = q.front();
+        q.pop();
+        int d = dist[cur];
+
+        for (const auto &nxt : neighbors(cur)) {
+            if (nxt == cur)
+                continue;
+            if (dist.find(nxt) != dist.end())
+                continue;
+
+            dist[nxt] = d + 1;
+            q.push(nxt);
+        }
+    }
+
+    return dist;
+}

@@ -47,15 +47,29 @@ void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneCenters) {
 
     ZoneMap zoneMap = map.getZoneMap();
 
-    bool debug = map.getLayoutInfo().getDebug();
+    bool debug = (map.getLayoutInfo().getDebug() > 0);
     if (debug)
         cerr << "==== ZoneIDs on Map ====\n";
 
     for (int y = 0; y < mapHeight; y++) {
         for (int x = 0; x < mapWidth; x++) {
             int zoneID = claim[x][y][0];
-            if (debug)
-                cerr << zoneID << " ";
+            if (debug) {
+                bool isZoneCenter = false;
+                for (auto &[zID, zone] : zoneMap) {
+                    if (zone->getCenter() == int3(x, y, 0)) {
+                        isZoneCenter = true;
+                        break;
+                    }
+                }
+
+                if (isZoneCenter) {
+                    printColor(BRIGHT_RED + BOLD, '*');
+                } else {
+                    printColor(getZoneColor(zoneID), to_string(zoneID));
+                }
+            }
+
             auto tilePtr = map.getTile(int3(x, y, 0));
             tilePtr->setZoneID(zoneID);
             tilePtr->setTerrain(zoneMap[zoneID]->getTerrain());
