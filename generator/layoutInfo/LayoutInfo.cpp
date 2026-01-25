@@ -8,7 +8,7 @@ LayoutInfo::LayoutInfo() {
     debug       = false;
 }
 
-bool LayoutInfo::getDebug() { return debug; }
+int LayoutInfo::getDebug() { return debug; }
 string LayoutInfo::getName() { return name; }
 string LayoutInfo::getDescription() { return description; }
 string LayoutInfo::getMapSize() { return mapSize; }
@@ -18,7 +18,7 @@ vector<ConnectionInfo> LayoutInfo::getConnectionInfoList() { return connectionIn
 
 void LayoutInfo::deserialize(const json &layout) {
 
-    bool debug         = getOrDefault<bool>(layout, "debug", false);
+    int debug          = getOrDefault<int>(layout, "debug", 0);
     string name        = getOrError<string>(layout, "name");
     string description = getOrError<string>(layout, "description");
     string mapSize     = layout.value("size", "M");

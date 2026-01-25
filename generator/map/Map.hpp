@@ -32,7 +32,7 @@ class Map {
 
     void generateMap();
 
-    void printMap();
+    void printMap(int debugLevel);
 
     void addRegion(shared_ptr<Region> region);
     void addZone(shared_ptr<Zone> zone);
