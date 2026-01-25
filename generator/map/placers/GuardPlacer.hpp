@@ -2,7 +2,6 @@
 
 #include "../../global/CreatureIds.hpp"
 #include "../../global/Global.hpp"
-#include "../../global/Random.hpp"
 #include "../../mapInfo/Town.hpp"
 #include "../Map.hpp"
 

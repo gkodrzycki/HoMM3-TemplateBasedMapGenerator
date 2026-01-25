@@ -6,7 +6,6 @@
 #include "../../mapInfo/Obstacle.hpp"
 #include "../../mapInfo/Resource.hpp"
 #include "../Map.hpp"
-#include "GuardPlacer.hpp"
 
 class Map;
 
