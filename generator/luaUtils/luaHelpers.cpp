@@ -141,8 +141,12 @@ void AddRoads(ofstream &luaFile, Map &map) {
     ObjectVector objectVector = map.getObjectVector();
 
     for (const auto &object : objectVector) {
-        if (auto road = std::dynamic_pointer_cast<Road>(object)) {
-            AddRoad(luaFile, road->getRoadTier(), road->getPosition());
+        if (auto road = dynamic_pointer_cast<Road>(object)) {
+            int tier          = road->getRoadTier();
+            vector<int3> path = road->getPath();
+            for (auto pos : path) {
+                AddRoad(luaFile, tier, pos);
+            }
         }
     }
 

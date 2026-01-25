@@ -10,6 +10,7 @@
 #include "../mapInfo/Tile.hpp"
 #include "../mapInfo/Zone.hpp"
 #include "./placers/BorderPlacer.hpp"
+#include "./placers/GuardPlacer.hpp"
 #include "./placers/ObjectPlacer.hpp"
 #include "./placers/RegionPlacer.hpp"
 #include "./placers/RoadPlacer.hpp"

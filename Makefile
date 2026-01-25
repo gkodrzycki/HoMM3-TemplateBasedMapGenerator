@@ -40,6 +40,7 @@ COMMON_SOURCES = \
 			  $(PLACERS_DIR)/TownPlacer.cpp \
 			  $(PLACERS_DIR)/RoadPlacer.cpp \
 			  $(PLACERS_DIR)/BorderPlacer.cpp \
+			  $(PLACERS_DIR)/GuardPlacer.cpp \
               $(UTILS_DIR)/luaHelpers.cpp \
 			  $(MAP_DIR)/Map.cpp \
 			  $(MAP_INFO_DIR)/Tile.cpp \
