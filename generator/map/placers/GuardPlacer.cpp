@@ -59,7 +59,7 @@ pair<const string *, int> GuardPlacer::getCreatureArrayForLevel(int level, bool 
 }
 
 string GuardPlacer::getGuardCreatureId(GuardType type, int level) {
-    bool upgraded = (type == GuardType::BORDER); // Currently only border guards are upgraded
+    bool upgraded = (type == GuardType::BORDER); // Currently only border guards can be upgraded
     auto [creatureArray, arraySize] = getCreatureArrayForLevel(level, upgraded);
 
     if (creatureArray == nullptr || arraySize == 0) {
