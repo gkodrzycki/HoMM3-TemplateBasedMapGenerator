@@ -10,6 +10,7 @@
 #include "../mapInfo/Tile.hpp"
 #include "../mapInfo/Zone.hpp"
 #include "./placers/BorderPlacer.hpp"
+#include "./placers/GuardPlacer.hpp"
 #include "./placers/ObjectPlacer.hpp"
 #include "./placers/RegionPlacer.hpp"
 #include "./placers/RoadPlacer.hpp"
@@ -53,7 +54,7 @@ class Map {
 
     void fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID,
                            const int3 &offset = int3(1, 1, 0));
-    bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BOTRr");
+    bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BbOTRr");
 
   private:
     RNG &rng;

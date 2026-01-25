@@ -12,10 +12,11 @@ void RoadPlacer::placeRoads() {
 
         vector<int3> path = createPath(fromPos, destPos);
 
+        Road road(1, path, "Road");
+        auto roadPtr = make_shared<Road>(road);
+        map.addObject(roadPtr);
+
         for (const auto &pos : path) {
-            Road road(1, pos, "Road");
-            auto roadPtr = make_shared<Road>(road);
-            map.addObject(roadPtr);
             map.getTile(pos)->setTileType(TileType::TILE_ROAD);
         }
     }

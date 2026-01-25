@@ -80,6 +80,9 @@ void Map::generateMap() {
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeBasicMines();
 
+    GuardPlacer guardPlacer(*this);
+    guardPlacer.placeGuards();
+
     Creature creature =
         Creature(CreatureType::PIKEMAN, int3(5, 5, 0), 1, "COMPLIANT", true, true, "Creature");
     addCreature(std::make_shared<Creature>(creature));
