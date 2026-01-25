@@ -54,7 +54,7 @@ class Map {
 
     void fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID,
                            const int3 &offset = int3(1, 1, 0));
-    bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BOTRr");
+    bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BbOTRr");
 
   private:
     RNG &rng;

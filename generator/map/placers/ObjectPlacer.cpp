@@ -32,7 +32,7 @@ void ObjectPlacer::placeBasicMines() {
             anchorPoint.x -= 2;
 
             pair<int3, int3> BC;
-            int maxIter = 100;
+            int maxIter = 1000;
             while (maxIter--) {
 
                 BC          = map.getRNG().getRandomTriangle(anchorPoint, 30);
@@ -63,6 +63,9 @@ void ObjectPlacer::placeBasicMines() {
                 // if (B and C inside and good)
                 break;
             }
+
+            if (maxIter <= 0)
+                throw runtime_error("Failed to place basic mines after maximum iterations");
 
             auto [B, C] = BC;
 
