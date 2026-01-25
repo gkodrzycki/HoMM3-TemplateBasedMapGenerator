@@ -26,8 +26,6 @@ void ObjectPlacer::placeBasicMines() {
     int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
 
-    GuardPlacer guardPlacer(map);
-
     for (const auto &object : objectVector) {
         if (auto town = dynamic_pointer_cast<Town>(object)) {
             int3 anchorPoint = object->getPosition();
@@ -75,7 +73,6 @@ void ObjectPlacer::placeBasicMines() {
             array<int, 4> &basicResourceCount = map.getBasicResourceCount();
             int3 left                         = int3(-2, 1, 0);
             int3 right                        = int3(0, 1, 0);
-            int3 down                         = int3(-1, 1, 0);
 
             Mine mineSawmill(MineType::MINE_SAWMILL, -1, B, "Mine");
             auto mineSawmillPtr = make_shared<Mine>(mineSawmill);
@@ -83,10 +80,6 @@ void ObjectPlacer::placeBasicMines() {
             map.fixNeighbourTiles(B, getMineSize(mineSawmill.getMineType()), anchorZoneID);
             placeResource(ResourceType::RESOURCE_WOOD, B + left, basicResourceCount[0]);
             placeResource(ResourceType::RESOURCE_WOOD, B + right, basicResourceCount[1]);
-            auto guardPtr = guardPlacer.createGuard(GuardType::MINE, B + down);
-            if (guardPtr != nullptr) {
-                map.addCreature(guardPtr);
-            }
 
             Mine mineOrePit(MineType::MINE_ORE_PIT, -1, C, "Mine");
             auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
@@ -94,11 +87,6 @@ void ObjectPlacer::placeBasicMines() {
             map.fixNeighbourTiles(C, getMineSize(mineOrePit.getMineType()), anchorZoneID);
             placeResource(ResourceType::RESOURCE_ORE, C + left, basicResourceCount[2]);
             placeResource(ResourceType::RESOURCE_ORE, C + right, basicResourceCount[3]);
-
-            guardPtr = guardPlacer.createGuard(GuardType::MINE, C + down);
-            if (guardPtr != nullptr) {
-                map.addCreature(guardPtr);
-            }
         }
     }
 }

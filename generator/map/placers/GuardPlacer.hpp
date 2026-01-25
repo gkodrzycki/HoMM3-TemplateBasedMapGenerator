@@ -15,7 +15,6 @@ class GuardPlacer {
     GuardPlacer(Map &map);
 
     void placeGuards();
-    void placeBorderGuards();
     shared_ptr<Creature> createGuard(GuardType type, int3 position);
 
   private:
@@ -25,4 +24,7 @@ class GuardPlacer {
     int getGuardPower(GuardType type);
     string getGuardCreatureId(GuardType type, int level);
     pair<const string *, int> getCreatureArrayForLevel(int level, bool upgraded);
+
+    void placeBorderGuards();
+    void placeMineGuards();
 };

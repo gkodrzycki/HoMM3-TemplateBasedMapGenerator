@@ -5,7 +5,7 @@ GuardPlacer::GuardPlacer(Map &map) : map(map) {}
 int GuardPlacer::getGuardLevel(GuardType type) {
     auto &rng = map.getRNG();
     if (type == GuardType::MINE) {
-        return rng.nextInt(1, 3);
+        return rng.nextInt(1, 2);
     } else if (type == GuardType::BORDER) {
         return rng.nextInt(6, 7);
     } else {
@@ -153,4 +153,24 @@ void GuardPlacer::placeBorderGuards() {
     }
 }
 
-void GuardPlacer::placeGuards() { placeBorderGuards(); }
+void GuardPlacer::placeMineGuards() {
+    int3 down                 = int3(-1, 1, 0);
+    ObjectVector objectVector = map.getObjectVector();
+
+    for (const auto &object : objectVector) {
+        if (auto mine = dynamic_pointer_cast<Mine>(object)) {
+            int3 minePos  = mine->getPosition();
+            int3 guardPos = minePos + down;
+
+            auto guardPtr = createGuard(GuardType::MINE, guardPos);
+            if (guardPtr != nullptr) {
+                map.addCreature(guardPtr);
+            }
+        }
+    }
+}
+
+void GuardPlacer::placeGuards() {
+    placeBorderGuards();
+    placeMineGuards();
+}
