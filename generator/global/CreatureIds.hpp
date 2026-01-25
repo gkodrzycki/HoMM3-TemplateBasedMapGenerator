@@ -9,64 +9,64 @@ const string basicLvl1CreatureIds[] = {"PIKEMAN",  "CENTAUR",    "GREMLIN", "IMP
                                        "SKELETON", "TROGLODYTE", "GOBLIN",  "GNOLL"};
 
 // Level 1 upgraded creatures
-const string upgradedLvl1CreatureIds[] = {"HALBERDIER", "CENTAUR_CAPTAIN",  "MASTER_GREMLIN",
-                                          "FAMILIAR",   "SKELETON_WARRIOR", "INFERNAL_TROGLODYTE",
-                                          "HOBGOBLIN",  "GNOLL_MARAUDER"};
+const string upgradedLvl1CreatureIds[] = {"HALBERDIER", "CENTAUR CAPTAIN",  "MASTER GREMLIN",
+                                          "FAMILIAR",   "SKELETON WARRIOR", "INFERNAL TROGLODYTE",
+                                          "HOBGOBLIN",  "GNOLL MARAUDER"};
 
 // Level 2 creatures
-const string basicLvl2CreatureIds[] = {"ARCHER",     "DWARF",        "STONE_GARGOYLE",
-                                       "GOG",        "WALKING_DEAD", "HARPY",
-                                       "WOLF_RIDER", "LIZARDMAN",    "AIR_ELEMENTAL"};
+const string basicLvl2CreatureIds[] = {"ARCHER",     "DWARF",        "STONE GARGOYLE",
+                                       "GOG",        "WALKING DEAD", "HARPY",
+                                       "WOLF RIDER", "LIZARDMAN",    "AIR ELEMENTAL"};
 
 // Level 2 upgraded creatures
-const string upgradedLvl2CreatureIds[] = {"MARKSMAN",    "BATTLE_DWARF",  "OBSIDIAN_GARGOYLE",
-                                          "MAGOG",       "ZOMBIE",        "HARPY_HAG",
-                                          "WOLF_RAIDER", "LIZARD_WARRIOR"};
+const string upgradedLvl2CreatureIds[] = {"MARKSMAN",    "BATTLE DWARF",  "OBSIDIAN GARGOYLE",
+                                          "MAGOG",       "ZOMBIE",        "HARPY HAG",
+                                          "WOLF RAIDER", "LIZARD WARRIOR"};
 
 // Level 3 creatures
-const string basicLvl3CreatureIds[] = {"GRIFFIN",    "WOOD_ELF",    "STONE_GOLEM",
-                                       "HELL_HOUND", "WIGHT",       "BEHOLDER",
-                                       "ORC",        "SERPENT_FLY", "WATER_ELEMENTAL"};
+const string basicLvl3CreatureIds[] = {"GRIFFIN",    "WOOD ELF",    "STONE GOLEM",
+                                       "HELL HOUND", "WIGHT",       "BEHOLDER",
+                                       "ORC",        "SERPENT FLY", "WATER ELEMENTAL"};
 
 // Level 3 upgraded creatures
-const string upgradedLvl3CreatureIds[] = {"ROYAL_GRIFFIN", "GRAND_ELF", "IRON_GOLEM",
-                                          "CERBERUS",      "WRAITH",    "EVIL_EYE",
-                                          "ORC_CHIEFTAIN", "DRAGON_FLY"};
+const string upgradedLvl3CreatureIds[] = {"ROYAL GRIFFIN", "GRAND ELF", "IRON GOLEM",
+                                          "CERBERUS",      "WRAITH",    "EVIL EYE",
+                                          "ORC CHIEFTAIN", "DRAGON FLY"};
 
 // Level 4 creatures
 const string basicLvl4CreatureIds[] = {"SWORDSMAN", "PEGASUS",  "MAGE",
                                        "DEMON",     "VAMPIRE",  "MEDUSA",
-                                       "OGRE",      "BASILISK", "FIRE_ELEMENTAL"};
+                                       "OGRE",      "BASILISK", "FIRE ELEMENTAL"};
 
 // Level 4 upgraded creatures
-const string upgradedLvl4CreatureIds[] = {"CRUSADER",     "SILVER_PEGASUS",  "ARCH_MAGE",
-                                          "HORNED_DEMON", "VAMPIRE_LORD",    "MEDUSA_QUEEN",
-                                          "OGRE_MAGE",    "GREATER_BASILISK"};
+const string upgradedLvl4CreatureIds[] = {"CRUSADER",     "SILVER PEGASUS",  "ARCH MAGE",
+                                          "HORNED DEMON", "VAMPIRE LORD",    "MEDUSA QUEEN",
+                                          "OGRE MAGE",    "GREATER BASILISK"};
 
 // Level 5 creatures
-const string basicLvl5CreatureIds[] = {"MONK",      "DENDROID_GUARD", "GENIE",
-                                       "PIT_FIEND", "LICH",           "MINOTAUR",
-                                       "ROC",       "GORGON",         "EARTH_ELEMENTAL"};
+const string basicLvl5CreatureIds[] = {"MONK",      "DENDROID GUARD", "GENIE",
+                                       "PIT FIEND", "LICH",           "MINOTAUR",
+                                       "ROC",       "GORGON",         "EARTH ELEMENTAL"};
 
 // Level 5 upgraded creatures
-const string upgradedLvl5CreatureIds[] = {"ZEALOT",      "DENDROID_SOLDIER", "MASTER_GENIE",
-                                          "PIT_LORD",    "POWER_LICH",       "MINOTAUR_KING",
-                                          "THUNDERBIRD", "MIGHTY_GORGON"};
+const string upgradedLvl5CreatureIds[] = {"ZEALOT",      "DENDROID SOLDIER", "MASTER GENIE",
+                                          "PIT LORD",    "POWER LICH",       "MINOTAUR KING",
+                                          "THUNDERBIRD", "MIGHTY GORGON"};
 
 // Level 6 creatures
 const string basicLvl6CreatureIds[] = {"CAVALIER",     "UNICORN",   "NAGA",    "EFREETI",
-                                       "BLACK_KNIGHT", "MANTICORE", "CYCLOPS", "WYVERN"};
+                                       "BLACK KNIGHT", "MANTICORE", "CYCLOPS", "WYVERN"};
 
 // Level 6 upgraded creatures
-const string upgradedLvl6CreatureIds[] = {"CHAMPION",      "WAR_UNICORN",   "NAGA_QUEEN",
-                                          "EFREET_SULTAN", "DREAD_KNIGHT",  "SCORPICORE",
-                                          "CYCLOPS_KING",  "WYVERN_MONARCH"};
+const string upgradedLvl6CreatureIds[] = {"CHAMPION",      "WAR UNICORN",   "NAGA QUEEN",
+                                          "EFREET SULTAN", "DREAD KNIGHT",  "SCORPICORE",
+                                          "CYCLOPS KING",  "WYVERN MONARCH"};
 
 // Level 7 creatures
-const string basicLvl7CreatureIds[] = {"ANGEL",       "GREEN_DRAGON", "GIANT",    "DEVIL",
-                                       "BONE_DRAGON", "RED_DRAGON",   "BEHEMOTH", "HYDRA"};
+const string basicLvl7CreatureIds[] = {"ANGEL",       "GREEN DRAGON", "GIANT",    "DEVIL",
+                                       "BONE DRAGON", "RED DRAGON",   "BEHEMOTH", "HYDRA"};
 
 // Level 7 upgraded creatures
-const string upgradedLvl7CreatureIds[] = {"ARCHANGEL",        "GOLD_DRAGON",  "TITAN",
-                                          "ARCH_DEVIL",       "GHOST_DRAGON", "BLACK_DRAGON",
-                                          "ANCIENT_BEHEMOTH", "CHAOS_HYDRA"};
+const string upgradedLvl7CreatureIds[] = {"ARCHANGEL",        "GOLD DRAGON",  "TITAN",
+                                          "ARCH DEVIL",       "GHOST DRAGON", "BLACK DRAGON",
+                                          "ANCIENT BEHEMOTH", "CHAOS HYDRA"};
