@@ -63,7 +63,7 @@ string GuardPlacer::getGuardCreatureId(GuardType type, int level) {
     auto [creatureArray, arraySize] = getCreatureArrayForLevel(level, upgraded);
 
     if (creatureArray == nullptr || arraySize == 0) {
-        return "PIKEMAN";
+        throw runtime_error("Failed to find guard creature id");
     }
 
     auto &rng       = map.getRNG();
