@@ -45,7 +45,7 @@ void generateLuaScript(Map map, string &saveLocation) {
 
     AddCreatures(luaFile, map);
 
-    AddResources(luaFile, map);
+    AddTreasures(luaFile, map);
 
     // Finishing luaScript
     string homeDir = getenv("HOME");

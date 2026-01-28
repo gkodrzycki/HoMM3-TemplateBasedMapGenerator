@@ -14,7 +14,7 @@ void RoadPlacer::placeRoads() {
 
         Road road(1, path, "Road");
         auto roadPtr = make_shared<Road>(road);
-        map.addObject(roadPtr);
+        map.addRoad(roadPtr);
 
         for (const auto &pos : path) {
             map.getTile(pos)->setTileType(TileType::TILE_ROAD);

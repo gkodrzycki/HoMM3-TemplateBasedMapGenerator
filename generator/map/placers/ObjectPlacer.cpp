@@ -2,13 +2,20 @@
 
 ObjectPlacer::ObjectPlacer(Map &map) : map(map) {}
 
+void ObjectPlacer::placeArtifact(ArtifactType artifactType, int3 pos) {
+
+    Artifact artifact(artifactType, pos, "Artifact");
+    auto artifactPtr = make_shared<Artifact>(artifact);
+    map.addTreasure(artifactPtr);
+}
+
 void ObjectPlacer::placeResource(ResourceType resourceType, int3 pos, int quantity) {
     if (quantity <= 0)
         return;
 
     Resource resource(resourceType, quantity, pos, "Resource");
     auto resourcePtr = make_shared<Resource>(resource);
-    map.addResource(resourcePtr);
+    map.addTreasure(resourcePtr);
 }
 
 void ObjectPlacer::placeCreature(CreatureType creatureType, int3 pos, int quantity) {
@@ -79,14 +86,60 @@ void ObjectPlacer::placeBasicMines() {
             map.addObject(mineSawmillPtr);
             map.fixNeighbourTiles(B, getMineSize(mineSawmill.getMineType()), anchorZoneID);
             placeResource(ResourceType::RESOURCE_WOOD, B + left, basicResourceCount[0]);
+            map.getTile(B + left)->setTileType(TileType::TILE_OCCUPIED);
             placeResource(ResourceType::RESOURCE_WOOD, B + right, basicResourceCount[1]);
+            map.getTile(B + right)->setTileType(TileType::TILE_OCCUPIED);
 
             Mine mineOrePit(MineType::MINE_ORE_PIT, -1, C, "Mine");
             auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
             map.addObject(mineOrePitPtr);
             map.fixNeighbourTiles(C, getMineSize(mineOrePit.getMineType()), anchorZoneID);
             placeResource(ResourceType::RESOURCE_ORE, C + left, basicResourceCount[2]);
+            map.getTile(C + left)->setTileType(TileType::TILE_OCCUPIED);
             placeResource(ResourceType::RESOURCE_ORE, C + right, basicResourceCount[3]);
+            map.getTile(C + right)->setTileType(TileType::TILE_OCCUPIED);
+        }
+    }
+}
+
+void ObjectPlacer::placeTreasures() {
+
+    int mapWidth  = map.getWidth();
+    int mapHeight = map.getHeight();
+
+    std::map<int, vector<pair<int3, shared_ptr<Tile>>>> zoneTiles;
+
+    for (int x = 0; x < mapWidth; x++) {
+        for (int y = 0; y < mapHeight; y++) {
+            int3 tilePos = int3(x, y, 0);
+            auto tile    = map.getTile(tilePos);
+            int zoneID   = tile->getZoneID();
+            if (tile->isTileType("F")) {
+                zoneTiles[zoneID].push_back({tilePos, tile});
+            }
+        }
+    }
+
+    for (auto [id, tiles] : zoneTiles) {
+        auto &rng = map.getRNG();
+        int numberOfTreasures =
+            rng.nextInt(3, 5); // TODO: change to some parameter specified in blueprint
+
+        ArtifactTier tierOfTreasures = static_cast<ArtifactTier>(rng.nextInt(1, 3));
+
+        for (int i = 0; i < numberOfTreasures; i++) {
+            bool placed               = false;
+            int maxNumberOfIterations = 100;
+            while (!placed && maxNumberOfIterations-- >= 0) {
+                auto [tilePos, tile] = tiles[rng.nextInt(0, tiles.size() - 1)];
+                if (tile->isTileType("F")) { // need to check again because we may claim it :DD
+                    tile->setTileType(TileType::TILE_OCCUPIED);
+
+                    auto randomArtifactType = getArtifactFromTier(tierOfTreasures, rng);
+                    placeArtifact(randomArtifactType, tilePos);
+                    placed = true;
+                }
+            }
         }
     }
 }

@@ -26,8 +26,9 @@ RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
 const TileMap &Map::getTileMap() { return tileMap; }
 ObjectVector Map::getObjectVector() { return objectVector; }
+RoadVector Map::getRoadVector() { return roadVector; }
 CreatureVector Map::getCreatureVector() { return creatureVector; }
-ResourceVector Map::getResourceVector() { return resourceVector; }
+TreasureVector Map::getTreasureVector() { return treasureVector; }
 array<int, 4> &Map::getBasicResourceCount() { return basicResourceCount; }
 
 int Map::getWidth() { return width; }
@@ -36,8 +37,9 @@ int Map::getHeight() { return height; }
 void Map::addRegion(shared_ptr<Region> region) { this->regionMap[region->getRegionID()] = region; }
 void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zone; }
 void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(object); }
+void Map::addRoad(shared_ptr<Road> road) { this->roadVector.push_back(road); }
 void Map::addCreature(shared_ptr<Creature> creature) { this->creatureVector.push_back(creature); }
-void Map::addResource(shared_ptr<Resource> resource) { this->resourceVector.push_back(resource); }
+void Map::addTreasure(shared_ptr<Treasure> treasure) { this->treasureVector.push_back(treasure); }
 void Map::initTiles() {
     pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
 
@@ -75,13 +77,16 @@ void Map::generateMap() {
     roadPlacer.placeRoads();
 
     BorderPlacer borderPlacer(*this);
-    borderPlacer.placeBorders();
+    borderPlacer.reserveBorderTiles();
 
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeBasicMines();
+    objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
+
+    borderPlacer.placeBorders();
 }
 
 void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {

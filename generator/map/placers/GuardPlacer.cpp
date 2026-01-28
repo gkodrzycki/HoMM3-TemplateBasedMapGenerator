@@ -121,34 +121,31 @@ shared_ptr<Creature> GuardPlacer::createGuard(GuardType type, int3 position) {
 }
 
 void GuardPlacer::placeBorderGuards() {
-    ObjectVector objectVector = map.getObjectVector();
+    RoadVector roadVector = map.getRoadVector();
 
-    for (const auto &object : objectVector) {
-        if (auto road = dynamic_pointer_cast<Road>(object)) {
-            vector<int3> path   = road->getPath();
-            int3 currGuardPos   = path[0];
-            int mostBorderTiles = 0;
-
-            for (auto pos : path) {
-                int borderTileCount = 0;
-                for (auto dir : directions8) {
-                    int3 neighborPos = pos + dir;
-                    auto tilePtr     = map.getTile(neighborPos);
-                    if (tilePtr != nullptr && tilePtr->isTileType("B")) {
-                        borderTileCount++;
-                    }
-                }
-
-                if (borderTileCount > mostBorderTiles) {
-                    mostBorderTiles = borderTileCount;
-                    currGuardPos    = pos;
+    for (const auto &road : roadVector) {
+        vector<int3> path   = road->getPath();
+        int3 currGuardPos   = path[0];
+        int mostBorderTiles = 0;
+        for (auto pos : path) {
+            int borderTileCount = 0;
+            for (auto dir : directions8) {
+                int3 neighborPos = pos + dir;
+                auto tilePtr     = map.getTile(neighborPos);
+                if (tilePtr != nullptr && tilePtr->isTileType("B")) {
+                    borderTileCount++;
                 }
             }
 
-            auto guardPtr = createGuard(GuardType::BORDER, currGuardPos);
-            if (guardPtr != nullptr) {
-                map.addCreature(guardPtr);
+            if (borderTileCount > mostBorderTiles) {
+                mostBorderTiles = borderTileCount;
+                currGuardPos    = pos;
             }
+        }
+
+        auto guardPtr = createGuard(GuardType::BORDER, currGuardPos);
+        if (guardPtr != nullptr) {
+            map.addCreature(guardPtr);
         }
     }
 }

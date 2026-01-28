@@ -45,7 +45,7 @@ void BorderPlacer::expandBorderTiles(vector<int3> &borderTiles, int maxDepth) {
         bfs_collect_depth_xy(mapWidth, mapHeight, borderTiles, maxDepth, neighbors8, passable);
 }
 
-void BorderPlacer::placeBorders() {
+void BorderPlacer::reserveBorderTiles() {
     vector<int3> borderTiles = getBorderTiles();
 
     for (const int3 &pos : borderTiles) {
@@ -61,18 +61,26 @@ void BorderPlacer::placeBorders() {
             continue;
         map.getTile(pos)->setTileType(TileType::TILE_BORDER_OUTER);
     }
+}
 
-    for (const int3 &pos : borderTiles) {
+void BorderPlacer::placeBorders() {
 
-        if (map.getTile(pos)->isTileType("OTRr"))
-            continue;
+    int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
-        auto upperTile = map.getTile(pos + int3(0, -1, 0));
-        if (upperTile != nullptr && upperTile->isTileType("r"))
-            continue;
+    for (int x = 0; x < mapWidth; x++) {
+        for (int y = 0; y < mapHeight; y++) {
+            int3 currentPos(x, y, 0);
+            auto currentTilePtr = map.getTile(currentPos);
 
-        Obstacle obstacle("Pine Trees", pos, "Obstacle");
-        auto obstaclePtr = make_shared<Obstacle>(obstacle);
-        map.addObject(obstaclePtr);
+            auto upperTile = map.getTile(currentPos + int3(0, -1, 0));
+            if (upperTile != nullptr && upperTile->isTileType("r"))
+                continue;
+
+            if (currentTilePtr->isTileType("Bb")) {
+                Obstacle obstacle("Pine Trees", currentPos, "Obstacle");
+                auto obstaclePtr = make_shared<Obstacle>(obstacle);
+                map.addObject(obstaclePtr);
+            }
+        }
     }
 }
