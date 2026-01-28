@@ -3,6 +3,8 @@
 #include "../global/Global.hpp"
 #include "../global/Random.hpp"
 
+enum class ArtifactTier { LOW = 1, MID, HIGH };
+
 enum class ArtifactType {
 
     ARTIFACT_UNKNOWN = 0,
@@ -52,22 +54,22 @@ enum class ArtifactType {
     END_TIER_TAB,
 };
 
-inline ArtifactType getArtifactFromTier(int tier, RNG &rng) {
+inline ArtifactType getArtifactFromTier(ArtifactTier tier, RNG &rng) {
 
     int beginOfTier = static_cast<int>(ArtifactType::LOW_TIER_TAB);
     int endOfTier   = static_cast<int>(ArtifactType::MID_TIER_TAB);
 
     switch (tier) {
-    case 1:
+    case ArtifactTier::LOW:
         beginOfTier = static_cast<int>(ArtifactType::LOW_TIER_TAB);
         endOfTier   = static_cast<int>(ArtifactType::MID_TIER_TAB);
         break;
-    case 2:
+    case ArtifactTier::MID:
 
         beginOfTier = static_cast<int>(ArtifactType::MID_TIER_TAB);
         endOfTier   = static_cast<int>(ArtifactType::HIGH_TIER_TAB);
         break;
-    case 3:
+    case ArtifactTier::HIGH:
         beginOfTier = static_cast<int>(ArtifactType::HIGH_TIER_TAB);
         endOfTier   = static_cast<int>(ArtifactType::END_TIER_TAB);
         break;

@@ -107,7 +107,7 @@ void ObjectPlacer::placeTreasures() {
     int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
 
-    std::map<int, vector<pair<int3, shared_ptr<Tile>>>> tilesForZones; // better name?
+    std::map<int, vector<pair<int3, shared_ptr<Tile>>>> zoneTiles;
 
     for (int x = 0; x < mapWidth; x++) {
         for (int y = 0; y < mapHeight; y++) {
@@ -115,17 +115,17 @@ void ObjectPlacer::placeTreasures() {
             auto tile    = map.getTile(tilePos);
             int zoneID   = tile->getZoneID();
             if (tile->isTileType("F")) {
-                tilesForZones[zoneID].push_back({tilePos, tile});
+                zoneTiles[zoneID].push_back({tilePos, tile});
             }
         }
     }
 
-    for (auto [id, tiles] : tilesForZones) {
+    for (auto [id, tiles] : zoneTiles) {
         auto &rng = map.getRNG();
         int numberOfTreasures =
             rng.nextInt(3, 5); // TODO: change to some parameter specified in blueprint
-        int tierOfTreasures =
-            rng.nextInt(1, 3); // TODO: change to some parameter specified in blueprint
+
+        ArtifactTier tierOfTreasures = static_cast<ArtifactTier>(rng.nextInt(1, 3));
 
         for (int i = 0; i < numberOfTreasures; i++) {
             bool placed               = false;
