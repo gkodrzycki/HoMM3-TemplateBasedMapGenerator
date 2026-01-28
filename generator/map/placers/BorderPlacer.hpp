@@ -11,6 +11,8 @@ class BorderPlacer {
   public:
     BorderPlacer(Map &map);
 
+    void reserveBorderTiles();
+
     void placeBorders();
     void expandBorderTiles(vector<int3> &borderTiles, int maxDepth = 1);
     vector<int3> getBorderTiles();

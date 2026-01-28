@@ -138,15 +138,13 @@ void AddRoads(ofstream &luaFile, Map &map) {
     luaFile << "-- Dynamic terrain adjustments for linear paths between towns\n";
     luaFile << "instance:terrain(function (x, y, z)\n";
 
-    ObjectVector objectVector = map.getObjectVector();
+    RoadVector roadVector = map.getRoadVector();
 
-    for (const auto &object : objectVector) {
-        if (auto road = dynamic_pointer_cast<Road>(object)) {
-            int tier          = road->getRoadTier();
-            vector<int3> path = road->getPath();
-            for (auto pos : path) {
-                AddRoad(luaFile, tier, pos);
-            }
+    for (const auto &road : roadVector) {
+        int tier          = road->getRoadTier();
+        vector<int3> path = road->getPath();
+        for (auto pos : path) {
+            AddRoad(luaFile, tier, pos);
         }
     }
 
