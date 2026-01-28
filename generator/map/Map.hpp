@@ -21,7 +21,7 @@ using RegionMap      = map<int, shared_ptr<Region>>;
 using TileMap        = map<int, map<int, shared_ptr<Tile>>>;
 using ObjectVector   = vector<shared_ptr<Object>>;
 using CreatureVector = vector<shared_ptr<Creature>>;
-using ResourceVector = vector<shared_ptr<Resource>>;
+using TreasureVector = vector<shared_ptr<Treasure>>;
 
 class Map {
   public:
@@ -38,7 +38,7 @@ class Map {
     void addZone(shared_ptr<Zone> zone);
     void addObject(shared_ptr<Object> object);
     void addCreature(shared_ptr<Creature> creature);
-    void addResource(shared_ptr<Resource> resource);
+    void addTreasure(shared_ptr<Treasure> treasure);
     shared_ptr<Tile> getTile(int3 pos);
     LayoutInfo getLayoutInfo();
     RegionMap getRegionMap();
@@ -46,7 +46,7 @@ class Map {
     const TileMap &getTileMap();
     ObjectVector getObjectVector();
     CreatureVector getCreatureVector();
-    ResourceVector getResourceVector();
+    TreasureVector getTreasureVector();
     array<int, 4> &getBasicResourceCount();
     RNG &getRNG();
     int getWidth();
@@ -68,5 +68,5 @@ class Map {
     TileMap tileMap;
     ObjectVector objectVector;
     CreatureVector creatureVector;
-    ResourceVector resourceVector;
+    TreasureVector treasureVector;
 };

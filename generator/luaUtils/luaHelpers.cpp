@@ -223,13 +223,27 @@ void AddResource(ofstream &luaFile, shared_ptr<Resource> resource) {
             << ", z=" << resource->getPosition().z << "}, " << resource->getQuantity() << ")\n";
 }
 
-// @function    AddResources
-// @tparam      ofstream    luaFile         file where we save lua script.
-// @tparam      Map         map             object of map class with finished setup
-void AddResources(ofstream &luaFile, Map &map) {
-    ResourceVector resourceVector = map.getResourceVector();
-    for (auto resource : resourceVector) {
-        AddResource(luaFile, resource);
+// @function    AddArtifact
+// @tparam      ofstream                luaFile          file where we save lua script.
+// @tparam      shared_ptr<Artifact>    artifact         completed artifact object.
+void AddArtifact(ofstream &luaFile, shared_ptr<Artifact> artifact) {
+    luaFile << "instance:artifact(homm3lua."
+            << getEnumName<ArtifactType>(artifact->getArtifactType())
+            << ", {x=" << artifact->getPosition().x << ", y=" << artifact->getPosition().y
+            << ", z=" << artifact->getPosition().z << "})\n";
+}
+
+// @function    AddTreasures
+// @tparam      ofstream    luaFile     file where we save lua script.
+// @tparam      Map         map         object of map class with finished setup.
+void AddTreasures(ofstream &luaFile, Map &map) {
+    TreasureVector treasureVector = map.getTreasureVector();
+    for (auto treasure : treasureVector) {
+        if (auto artifact = dynamic_pointer_cast<Artifact>(treasure)) {
+            AddArtifact(luaFile, artifact);
+        } else if (auto resource = dynamic_pointer_cast<Resource>(treasure)) {
+            AddResource(luaFile, resource);
+        }
     }
 }
 
