@@ -1,6 +1,6 @@
 #include "./Tile.hpp"
 
-Tile::Tile() : tileType(TileType::TILE_FREE) {}
+Tile::Tile() : zoneID(0), terrain("swamp"), tileType(TileType::TILE_FREE) {}
 Tile::Tile(int zoneID, string terrain)
     : zoneID(zoneID), terrain(terrain), tileType(TileType::TILE_FREE) {}
 Tile::Tile(int zoneID, string terrain, TileType tileType)

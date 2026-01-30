@@ -67,7 +67,6 @@ void Map::generateMap() {
     initMap();
 
     RegionPlacer regionPlacer(*this);
-    regionPlacer.generateRegions();
     regionPlacer.placeRegions();
 
     TownPlacer townPlacer(*this);

@@ -333,9 +333,9 @@ inline vector<int3> astar_path_xy(int W, int H, const int3 &start, const int3 &g
  *
  */
 template <typename Node, typename NeighFn>
-inline std::unordered_map<Node, int> bfs_distances(const Node &start, NeighFn neighbors) {
-    std::unordered_map<Node, int> dist;
-    std::queue<Node> q;
+inline unordered_map<Node, int> bfs_distances(const Node &start, NeighFn neighbors) {
+    unordered_map<Node, int> dist;
+    queue<Node> q;
 
     dist[start] = 0;
     q.push(start);
