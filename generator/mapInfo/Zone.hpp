@@ -12,7 +12,7 @@ class Zone {
 
     void setCenter(int3 center);
     void setZoneID(int zoneID);
-    void setSize(string size);
+    void setSize(int size);
     void setTerrain(string terrain);
     void setFaction(Faction faction);
     void setOwner(string owner);
@@ -20,7 +20,7 @@ class Zone {
 
     int3 getCenter();
     int getZoneID();
-    string getSize();
+    int getSize();
     string getTerrain();
     Faction getFaction();
     string getOwner();
@@ -32,7 +32,7 @@ class Zone {
     int3 center;
 
     int zoneID;
-    string size;
+    int size;
     string terrain;
     Faction faction;
     string owner;

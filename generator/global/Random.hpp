@@ -27,4 +27,6 @@ class RNG {
     mt19937 gen;
 };
 
-template <typename T> void RNG::shuffle(vector<T> &vec) { shuffle(vec.begin(), vec.end(), gen); }
+template <typename T> void RNG::shuffle(vector<T> &vec) {
+    std::shuffle(vec.begin(), vec.end(), gen);
+}

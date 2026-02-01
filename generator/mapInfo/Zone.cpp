@@ -1,9 +1,20 @@
 #include "./Zone.hpp"
 
+int decodeZoneSize(string size) {
+
+    if (size == "S")
+        return 1;
+    if (size == "M")
+        return 2;
+    if (size == "L")
+        return 3;
+    return 0;
+}
+
 Zone::Zone(ZoneInfo zoneInfo) {
     this->setFaction(getEnumFromNameOrThrow<Faction>(zoneInfo.getFaction()));
     this->setOwner(zoneInfo.getOwner());
-    this->setSize(zoneInfo.getSize());
+    this->setSize(decodeZoneSize(zoneInfo.getSize()));
     this->setTerrain(zoneInfo.getTerrain());
     this->setType(zoneInfo.getType());
     this->setZoneID(zoneInfo.getID());
@@ -13,7 +24,7 @@ void Zone::setCenter(int3 center) { this->center = center; }
 
 void Zone::setZoneID(int zoneID) { this->zoneID = zoneID; }
 
-void Zone::setSize(string size) { this->size = size; }
+void Zone::setSize(int size) { this->size = size; }
 
 void Zone::setTerrain(string terrain) { this->terrain = terrain; }
 
@@ -27,7 +38,7 @@ int3 Zone::getCenter() { return center; }
 
 int Zone::getZoneID() { return zoneID; }
 
-string Zone::getSize() { return size; }
+int Zone::getSize() { return size; }
 
 string Zone::getTerrain() { return terrain; }
 

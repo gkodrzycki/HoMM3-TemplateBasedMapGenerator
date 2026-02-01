@@ -39,7 +39,7 @@ void ObjectPlacer::placeBasicMines() {
             anchorPoint.x -= 2;
 
             pair<int3, int3> BC;
-            int maxIter = 1000;
+            int maxIter = 10000;
             while (maxIter--) {
 
                 BC          = map.getRNG().getRandomTriangle(anchorPoint, 30);

@@ -25,6 +25,9 @@ void RoadPlacer::placeRoads() {
 vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
+    int fromZoneID = map.getTile(fromPos)->getZoneID();
+    int destZoneID = map.getTile(destPos)->getZoneID();
+
     vector<vector<bool>> blocked(mapWidth, vector<bool>(mapHeight, false));
 
     for (const auto &object : map.getObjectVector()) {
@@ -66,6 +69,15 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
             return false;
         if (tile->isTileType("T"))
             return false;
+        // TODO check if this is needed
+        // check if neighbour tiles belong to fromZoneID or destZoneID
+        for (const auto &dir : directions4) {
+            auto neighTile = map.getTile(p + dir);
+            if (!neighTile)
+                continue;
+            if (tile->getZoneID() != fromZoneID && tile->getZoneID() != destZoneID)
+                return false;
+        }
 
         return true;
     };
