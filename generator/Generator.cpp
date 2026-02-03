@@ -1,5 +1,6 @@
 #include "./luaUtils/luaHelpers.hpp"
 
+#include "./blueprintInfo/BlueprintInfo.hpp"
 #include "./global/Global.hpp"
 #include "./global/Random.hpp"
 #include "./layoutInfo/LayoutInfo.hpp"
@@ -12,8 +13,14 @@ LayoutInfo parseLayout(const json &layout) {
     return layoutInfo;
 }
 
-void generateLuaScript(Map map, string &saveLocation) {
+BlueprintInfo parseBlueprint(const json &blueprint) {
+    BlueprintInfo blueprintInfo;
+    blueprintInfo.deserialize(blueprint);
 
+    return blueprintInfo;
+}
+
+void generateLuaScript(Map map, string &saveLocation) {
     LayoutInfo layoutInfo = map.getLayoutInfo();
 
     ofstream luaFile("generated_script.lua");
@@ -75,20 +82,27 @@ void executeLuaScript(const string &script_name) {
     lua_close(L);
 }
 
-int main(int argc, char *argv[]) {
-    ifstream file("layout.json");
+json readFile(string filename) {
+    ifstream file(filename);
     if (!file.is_open()) {
-        cerr << "Failed to open layout.json file." << endl;
+        cerr << "Failed to open " << filename << " file." << endl;
         return 1;
     }
 
-    json layout;
+    json jsonFile;
     try {
-        file >> layout;
+        file >> jsonFile;
     } catch (const json::parse_error &e) {
         cerr << "JSON parsing error: " << e.what() << endl;
         return 1;
     }
+
+    return jsonFile;
+}
+
+int main(int argc, char *argv[]) {
+    json layout    = readFile("layout.json");
+    json blueprint = readFile("blueprint.json");
 
     RNG rng;
     string saveLocation = "";
@@ -107,7 +121,11 @@ int main(int argc, char *argv[]) {
     if (layoutInfo.getDebug() > 1)
         layoutInfo.printLayout();
 
-    Map map(rng, layoutInfo);
+    BlueprintInfo blueprintInfo = parseBlueprint(blueprint);
+    if (layoutInfo.getDebug() > 1)
+        blueprintInfo.printBlueprint();
+
+    Map map(rng, layoutInfo, blueprintInfo);
     map.generateMap();
     if (layoutInfo.getDebug() > 0) {
         cerr << "========== MAP ==========\n";

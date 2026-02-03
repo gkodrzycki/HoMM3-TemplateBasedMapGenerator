@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../blueprintInfo/BlueprintInfo.hpp"
 #include "../global/Global.hpp"
 #include "../global/Random.hpp"
 #include "../layoutInfo/LayoutInfo.hpp"
@@ -26,7 +27,7 @@ using TreasureVector = vector<shared_ptr<Treasure>>;
 
 class Map {
   public:
-    Map(RNG &rng, LayoutInfo layoutInfo);
+    Map(RNG &rng, LayoutInfo layoutInfo, BlueprintInfo blueprintInfo);
 
     void initMap();
     void initTiles();
@@ -43,6 +44,7 @@ class Map {
     void addTreasure(shared_ptr<Treasure> treasure);
     shared_ptr<Tile> getTile(int3 pos);
     LayoutInfo getLayoutInfo();
+    BlueprintInfo getBlueprintInfo();
     RegionMap getRegionMap();
     ZoneMap getZoneMap();
     const TileMap &getTileMap();
@@ -62,6 +64,7 @@ class Map {
   private:
     RNG &rng;
     LayoutInfo layoutInfo;
+    BlueprintInfo blueprintInfo;
 
     int width, height;
     array<int, 4> basicResourceCount = {0, 0, 0, 0};

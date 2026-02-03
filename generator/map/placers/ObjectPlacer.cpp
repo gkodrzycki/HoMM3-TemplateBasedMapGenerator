@@ -3,7 +3,6 @@
 ObjectPlacer::ObjectPlacer(Map &map) : map(map) {}
 
 void ObjectPlacer::placeArtifact(ArtifactType artifactType, int3 pos) {
-
     Artifact artifact(artifactType, pos, "Artifact");
     auto artifactPtr = make_shared<Artifact>(artifact);
     map.addTreasure(artifactPtr);
@@ -102,8 +101,77 @@ void ObjectPlacer::placeBasicMines() {
     }
 }
 
-void ObjectPlacer::placeTreasures() {
+int ObjectPlacer::getNumberOfTreasures(int zoneID) {
+    auto &rng = map.getRNG();
 
+    int numberOfTreasures;
+
+    BlueprintInfo blueprintInfo = map.getBlueprintInfo();
+    auto zoneMap                = map.getZoneMap();
+    auto it                     = zoneMap.find(zoneID);
+    if (it == zoneMap.end()) {
+        throw runtime_error("Zone not found: " + to_string(zoneID));
+    }
+
+    string type = it->second->getType();
+    try {
+        ZoneBlueprint zoneBlueprint = blueprintInfo.getTypeBlueprint(type);
+        switch (decodeRichnessLevel(zoneBlueprint.getRichness())) {
+        case RichnessLevel::LOW:
+            numberOfTreasures = rng.nextInt(3, 5);
+            break;
+        case RichnessLevel::MEDIUM:
+            numberOfTreasures = rng.nextInt(6, 9);
+            break;
+        case RichnessLevel::HIGH:
+            numberOfTreasures = rng.nextInt(10, 15);
+            break;
+        case RichnessLevel::UNKNOWN:
+        default:
+            break;
+        }
+    } catch (const out_of_range &e) {
+        throw runtime_error("Blueprint not found for zone type: " + type);
+    }
+
+    return numberOfTreasures;
+}
+
+ArtifactTier ObjectPlacer::getTierOfTreasures(int zoneID) {
+    int tier;
+
+    BlueprintInfo blueprintInfo = map.getBlueprintInfo();
+    auto zoneMap                = map.getZoneMap();
+    auto it                     = zoneMap.find(zoneID);
+    if (it == zoneMap.end()) {
+        throw runtime_error("Zone not found: " + to_string(zoneID));
+    }
+
+    string type = it->second->getType();
+    try {
+        ZoneBlueprint zoneBlueprint = blueprintInfo.getTypeBlueprint(type);
+        switch (decodeRichnessLevel(zoneBlueprint.getRichness())) {
+        case RichnessLevel::LOW:
+            tier = 1;
+            break;
+        case RichnessLevel::MEDIUM:
+            tier = 2;
+            break;
+        case RichnessLevel::HIGH:
+            tier = 3;
+            break;
+        case RichnessLevel::UNKNOWN:
+        default:
+            break;
+        }
+    } catch (const out_of_range &e) {
+        throw runtime_error("Blueprint not found for zone type: " + type);
+    }
+
+    return static_cast<ArtifactTier>(tier);
+}
+
+void ObjectPlacer::placeTreasures() {
     int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
 
@@ -121,11 +189,9 @@ void ObjectPlacer::placeTreasures() {
     }
 
     for (auto [id, tiles] : zoneTiles) {
-        auto &rng = map.getRNG();
-        int numberOfTreasures =
-            rng.nextInt(3, 5); // TODO: change to some parameter specified in blueprint
-
-        ArtifactTier tierOfTreasures = static_cast<ArtifactTier>(rng.nextInt(1, 3));
+        auto &rng                    = map.getRNG();
+        int numberOfTreasures        = getNumberOfTreasures(id);
+        ArtifactTier tierOfTreasures = getTierOfTreasures(id);
 
         for (int i = 0; i < numberOfTreasures; i++) {
             bool placed               = false;

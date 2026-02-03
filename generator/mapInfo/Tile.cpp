@@ -48,6 +48,7 @@ char tileTypeToChar(TileType tileType) {
         return '?';
     }
 }
+
 TileType charToTileType(char c) {
     switch (c) {
     case 'F':

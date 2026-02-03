@@ -5,7 +5,7 @@ LayoutInfo::LayoutInfo() {
     description = "";
     mapSize     = "M";
     difficulty  = "";
-    debug       = false;
+    debug       = 0;
 }
 
 int LayoutInfo::getDebug() { return debug; }
@@ -17,7 +17,6 @@ vector<RegionInfo> LayoutInfo::getRegionInfoList() { return regionInfoList; }
 vector<ConnectionInfo> LayoutInfo::getConnectionInfoList() { return connectionInfoList; }
 
 void LayoutInfo::deserialize(const json &layout) {
-
     int debug          = getOrDefault<int>(layout, "debug", 0);
     string name        = getOrError<string>(layout, "name");
     string description = getOrError<string>(layout, "description");

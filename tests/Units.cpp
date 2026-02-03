@@ -98,7 +98,7 @@ void executeLuaScript(const string &script_name) {
 
 int main(int argc, char *argv[]) {
     string saveLocation = "";
-    string crtraitsPath = "CRTRAITS.json";
+    string crtraitsPath = "stats/CRTRAITS.json";
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--location") == 0) {

@@ -33,7 +33,6 @@ void AddPlayer(ofstream &luaFile, string playerId) {
 // @tparam      shared_ptr<Town>        town        pointer to town.
 // @tparam      boolean                 is_main     tells if is main town.
 void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
-
     string nameOfObject = "TOWN_" + getEnumName<Faction>(town->getFaction());
     string ID           = town->getOwner();
     int X               = town->getPosition().x;

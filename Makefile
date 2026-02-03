@@ -26,14 +26,17 @@ UTILS_DIR = $(GENERATOR_DIR)/luaUtils
 MAP_INFO_DIR = $(GENERATOR_DIR)/mapInfo
 GLOBAL_DIR = $(GENERATOR_DIR)/global
 LAYOUT_INFO_DIR = $(GENERATOR_DIR)/layoutInfo
+BLUEPRINT_INFO_DIR = $(GENERATOR_DIR)/blueprintInfo
 MAP_DIR = $(GENERATOR_DIR)/map
 PLACERS_DIR = $(MAP_DIR)/placers
 
 COMMON_SOURCES = \
               $(LAYOUT_INFO_DIR)/LayoutInfo.cpp \
-              $(LAYOUT_INFO_DIR)/ZoneInfo.cpp \
+              $(LAYOUT_INFO_DIR)/ZoneLayout.cpp \
               $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
               $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
+              $(BLUEPRINT_INFO_DIR)/BlueprintInfo.cpp \
+              $(BLUEPRINT_INFO_DIR)/ZoneBlueprint.cpp \
               $(GLOBAL_DIR)/Random.cpp \
 			  $(PLACERS_DIR)/RegionPlacer.cpp \
 			  $(PLACERS_DIR)/ObjectPlacer.cpp \
@@ -63,10 +66,16 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp $(COMMON_SOURCES)
 UNITS_SOURCES = ./tests/Units.cpp $(COMMON_SOURCES)
 
 # Object files for Generator
-GEN_OBJECTS = $(GEN_SOURCES:.cpp=.o)
+## Place object files for sources under generator/ into `build/`
+OBJ_DIR := build
 
-# Object files for Units
+# Object files for Generator (map generator/*.cpp -> build/*.o)
+GEN_OBJECTS = $(GEN_SOURCES:.cpp=.o)
+GEN_OBJECTS := $(patsubst $(GENERATOR_DIR)/%.o,$(OBJ_DIR)/%.o,$(GEN_OBJECTS))
+
+# Object files for Units (keep test objects local, but move generator parts)
 UNITS_OBJECTS = $(UNITS_SOURCES:.cpp=.o)
+UNITS_OBJECTS := $(patsubst $(GENERATOR_DIR)/%.o,$(OBJ_DIR)/%.o,$(UNITS_OBJECTS))
 
 # Create necessary directories for object files
 OBJECT_DIRS = $(sort $(dir $(GEN_OBJECTS) $(UNITS_OBJECTS))) dist
@@ -97,6 +106,11 @@ dist/homm3lua.so: $(HOMM3_OBJ) | libs
 	$(CC) $^ $(STATICLIBS) $(CFLAGS) $(LDLIBS) -o $@
 
 # Compilation rules
+# Rule to compile generator sources into build/<path>.o
+$(OBJ_DIR)/%.o: $(GENERATOR_DIR)/%.cpp | $(OBJECT_DIRS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+# Fallback rule for other sources (tests etc.)
 %.o: %.cpp | $(OBJECT_DIRS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
@@ -113,12 +127,12 @@ doc/index.html: $(HOMM3_SRC)
 hard_clean:
 	$(MAKE) -C homm3tools/h3m/h3mtilespritegen/BUILD/gcc clean
 	$(MAKE) -C homm3tools/h3m/h3mlib/BUILD/gcc clean
-	rm -rf dist doc $(GEN_OBJECTS) $(UNITS_OBJECTS) Generator Units
+	rm -rf dist doc $(OBJ_DIR) Generator Units
 
 # (Soft) Clean
 .PHONY: clean
 clean:
-	rm -rf dist doc $(GEN_OBJECTS) $(UNITS_OBJECTS) Generator Units
+	rm -rf dist doc $(OBJ_DIR) Generator Units
 
 # Build and run Generator
 .PHONY: run

@@ -23,7 +23,7 @@ Najważniejsze elementy:
 
 - `layout.json` - wejściowy szablon mapy.
 - `generator/Generator.cpp` - entrypoint, CLI, uruchomienie pipeline’u oraz generacja/wykonanie Lua.
-- `generator/layoutInfo/*` - parser JSON → `LayoutInfo/RegionInfo/ZoneInfo/ConnectionInfo`.
+- `generator/layoutInfo/*` - parser JSON → `LayoutInfo/RegionInfo/ZoneLayout/ConnectionInfo`.
 - `generator/map/Map.*` - główna abstrakcja mapy (siatka `Tile`, obiekty, strefy, regiony).
 - `generator/map/placers/*` - moduły rozmieszczania elementów mapy.
 - `generator/mapInfo/*` - modele obiektów: `Town`, `Mine`, `Creature`, `Road`, `Treasure` (Artifact/Resource), `Obstacle`, `Tile`.
@@ -57,7 +57,7 @@ Najważniejsze elementy:
   - `dest_zone` (int)
 
 ### 3.2. Fallback wartości z regionu do strefy
-`ZoneInfo::deserializeZone` używa `getWithRegionFallback`, który:
+`ZoneLayout::deserializeZone` używa `getWithRegionFallback`, który:
 - bierze wartość z obiektu strefy jeśli jest,
 - w przeciwnym razie używa wartości domyślnej z regionu,
 - jeśli nie ma żadnej z nich - rzuca wyjątek.

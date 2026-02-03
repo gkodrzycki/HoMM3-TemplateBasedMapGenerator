@@ -1,0 +1,1010 @@
+[
+  {
+    "name": "Spell Book",
+    "cost": 0,
+    "spell_book": "x",
+    "class_s_t_n_j_r": "S",
+    "description": "{Spell Book}\n\nLeft-click on the spell book to view your spells."
+  },
+  {
+    "name": "Spell Scroll",
+    "cost": 2500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "S",
+    "description": "{Spell Scroll}\n\nThis scroll contains the [spell name] spell which is added into your spell book for as long as you carry the scroll."
+  },
+  {
+    "name": "The Grail",
+    "cost": 0,
+    "spell_book": "",
+    "class_s_t_n_j_r": "S",
+    "description": "{The Grail}\n\nCarry the Grail to the city of your choice and the populace there will build a fantastic structure which will provide a tremendous advantage to the city's owner."
+  },
+  {
+    "name": "Catapult",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "S",
+    "description": "{Catapult}\n\nUse this war machine to target your enemy's fortifications in combat."
+  },
+  {
+    "name": "Ballista",
+    "cost": 2500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "S",
+    "description": "{Ballista}\n\nUse this war machine to target your enemy's troops in combat."
+  },
+  {
+    "name": "Ammo Cart",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "S",
+    "description": "{Ammo Cart}\n\nThe Ammo Cart ensures that your missile troops will never run out of ammunition in combat."
+  },
+  {
+    "name": "First Aid Tent",
+    "cost": 750,
+    "spell_book": "",
+    "class_s_t_n_j_r": "S",
+    "description": "{First Aid Tent}\n\nThe First Aid Tent provides healing to your troops during each round of combat."
+  },
+  {
+    "name": "Centaurs Axe",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Centaur's Axe}\n\nThis right handed weapon increases your Attack skill by +2."
+  },
+  {
+    "name": "Blackshard of the Dead Knight",
+    "cost": 3000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Blackshard of the Dead Knight}\n\nThis right handed weapon increases your Attack skill by +3."
+  },
+  {
+    "name": "Greater Gnoll's Flail",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Greater Gnoll's Flail}\n\nThis right handed weapon increases your Attack skill by +4."
+  },
+  {
+    "name": "Ogre's Club of Havoc",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Ogre's Club of Havoc}\n\nThis right handed weapon increases your Attack skill by +5."
+  },
+  {
+    "name": "Sword of Hellfire",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Sword of Hellfire}\n\nThis right handed weapon increases your Attack skill by +6."
+  },
+  {
+    "name": "Titan's Gladius",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Titan's Gladius}\n\nHeld with the right hand, this massive relic increases your Attack skill by +12, but reduces your Defense skill by -3."
+  },
+  {
+    "name": "Shield of the Dwarven Lords",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Shield of the Dwarven Lords}\n\nThis left handed item increases your Defense skill by +2."
+  },
+  {
+    "name": "Shield of the Yawning Dead",
+    "cost": 3000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Shield of the Yawning Dead}\n\nThis left handed item increases your Defense skill by +3."
+  },
+  {
+    "name": "Buckler of the Gnoll King",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Buckler of the Gnoll King}\n\nThis left handed item increases your Defense skill by +4."
+  },
+  {
+    "name": "Targ of the Rampaging Ogre",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Targ of the Rampaging Ogre}\n\nThis left handed item increases your Defense skill by +5."
+  },
+  {
+    "name": "Shield of the Damned",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Shield of the Damned}\n\nThis left handed item increases your Defense skill by +6."
+  },
+  {
+    "name": "Sentinel's Shield",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Sentinel's Shield}\n\nHeld with the left hand, this relic increases your Defense skill by +12, but reduces your Attack skill by -3."
+  },
+  {
+    "name": "Helm of the Alabaster Unicorn",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Helm of the Alabaster Unicorn}\n\nWorn on the head, this item increases your Knowledge skill by +1."
+  },
+  {
+    "name": "Skull Helmet",
+    "cost": 3000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Skull Helmet}\n\nWorn on the head, this item increases your Knowledge skill by +2."
+  },
+  {
+    "name": "Helm of Chaos",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Helm of Chaos}\n\nWorn on the head, this item increases your Knowledge skill by +3."
+  },
+  {
+    "name": "Crown of the Supreme Magi",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Crown of the Supreme Magi}\n\nWorn on the head, this item increases your Knowledge skill by +4."
+  },
+  {
+    "name": "Hellstorm Helmet",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Hellstorm Helmet}\n\nWorn on the head, this item increases your Knowledge skill by +5."
+  },
+  {
+    "name": "Thunder Helmet",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Thunder Helmet}\n\nWhen worn, this relic increases your Knowledge skill by +10, but reduces your Power skill by -2."
+  },
+  {
+    "name": "Breastplate of Petrified Wood",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Breastplate of Petrified Wood}\n\nWorn on the torso, this item increases your Power skill by +1."
+  },
+  {
+    "name": "Rib Cage",
+    "cost": 3000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Rib Cage}\n\nWorn on the torso, this item increases your Power skill by +2."
+  },
+  {
+    "name": "Scales of the Greater Basilisk",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Scales of the Greater Basilisk}\n\nWorn on the torso, this item increases your Power skill by +3."
+  },
+  {
+    "name": "Tunic of the Cyclops King",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Tunic of the Cyclops King}\n\nWorn on the torso, this item increases your Power skill by +4."
+  },
+  {
+    "name": "Breastplate of Brimstone",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Breastplate of Brimstone}\n\nWorn on the torso, this item increases your Power skill by +5."
+  },
+  {
+    "name": "Titan's Cuirass",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Titan's Cuirass}\n\nWhen worn, this massive relic increases your Power skill by +10, but reduces your Knowledge skill by -2."
+  },
+  {
+    "name": "Armor of Wonder",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Armor of Wonder}\n\nWorn on the torso, the Armor of Wonder increases all four primary skills by +1."
+  },
+  {
+    "name": "Sandals of the Saint",
+    "cost": 8000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Sandals of the Saint}\n\nWorn on the feet, the Sandals of the Saint increase all four primary skills by +2."
+  },
+  {
+    "name": "Celestial Necklace of Bliss",
+    "cost": 12000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Celestial Necklace of Bliss}\n\nWorn about the neck, the Celestial Necklace of Bliss increases all four primary skills by +3."
+  },
+  {
+    "name": "Lion's Shield of Courage",
+    "cost": 16000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Lion's Shield of Courage}\n\nHeld with the left hand, the Lion's Shield of Courage increases all four primary skills by +4."
+  },
+  {
+    "name": "Sword of Judgement",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Sword of Judgement}\n\nHeld with the right hand, the Sword of Judgement increases all four primary skills by +5."
+  },
+  {
+    "name": "Helm of Heavenly Enlightenment",
+    "cost": 24000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Helm of Heavenly Enlightenment}\n\nWorn on the head, the Helm of Heavenly Enlightenment increases all four primary skills by +6."
+  },
+  {
+    "name": "Quiet Eye of the Dragon",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Quiet Eye of the Dragon}\n\nWorn on a finger, this item increases your Attack and Defense skills by +1."
+  },
+  {
+    "name": "Red Dragon Flame Tongue",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Red Dragon Flame Tongue}\n\nHeld with the right hand, this item increases your Attack and Defense skills by +2."
+  },
+  {
+    "name": "Dragon Scale Shield",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Dragon Scale Shield}\n\nHeld with the left hand, this item increases your Attack and Defense skills by +3."
+  },
+  {
+    "name": "Dragon Scale Armor",
+    "cost": 8000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Dragon Scale Armor}\n\nWorn on a torso, this item increases your Attack and Defense skills by +4."
+  },
+  {
+    "name": "Dragonbone Greaves",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Dragonbone Greaves}\n\nWorn on the feet, this item increases your Knowledge and Power skills by +1."
+  },
+  {
+    "name": "Dragon Wing Tabard",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Dragon Wing Tabard}\n\nWorn on the shoulders, this item increases your Knowledge and Power skills by +2."
+  },
+  {
+    "name": "Necklace of Dragonteeth",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Necklace of Dragonteeth}\n\nWorn about the neck, this item increases your Knowledge and Power skills by +3."
+  },
+  {
+    "name": "Crown of Dragontooth",
+    "cost": 8000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Crown of Dragontooth}\n\nWorn on the head, this item increases your Knowledge and Power skills by +4."
+  },
+  {
+    "name": "Still Eye of the Dragon",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Still Eye of the Dragon}\n\nWorn on the finger, this item increases your Luck and Morale by +1."
+  },
+  {
+    "name": "Clover of Fortune",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Clover of Fortune}\n\nThe Clover of Fortune increases your Luck by +1."
+  },
+  {
+    "name": "Cards of Prophecy",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Cards of Prophecy}\n\nThe Cards of Prophecy increase your Luck by +1."
+  },
+  {
+    "name": "Ladybird of Luck",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Ladybird of Luck}\n\nThe Ladybird of Luck increases your Luck by +1."
+  },
+  {
+    "name": "Badge of Courage",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Badge of Courage}\n\nThe Badge of Courage increases your Morale by +1."
+  },
+  {
+    "name": "Crest of Valor",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Crest of Valor}\n\nThe Crest of Valor increases your Morale by +1."
+  },
+  {
+    "name": "Glyph of Gallantry",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Glyph of Gallantry}\n\nThe Glyph of Gallantry increases your Morale by +1."
+  },
+  {
+    "name": "Speculum",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Speculum}\n\nThe Speculum increases your Scouting radius by +1."
+  },
+  {
+    "name": "Spyglass",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Spyglass}\n\nThe Spyglass increases your Scouting radius by +1."
+  },
+  {
+    "name": "Amulet of the Undertaker",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Amulet of the Undertaker}\n\nWorn about the neck, this amulet increases your Necromancy skill by 5%."
+  },
+  {
+    "name": "Vampire's Cowl",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Vampire's Cowl}\n\nWorn about the shoulders, this cowl increases your Necromancy skill by 10%."
+  },
+  {
+    "name": "Dead Man's Boots",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Dead Man's Boots}\n\nWorn on the feet, these boots increase your Necromancy skill by 15%."
+  },
+  {
+    "name": "Garniture of Interference",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Garniture of Interference}\n\nWorn about the neck, this item increases your Magic Resistance by 5%."
+  },
+  {
+    "name": "Surcoat of Counterpoise",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Surcoat of Counterpoise}\n\nWorn about the shoulders, this item increases your Magic Resistance by 10%."
+  },
+  {
+    "name": "Boots of Polarity",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Boots of Polarity}\n\nWorn on the feet, these boots increase your Magic Resistance by 15%."
+  },
+  {
+    "name": "Bow of Elven Cherrywood",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Bow of Elven Cherrywood}\n\nThis bow increases your Archery skill by 5%."
+  },
+  {
+    "name": "Bowstring of the Unicorn's Mane",
+    "cost": 4000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Bowstring of the Unicorn's Mane}\n\nThis bowstring increases your Archery skill by 10%."
+  },
+  {
+    "name": "Angel Feather Arrows",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Angel Feather Arrows}\n\nThese arrows increase your Archery skill by 15%."
+  },
+  {
+    "name": "Bird of Perception",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Bird of Perception}\n\nThis figurine increases your Eagle Eye skill by 5%."
+  },
+  {
+    "name": "Stoic Watchman",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Stoic Watchman}\n\nThis figurine increases your Eagle Eye skill by 10%."
+  },
+  {
+    "name": "Emblem of Cognizance",
+    "cost": 3000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Emblem of Cognizance}\n\nThis item increases your Eagle Eye skill by 15%."
+  },
+  {
+    "name": "Statesman's Medal",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Statesman's Medal}\n\nWorn about the neck, the Statesman's Medal reduces the cost of surrendering."
+  },
+  {
+    "name": "Diplomat's Ring",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Diplomat's Ring}\n\nWorn on the finger, the Diplomat's Ring reduces the cost of surrendering."
+  },
+  {
+    "name": "Ambassador's Sash",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Ambassador's Sash}\n\nWorn about the shoulders, the Ambassador's Sash reduces the cost of surrendering."
+  },
+  {
+    "name": "Ring of the Wayfarer",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Ring of the Wayfarer}\n\nWhen placed on the finger, this ring increases the combat speed of all your units by +1."
+  },
+  {
+    "name": "Equestrian's Gloves",
+    "cost": 3000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Equestrian's Gloves}\n\nWorn on the hands, these gloves increase your hero's movement rate over land."
+  },
+  {
+    "name": "Necklace of Ocean Guidance",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Necklace of Ocean Guidance}\n\nWorn about the neck, this necklace increases your hero's movement rate at sea."
+  },
+  {
+    "name": "Angel Wings",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Angel Wings}\n\nWorn about the shoulders, these wings allow you to fly."
+  },
+  {
+    "name": "Charm of Mana",
+    "cost": 500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Charm of Mana}\n\nThis charm helps you recover 1 extra spell point per day."
+  },
+  {
+    "name": "Talisman of Mana",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Talisman of Mana}\n\nThis talisman helps you recover 2 extra spell points per day."
+  },
+  {
+    "name": "Mystic Orb of Mana",
+    "cost": 1500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Mystic Orb of Mana}\n\nThis orb helps you recover 3 extra spell points per day."
+  },
+  {
+    "name": "Collar of Conjuring",
+    "cost": 500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Collar of Conjuring}\n\nWorn about the neck, this item increases the duration of all your spells by 1."
+  },
+  {
+    "name": "Ring of Conjuring",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Ring of Conjuring}\n\nWorn on a finger, this item increases the duration of all your spells by 2."
+  },
+  {
+    "name": "Cape of Conjuring",
+    "cost": 1500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Cape of Conjuring}\n\nWorn about the shoulders, this item increases the duration of all your spells by 3."
+  },
+  {
+    "name": "Orb of the Firmament",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Orb of the Firmament}\n\nThis powerful orb causes your Air spells to inflict an additional 50% damage."
+  },
+  {
+    "name": "Orb of Silt",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Orb of Silt}\n\nThis powerful orb causes your Earth spells to inflict an additional 50% damage."
+  },
+  {
+    "name": "Orb of Tempestuous Fire",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Orb of Tempestuous Fire}\n\nThis powerful orb causes your Fire spells to inflict an additional 50% damage."
+  },
+  {
+    "name": "Orb of Driving Rain",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Orb of Driving Rain}\n\nThis powerful orb causes your Water spells to inflict an additional 50% damage."
+  },
+  {
+    "name": "Recanter's Cloak",
+    "cost": 8000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Recanter's Cloak}\n\nWhile wearing this cloak, neither you nor your opponent will be able to cast level 3 or higher spells during combat."
+  },
+  {
+    "name": "Spirit of Oppression",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Spirit of Oppression}\n\nThis item negates all Morale bonuses during combat for both you and your opponent."
+  },
+  {
+    "name": "Hourglass of the Evil Hour",
+    "cost": 2000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Hourglass of the Evil Hour}\n\nThis item negates all Luck bonuses during combat for both you and your opponent."
+  },
+  {
+    "name": "Tome of Fire Magic",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Tome of Fire Magic}\n\nThis heavy book contains all spells in the school of Fire Magic.  It must be equipped for the spells to be available."
+  },
+  {
+    "name": "Tome of Air Magic",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Tome of Air Magic}\n\nThis heavy book contains all spells in the school of Air Magic.  It must be equipped for the spells to be available."
+  },
+  {
+    "name": "Tome of Water Magic",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Tome of Water Magic}\n\nThis heavy book contains all spells in the school of Water Magic.  It must be equipped for the spells to be available."
+  },
+  {
+    "name": "Tome of Earth Magic",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Tome of Earth Magic}\n\nThis heavy book contains all spells in the school of Earth Magic.  It must be equipped for the spells to be available."
+  },
+  {
+    "name": "Boots of Levitation",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Boots of Levitation}\n\nWhen worn, these boots allow you to walk across water."
+  },
+  {
+    "name": "Golden Bow",
+    "cost": 8000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Golden Bow}\n\nWhen wielded, the Golden Bow allows your troops to shoot through any obstacle or at any range without penalty."
+  },
+  {
+    "name": "Sphere of Permanence",
+    "cost": 7500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Sphere of Permanence}\n\nWielding this sphere renders your units immune to the Dispel Magic spell."
+  },
+  {
+    "name": "Orb of Vulnerability",
+    "cost": 25000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Orb of Vulnerability}\n\nDuring combat, this orb negates the natural magic resistance of all creatures on the battlefield."
+  },
+  {
+    "name": "Ring of Vitality",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Ring of Vitality}\n\nThis item increases the health of all your units by +1."
+  },
+  {
+    "name": "Ring of Life",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Ring of Life}\n\nThis item increases the health of all your units by +1."
+  },
+  {
+    "name": "Vial of Lifeblood",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Vial of Lifeblood}\n\nThis item increases the health of all your units by +2."
+  },
+  {
+    "name": "Necklace of Swiftness",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Necklace of Swiftness}\n\nWorn about the neck, this necklace increases the combat speed of all your units by +1."
+  },
+  {
+    "name": "Boots of Speed",
+    "cost": 6000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Boots of Speed}\n\nWorn on the feet, these boots increase your hero's movement rate over land."
+  },
+  {
+    "name": "Cape of Velocity",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Cape of Velocity}\n\nWorn about the shoulders, this cape increases the combat speed of all your units by +2."
+  },
+  {
+    "name": "Pendant of Dispassion",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Pendant of Dispassion}\n\nWearing this item renders your units immune to the Berserk spell."
+  },
+  {
+    "name": "Pendant of Second Sight",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Pendant of Second Sight}\n\nWearing this item renders your units immune to the Blind spell."
+  },
+  {
+    "name": "Pendant of Holiness",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Pendant of Holiness}\n\nWearing this item renders your units immune to the Curse spell."
+  },
+  {
+    "name": "Pendant of Life",
+    "cost": 2500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Pendant of Life}\n\nWearing this item renders your units immune to the Death Ripple spell."
+  },
+  {
+    "name": "Pendant of Death",
+    "cost": 2500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Pendant of Death}\n\nWearing this item renders your units immune to the Destroy Undead spell."
+  },
+  {
+    "name": "Pendant of Free Will",
+    "cost": 1000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Pendant of Free Will}\n\nWearing this item renders your units immune to the Hypnotize spell."
+  },
+  {
+    "name": "Pendant of Negativity",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Pendant of Negativity}\n\nWearing this item renders your units immune to the Lightning Bolt and Chain Lightning spells."
+  },
+  {
+    "name": "Pendant of Total Recall",
+    "cost": 3000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Pendant of Total Recall}\n\nWearing this item renders your units immune to the Forgetfulness spell."
+  },
+  {
+    "name": "Pendant of Courage",
+    "cost": 7000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Pendant of Courage}\n\nWhen worn, this item bestows +3 Luck and Morale to your hero's troops."
+  },
+  {
+    "name": "Everflowing Crystal Cloak",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Everflowing Crystal Cloak}\n\nWhen worn, this cloak increases your Crystal production by +1 per day."
+  },
+  {
+    "name": "Ring of Infinite Gems",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Ring of Infinite Gems}\n\nWhen worn, this ring increases your Gem production by +1 per day."
+  },
+  {
+    "name": "Everpouring Vial of Mercury",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Everpouring Vial of Mercury}\n\nWhen equipped, this vial increases your Mercury production by +1 per day."
+  },
+  {
+    "name": "Inexhaustible Cart of Ore",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Inexhaustible Cart of Ore}\n\nWhen equipped, this cart provides you with an additional +1 Ore per day."
+  },
+  {
+    "name": "Eversmoking Ring of Sulfur",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Eversmoking Ring of Sulfur}\n\nWhen worn, this ring increases your Sulfur production by +1 per day."
+  },
+  {
+    "name": "Inexhaustible Cart of Lumber",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Inexhaustible Cart of Lumber}\n\nWhen equipped, this cart provides you with an additional +1 Wood per day."
+  },
+  {
+    "name": "Endless Sack of Gold",
+    "cost": 10000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Endless Sack of Gold}\n\nWhen equipped, the Endless Sack of Gold increases your income by 1000 gold per day."
+  },
+  {
+    "name": "Endless Bag of Gold",
+    "cost": 7500,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Endless Bag of Gold}\n\nWhen equipped, the Endless Bag of Gold increases your income by 750 gold per day."
+  },
+  {
+    "name": "Endless Purse of Gold",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Endless Purse of Gold}\n\nWhen equipped, the Endless Purse of Gold increases your income by 500 gold per day."
+  },
+  {
+    "name": "Legs of Legion",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "T",
+    "description": "{Legs of Legion}\n\nThis item, when equipped by a hero in a town, increases the growth of your 2nd level units (in that town) by 5 per week."
+  },
+  {
+    "name": "Loins of Legion",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Loins of Legion}\n\nThis item, when equipped by a hero in a town, increases the growth of your 3rd level units (in that town) by 4 per week."
+  },
+  {
+    "name": "Torso of Legion",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "N",
+    "description": "{Torso of Legion}\n\nThis item, when equipped by a hero in a town, increases the growth of your 4th level units (in that town) by 3 per week."
+  },
+  {
+    "name": "Arms of Legion",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Arms of Legion}\n\nThis item, when equipped by a hero in a town, increases the growth of your 5th level units (in that town) by 2 per week."
+  },
+  {
+    "name": "Head of Legion",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Head of Legion}\n\nThis item, when equipped by a hero in a town, increases the growth of your 6th level units (in that town) by 1 per week."
+  },
+  {
+    "name": "Sea Captain's Hat",
+    "cost": 15000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Sea Captain's Hat}\n\nWhen worn, this hat increases your movement at sea, allows you to summon and destroy boats, and protects you from whirlpools."
+  },
+  {
+    "name": "Spellbinder's Hat",
+    "cost": 30000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Spellbinder's Hat}\n\nWhen worn, this hat allows you to cast all 5th level spells."
+  },
+  {
+    "name": "Shackles of War",
+    "cost": 5000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "J",
+    "description": "{Shackles of War}\n\nWhen these shackles are wielded in combat, neither you nor your opponent may retreat or surrender."
+  },
+  {
+    "name": "Orb of Inhibition",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Orb of Inhibition}\n\nThis powerful orb prevents all spell casting in combat."
+  },
+  {
+    "name": "Vial of Dragon Blood",
+    "cost": 20000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Vial of Dragon Blood}\n\nAll dragons under your command receive +5 to their attack and +5 to defense."
+  },
+  {
+    "name": "Armageddon's Blade",
+    "cost": 50000,
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Armageddon's Blade}\n\n+ 3 Attack. + 3 Defense. + 6 Knowledge. + 3 Power. Places Expert Armageddon Spell in your hero's spell book. All allied creatures become immune to Armageddon."
+  },
+  {
+    "name": "Angelic Alliance",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Angelic Alliance}\n\nAllows Rampart, Tower, Fortress, Stronghold and Castle creatures to be mixed without a morale penalty, for the player.  Casts Expert Prayer at the start of combat."
+  },
+  {
+    "name": "Cloak of the Undead King",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Cloak of the Undead King}\n\n30% of battlefield dead are resurrected as Skeletons.  If hero already has the Necromancy skill then the percentages are added to the skill and the level of skill determines what type is resurrected.  Basic: Zombies\nAdvanced: Wights\nExpert:  Liches"
+  },
+  {
+    "name": "Elixir of Life",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Elixir of Life}\n\nAll creatures get a 25% health bonus and gain the regeneration ability.  Does not work on Undead or unliving creatures"
+  },
+  {
+    "name": "Armor of the Damned",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Armor of the Damned}\n\nAll opponents have these spells effective on them for fifty turns: Slow, Curse, Weakness, and Misfortune."
+  },
+  {
+    "name": "Statue of Legion",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Statue of Legion}\n\nAll creature production increases by 50%, in all towns based off of the castle creature generation level, does not include flagged structures or other like bonuses."
+  },
+  {
+    "name": "Power of the Dragon Father",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Power of the Dragon Father}\n\n+6 to all primary skills, all troops are immune to 1-4th level spells."
+  },
+  {
+    "name": "Titan's Thunder",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Titan's Thunder}\n\nHero gains the ability to cast Lightning Bolt for 600 points of damage, does not cost any spell points, adds a spell book into their inventory (permanently)."
+  },
+  {
+    "name": "Admiral's Hat",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Admiral's Hat}\n\nNo boarding or unboarding ship penalty.  Converts movement points between the Hero's Land and Water movement."
+  },
+  {
+    "name": "Bow of the Sharpshooter",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Bow of the Sharpshooter}\n\nRanged shooters may fire projectiles while adjacent to an enemy creature.  No archery penalty for range or obstacle"
+  },
+  {
+    "name": "Wizard's Well",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Wizard's Well}\n\nRegenerates all spell points each day"
+  },
+  {
+    "name": "Ring of the Magi",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Ring of the Magi}\n\nAdd 50 rounds to spell duration."
+  },
+  {
+    "name": "Cornucopia",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Cornucopia}\n\nGenerates 4 of each precious resource, each day."
+  },
+  {
+    "name": "Diplomat's Suit",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Diplomat's Suit}\n\nThis is a kick-ass artifact."
+  },
+  {
+    "name": "Mired in Neutrality",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Mired in Neutrality}\n\nThis is a kick-ass artifact."
+  },
+  {
+    "name": "Ironfist of the Ogre",
+    "cost": "",
+    "spell_book": "",
+    "class_s_t_n_j_r": "R",
+    "description": "{Ironfist of the Ogre}\n\nThis is a kick-ass artifact."
+  }
+]

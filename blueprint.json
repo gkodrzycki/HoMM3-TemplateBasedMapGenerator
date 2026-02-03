@@ -1,0 +1,12 @@
+{
+  "zones": [
+    {
+      "type": "starting_zone",
+      "richness": "low"
+    },
+    {
+      "type": "support_zone",
+      "richness": "high"
+    }
+  ]
+}

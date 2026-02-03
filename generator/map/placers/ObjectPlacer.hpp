@@ -6,6 +6,7 @@
 #include "../../mapInfo/Mine.hpp"
 #include "../../mapInfo/Obstacle.hpp"
 #include "../../mapInfo/Resource.hpp"
+#include "../../mapInfo/RichnessLevel.hpp"
 #include "../Map.hpp"
 
 class Map;
@@ -23,4 +24,6 @@ class ObjectPlacer {
     void placeCreature(CreatureType creatureType, int3 pos, int quantity);
     void placeResource(ResourceType resourceType, int3 pos, int quantity);
     void placeArtifact(ArtifactType artifactType, int3 pos);
+    int getNumberOfTreasures(int zoneID);
+    ArtifactTier getTierOfTreasures(int zoneID);
 };

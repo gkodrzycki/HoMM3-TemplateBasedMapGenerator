@@ -10,9 +10,9 @@ struct RegionDefaults {
     string type    = "";
 };
 
-class ZoneInfo {
+class ZoneLayout {
   public:
-    ZoneInfo();
+    ZoneLayout();
 
     int getID();
     string getSize();

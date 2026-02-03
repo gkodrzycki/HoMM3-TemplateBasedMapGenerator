@@ -3,13 +3,12 @@
 RegionPlacer::RegionPlacer(Map &map) : map(map) {}
 
 void RegionPlacer::initRegions() {
-
     LayoutInfo layout = map.getLayoutInfo();
 
     for (auto regionInfo : layout.getRegionInfoList()) {
         Region region(regionInfo);
-        for (auto zoneInfo : regionInfo.getZoneInfoList()) {
-            Zone zone(zoneInfo);
+        for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
+            Zone zone(zoneLayout);
             auto zonePtr = make_shared<Zone>(zone);
             region.addZone(zonePtr);
             map.addZone(zonePtr);
@@ -25,8 +24,8 @@ int RegionPlacer::calculateTotalSize() {
     int sumOfSizes = 0;
     for (auto regionInfo : layout.getRegionInfoList()) {
         Region region(regionInfo);
-        for (auto zoneInfo : regionInfo.getZoneInfoList()) {
-            Zone zone(zoneInfo);
+        for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
+            Zone zone(zoneLayout);
             sumOfSizes += zone.getSize();
         }
     }
@@ -34,7 +33,6 @@ int RegionPlacer::calculateTotalSize() {
 }
 
 void RegionPlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
-
     vector<int3> zoneTiles;
     for (int x = 0; x < gridN; x++) {
         for (int y = 0; y < gridN; y++) {
@@ -176,7 +174,6 @@ void RegionPlacer::placeAbstractGridOnRealMap() {
 }
 
 void RegionPlacer::generateRegions() {
-
     int numberOfIterations = 100;
     while (numberOfIterations--) {
         generateAbstractGrid();
@@ -209,8 +206,8 @@ void RegionPlacer::calculateDistances() {
 
     for (auto regionInfo : layout.getRegionInfoList()) {
         Region region(regionInfo);
-        for (auto zoneInfo : regionInfo.getZoneInfoList()) {
-            Zone zone(zoneInfo);
+        for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
+            Zone zone(zoneLayout);
 
             int zoneID                    = zone.getZoneID();
             distancedBetweenZones[zoneID] = bfs_distances<int>(zoneID, zoneNeighbors);
@@ -297,7 +294,6 @@ void RegionPlacer::calculateZoneCenters() {
 }
 
 void RegionPlacer::placeRegions() {
-
     initRegions();
     calculateDistances();
 

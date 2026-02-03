@@ -6,7 +6,6 @@
 enum class ArtifactTier { LOW = 1, MID, HIGH };
 
 enum class ArtifactType {
-
     ARTIFACT_UNKNOWN = 0,
 
     LOW_TIER_TAB,
@@ -55,7 +54,6 @@ enum class ArtifactType {
 };
 
 inline ArtifactType getArtifactFromTier(ArtifactTier tier, RNG &rng) {
-
     int beginOfTier = static_cast<int>(ArtifactType::LOW_TIER_TAB);
     int endOfTier   = static_cast<int>(ArtifactType::MID_TIER_TAB);
 
