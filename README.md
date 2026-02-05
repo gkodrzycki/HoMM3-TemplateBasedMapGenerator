@@ -55,7 +55,7 @@ Reusing the same placement procedure revealed a shortcoming: the algorithm ignor
 
 ### Final approach
 We retain the abstract $N \times N$ grid but treat zones as weighted chunks (S = 1, M = 2, L = 3). We require
-$$ N^2 \geq \sum_{z\in zones} size(z) $$
+$N^2 \geq \sum_{z\in zones} size(z)$
 so the grid can accommodate all zone area weights. Placement proceeds by seeding the first chunk greedily, then growing each chunk by claiming neighboring abstract cells probabilistically based on distance and remaining size until the target size is reached. After mapping the abstract grid onto the physical map we claim tiles immediately; any unclaimed tiles are assigned to the nearest zone center. Center of zone is tile with the smallest sum of distances to other tiles within zone.
 
 This weighted-chunk approach produces better-shaped zones and gives explicit control over relative zone sizes.
