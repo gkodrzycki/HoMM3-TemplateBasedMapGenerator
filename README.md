@@ -152,10 +152,15 @@ pre-commit run --all-files
 
 ### Future work (short list)
 - Extend usage of layout and blueprint
-- Preparing architecture for mutation
-- Obstacle generation (noise, cellular automata)
 - Better treasure/mine  placement
+- Obstacle generation (noise, cellular automata)
+- Preparing architecture for mutation
 - Natural look of biomes
+
+### Next meeting
+- Fix collision detection (for mines)
+- Implement factionMine and randomMine handling
+- Place resources next to all mines function
 
 # Any number of appendices containing more useful information / images / results
 ## Example simple map

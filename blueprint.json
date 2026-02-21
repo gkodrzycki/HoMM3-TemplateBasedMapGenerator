@@ -2,7 +2,11 @@
   "zones": [
     {
       "type": "starting_zone",
-      "richness": "low"
+      "richness": "low",
+      "mines": {
+        "factionMine": 1,
+        "randomMine": 1
+      }
     },
     {
       "type": "support_zone",
