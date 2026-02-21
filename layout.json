@@ -14,7 +14,7 @@
           "id": 1,
           "terrain": "grass",
           "faction": "Stronghold",
-          "owner_id": "1",
+          "ownerId": "1",
           "type": "starting_zone",
           "size": "L"
         },
@@ -22,7 +22,7 @@
           "id": 2,
           "terrain": "sand",
           "faction": "Stronghold",
-          "owner_id": "0",
+          "ownerId": "0",
           "type": "support_zone"
         }
       ]
@@ -36,7 +36,7 @@
           "id": 4,
           "terrain": "lava",
           "faction": "Rampart",
-          "owner_id": "2",
+          "ownerId": "2",
           "type": "starting_zone",
           "size": "L"
         },
@@ -44,7 +44,7 @@
           "id": 3,
           "terrain": "snow",
           "faction": "Rampart",
-          "owner_id": "0",
+          "ownerId": "0",
           "type": "support_zone"
         }
       ]
@@ -52,16 +52,16 @@
   ],
   "connections": [
     {
-      "from_zone": 1,
-      "dest_zone": 2
+      "fromZone": 1,
+      "destZone": 2
     },
     {
-      "from_zone": 3,
-      "dest_zone": 4
+      "fromZone": 3,
+      "destZone": 4
     },
     {
-      "from_zone": 1,
-      "dest_zone": 3
+      "fromZone": 1,
+      "destZone": 3
     }
   ]
 }

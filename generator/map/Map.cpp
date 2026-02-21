@@ -82,6 +82,7 @@ void Map::generateMap() {
 
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeBasicMines();
+    objectPlacer.placeMines();
     objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);

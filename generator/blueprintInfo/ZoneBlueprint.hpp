@@ -8,6 +8,8 @@ class ZoneBlueprint {
 
     string getType();
     string getRichness();
+    bool getPlaceBasicMines();
+    map<string, int> &getMines();
 
     void deserializeZoneBlueprint(const json &zone);
     void printZoneBlueprint();
@@ -15,4 +17,7 @@ class ZoneBlueprint {
   private:
     string type;
     string richness;
+
+    bool placeBasicMines;
+    map<string, int> mines;
 };

@@ -28,7 +28,7 @@ void ZoneLayout::deserializeZone(const json &zone, const RegionDefaults &default
     string size    = getWithRegionFallback(zone, "size", defaults.size);
     string terrain = getWithRegionFallback(zone, "terrain", defaults.terrain);
     string faction = getWithRegionFallback(zone, "faction", defaults.faction);
-    string owner   = getWithRegionFallback(zone, "owner_id", defaults.owner);
+    string owner   = getWithRegionFallback(zone, "ownerId", defaults.owner);
     string type    = getWithRegionFallback(zone, "type", defaults.type);
 
     this->id      = id;

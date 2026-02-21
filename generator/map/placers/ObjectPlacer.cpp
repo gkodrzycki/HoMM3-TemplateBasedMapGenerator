@@ -34,6 +34,13 @@ void ObjectPlacer::placeBasicMines() {
 
     for (const auto &object : objectVector) {
         if (auto town = dynamic_pointer_cast<Town>(object)) {
+            auto townZoneID = map.getTile(town->getPosition())->getZoneID();
+            auto zoneMap    = map.getZoneMap();
+            auto zoneType   = zoneMap[townZoneID]->getType();
+            if (!map.getBlueprintInfo().getTypeBlueprint(zoneType).getPlaceBasicMines()) {
+                continue;
+            }
+
             int3 anchorPoint = object->getPosition();
             anchorPoint.x -= 2;
 
@@ -97,6 +104,56 @@ void ObjectPlacer::placeBasicMines() {
             map.getTile(C + left)->setTileType(TileType::TILE_OCCUPIED);
             placeResource(ResourceType::RESOURCE_ORE, C + right, basicResourceCount[3]);
             map.getTile(C + right)->setTileType(TileType::TILE_OCCUPIED);
+        }
+    }
+}
+
+void ObjectPlacer::placeMines() {
+    int mapWidth  = map.getWidth();
+    int mapHeight = map.getHeight();
+    auto &rng     = map.getRNG();
+
+    std::map<int, vector<pair<int3, shared_ptr<Tile>>>> zoneTiles;
+
+    for (int x = 0; x < mapWidth; x++) {
+        for (int y = 0; y < mapHeight; y++) {
+            int3 tilePos = int3(x, y, 0);
+            auto tile    = map.getTile(tilePos);
+            int zoneID   = tile->getZoneID();
+            if (tile->isTileType("F")) {
+                zoneTiles[zoneID].push_back({tilePos, tile});
+            }
+        }
+    }
+
+    auto zoneMap = map.getZoneMap();
+    for (const auto &[zoneID, zone] : zoneMap) {
+        string zoneType = zone->getType();
+
+        ZoneBlueprint zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
+        auto mines                  = zoneBlueprint.getMines();
+        for (const auto &[mineTypeStr, count] : mines) {
+            MineType mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
+            for (int i = 0; i < count; i++) {
+                bool placed               = false;
+                int maxNumberOfIterations = 100;
+                while (!placed && maxNumberOfIterations-- >= 0) {
+                    auto [tilePos, tile] =
+                        zoneTiles[zoneID][rng.nextInt(0, zoneTiles[zoneID].size() - 1)];
+
+                    if (map.checkPlacementConflict(tilePos, getMineSize(mineType)), "BbOTRr") {
+                        continue;
+                    }
+
+                    Mine mine(mineType, -1, tilePos, "Mine");
+                    auto minePtr = make_shared<Mine>(mine);
+                    map.addObject(minePtr);
+                    map.fixNeighbourTiles(tilePos, getMineSize(mineType), zoneID);
+                    placed = true;
+                }
+                if (maxNumberOfIterations <= 0)
+                    throw runtime_error("Failed to place mine after maximum iterations");
+            }
         }
     }
 }
@@ -174,6 +231,7 @@ ArtifactTier ObjectPlacer::getTierOfTreasures(int zoneID) {
 void ObjectPlacer::placeTreasures() {
     int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
+    auto &rng     = map.getRNG();
 
     std::map<int, vector<pair<int3, shared_ptr<Tile>>>> zoneTiles;
 
@@ -189,7 +247,6 @@ void ObjectPlacer::placeTreasures() {
     }
 
     for (auto [id, tiles] : zoneTiles) {
-        auto &rng                    = map.getRNG();
         int numberOfTreasures        = getNumberOfTreasures(id);
         ArtifactTier tierOfTreasures = getTierOfTreasures(id);
 

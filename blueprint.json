@@ -6,7 +6,11 @@
     },
     {
       "type": "support_zone",
-      "richness": "high"
+      "richness": "high",
+      "mines": {
+        "gold mine": 2,
+        "gem pond": 1
+      }
     }
   ]
 }

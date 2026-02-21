@@ -17,7 +17,7 @@ void RegionInfo::deserializeRegion(const json &region) {
     defaults.size    = getOrDefault<string>(region, "size", "");
     defaults.terrain = getOrDefault<string>(region, "terrain", "");
     defaults.faction = getOrDefault<string>(region, "faction", "");
-    defaults.owner   = getOrDefault<string>(region, "owner_id", "None");
+    defaults.owner   = getOrDefault<string>(region, "ownerId", "None");
     defaults.type    = getOrDefault<string>(region, "type", "");
 
     const auto &zoneList = getOrError<json>(region, "zones");
