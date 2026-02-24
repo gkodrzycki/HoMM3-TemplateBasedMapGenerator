@@ -5,7 +5,7 @@ ZoneBlueprint::ZoneBlueprint() : type("support_zone"), richness("high") {}
 string ZoneBlueprint::getType() { return type; }
 string ZoneBlueprint::getRichness() { return richness; }
 bool ZoneBlueprint::getPlaceBasicMines() { return placeBasicMines; }
-map<string, int> &ZoneBlueprint::getMines() { return mines; }
+map<MineTypeInfo, int> &ZoneBlueprint::getMines() { return mines; }
 
 void ZoneBlueprint::deserializeZoneBlueprint(const json &zone) {
     string type          = getOrError<string>(zone, "type");
@@ -15,9 +15,9 @@ void ZoneBlueprint::deserializeZoneBlueprint(const json &zone) {
     const auto &mineList = getOrDefault<json>(zone, "mines", json::object());
 
     for (const auto &mine : mineList.items()) {
-        string mineType       = mine.key();
-        int count             = mine.value().get<int>();
-        this->mines[mineType] = count;
+        MineTypeInfo mineTypeInfo = getEnumFromNameOrThrow<MineTypeInfo>(mine.key());
+        int count                 = mine.value().get<int>();
+        this->mines[mineTypeInfo] = count;
     }
 
     this->type            = type;
@@ -31,6 +31,6 @@ void ZoneBlueprint::printZoneBlueprint() {
     cerr << "      Blueprint Zone placeBasicMines: " << placeBasicMines << "\n";
     cerr << "      Blueprint Zone mines:\n";
     for (const auto &mine : mines) {
-        cerr << "        " << mine.first << ": " << mine.second << "\n";
+        cerr << "        " << getEnumName<MineTypeInfo>(mine.first) << ": " << mine.second << "\n";
     }
 }

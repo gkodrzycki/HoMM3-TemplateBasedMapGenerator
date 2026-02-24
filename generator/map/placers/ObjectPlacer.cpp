@@ -132,18 +132,21 @@ void ObjectPlacer::placeMines() {
 
         ZoneBlueprint zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
         auto mines                  = zoneBlueprint.getMines();
-        for (const auto &[mineTypeStr, count] : mines) {
+        for (const auto &[mineTypeInfo, count] : mines) {
+            string mineTypeStr = getMineType(mineTypeInfo, rng, zone->getFaction());
+            cerr << "Placing " << count << " mines of type " << mineTypeStr << " in zone " << zoneID
+                 << endl;
             MineType mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
             for (int i = 0; i < count; i++) {
                 bool placed               = false;
-                int maxNumberOfIterations = 100;
+                int maxNumberOfIterations = 10000;
                 while (!placed && maxNumberOfIterations-- >= 0) {
                     auto [tilePos, tile] =
                         zoneTiles[zoneID][rng.nextInt(0, zoneTiles[zoneID].size() - 1)];
 
-                    if (map.checkPlacementConflict(tilePos, getMineSize(mineType)), "BbOTRr") {
-                        continue;
-                    }
+                    // if (map.checkPlacementConflict(tilePos, getMineSize(mineType)), "BbOTRr") {
+                    //     continue;
+                    // }
 
                     Mine mine(mineType, -1, tilePos, "Mine");
                     auto minePtr = make_shared<Mine>(mine);

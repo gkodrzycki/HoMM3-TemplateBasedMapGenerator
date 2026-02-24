@@ -4,15 +4,15 @@
       "type": "starting_zone",
       "richness": "low",
       "mines": {
-        "factionMine": 1,
-        "randomMine": 1
+        "faction mine": 1,
+        "random mine": 1
       }
     },
     {
       "type": "support_zone",
       "richness": "high",
       "mines": {
-        "gold mine": 2,
+        "gold mine": 1,
         "gem pond": 1
       }
     }

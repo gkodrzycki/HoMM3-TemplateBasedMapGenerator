@@ -158,8 +158,8 @@ pre-commit run --all-files
 - Natural look of biomes
 
 ### Next meeting
+- ~~Implement factionMine and randomMine handling~~
 - Fix collision detection (for mines)
-- Implement factionMine and randomMine handling
 - Place resources next to all mines function
 
 # Any number of appendices containing more useful information / images / results

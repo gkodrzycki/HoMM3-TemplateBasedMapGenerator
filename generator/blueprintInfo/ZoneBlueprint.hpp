@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global/Global.hpp"
+#include "../mapInfo/MineTypeInfo.hpp"
 
 class ZoneBlueprint {
   public:
@@ -9,7 +10,7 @@ class ZoneBlueprint {
     string getType();
     string getRichness();
     bool getPlaceBasicMines();
-    map<string, int> &getMines();
+    map<MineTypeInfo, int> &getMines();
 
     void deserializeZoneBlueprint(const json &zone);
     void printZoneBlueprint();
@@ -19,5 +20,5 @@ class ZoneBlueprint {
     string richness;
 
     bool placeBasicMines;
-    map<string, int> mines;
+    map<MineTypeInfo, int> mines;
 };
