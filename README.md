@@ -159,8 +159,8 @@ pre-commit run --all-files
 
 ### Next meeting
 - ~~Implement factionMine and randomMine handling~~
-- Fix collision detection (for mines)
-- Place resources next to all mines function
+- ~~Fix collision detection (for mines)~~
+- ~~Place resources next to all mines function~~
 
 # Any number of appendices containing more useful information / images / results
 ## Example simple map

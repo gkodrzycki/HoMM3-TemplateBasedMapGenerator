@@ -83,6 +83,7 @@ void Map::generateMap() {
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeBasicMines();
     objectPlacer.placeMines();
+    objectPlacer.placeMineResources();
     objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
@@ -115,16 +116,25 @@ void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const
     }
 }
 
-bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string &types) {
+bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string &types,
+                                 const int3 &offset, bool debug) {
     auto zoneMap = getZoneMap();
 
-    for (int dx = 0; dx < size.x; dx++) {
-        for (int dy = 0; dy < size.y; dy++) {
+    if (debug) {
+        cerr << "debugging checkplacement conflict\n";
+    }
+
+    for (int dx = 0; dx < size.x + offset.x; dx++) {
+        for (int dy = 0; dy < size.y + offset.y; dy++) {
             int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
             auto tilePtr = getTile(tilePos);
 
             if (tilePtr == nullptr)
                 continue;
+
+            if (debug) {
+                cerr << tilePos.toString() << "\n";
+            }
 
             if (tilePtr->isTileType(types)) {
                 return true;

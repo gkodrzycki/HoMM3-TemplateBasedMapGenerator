@@ -2,7 +2,7 @@
   "debug": 1,
   "name": "Simple map",
   "description": "A balanced map for 2 players with a contested central area.",
-  "size": "M",
+  "size": "S",
   "difficulty": "easy",
   "regions": [
     {

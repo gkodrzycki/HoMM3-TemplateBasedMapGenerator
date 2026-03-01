@@ -17,6 +17,7 @@ class ObjectPlacer {
 
     void placeBasicMines();
     void placeMines();
+    void placeMineResources();
     void placeTreasures();
 
   private:
