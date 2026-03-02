@@ -46,13 +46,6 @@ inline string getMineType(MineTypeInfo mineTypeInfo, RNG &rng, Faction faction) 
             return "GOLD MINE";
         }
     }
-    case MineTypeInfo::RANDOM_MINE: {
-        int beginOfTier = static_cast<int>(MineTypeInfo::ALCHEMISTS_LAB);
-        int endOfTier   = static_cast<int>(MineTypeInfo::SAWMILL);
-        auto randomMine = static_cast<MineTypeInfo>(rng.nextInt(beginOfTier, endOfTier));
-
-        return getEnumName<MineTypeInfo>(randomMine);
-    }
     default:
         return getEnumName<MineTypeInfo>(mineTypeInfo);
     }

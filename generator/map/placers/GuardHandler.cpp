@@ -1,29 +1,29 @@
-#include "./GuardPlacer.hpp"
+#include "./GuardHandler.hpp"
 
-GuardPlacer::GuardPlacer(Map &map) : map(map) {}
+GuardHandler::GuardHandler(RNG &rng) : rng(rng) {}
 
-int GuardPlacer::getGuardLevel(GuardType type) {
-    auto &rng = map.getRNG();
-    if (type == GuardType::MINE) {
+int GuardHandler::getGuardLevel(GuardTypeHandler type) {
+    auto &rng = this->rng;
+    if (type == GuardTypeHandler::MINE) {
         return rng.nextInt(1, 2);
-    } else if (type == GuardType::BORDER) {
+    } else if (type == GuardTypeHandler::BORDER) {
         return rng.nextInt(6, 7);
     } else {
         return 1;
     }
 }
 
-int GuardPlacer::getGuardPower(GuardType type) {
-    if (type == GuardType::MINE) {
+int GuardHandler::getGuardPower(GuardTypeHandler type) {
+    if (type == GuardTypeHandler::MINE) {
         return 4000;
-    } else if (type == GuardType::BORDER) {
+    } else if (type == GuardTypeHandler::BORDER) {
         return 40000;
     } else {
         return 1;
     }
 }
 
-pair<const string *, int> GuardPlacer::getCreatureArrayForLevel(int level, bool upgraded) {
+pair<const string *, int> GuardHandler::getCreatureArrayForLevel(int level, bool upgraded) {
     switch (level) {
     case 1:
         return {upgraded ? upgradedLvl1CreatureIds : basicLvl1CreatureIds,
@@ -58,20 +58,21 @@ pair<const string *, int> GuardPlacer::getCreatureArrayForLevel(int level, bool 
     }
 }
 
-string GuardPlacer::getGuardCreatureId(GuardType type, int level) {
-    bool upgraded = (type == GuardType::BORDER); // Currently only border guards can be upgraded
+string GuardHandler::getGuardCreatureId(GuardTypeHandler type, int level) {
+    bool upgraded =
+        (type == GuardTypeHandler::BORDER); // Currently only border guards can be upgraded
     auto [creatureArray, arraySize] = getCreatureArrayForLevel(level, upgraded);
 
     if (creatureArray == nullptr || arraySize == 0) {
         throw runtime_error("Failed to find guard creature id");
     }
 
-    auto &rng       = map.getRNG();
+    auto &rng       = this->rng;
     int randomIndex = rng.nextInt(0, arraySize - 1);
     return creatureArray[randomIndex];
 }
 
-shared_ptr<Creature> GuardPlacer::createGuard(GuardType type, int3 position) {
+shared_ptr<Creature> GuardHandler::createGuard(GuardTypeHandler type, int3 position) {
     int level         = getGuardLevel(type);
     string creatureId = getGuardCreatureId(type, level);
     int targetPower   = getGuardPower(type);
@@ -118,56 +119,4 @@ shared_ptr<Creature> GuardPlacer::createGuard(GuardType type, int3 position) {
     Creature guard = Creature(getEnumFromNameOrThrow<CreatureType>(creatureId), position, count,
                               "AGGRESSIVE", true, false, "Creature");
     return make_shared<Creature>(guard);
-}
-
-void GuardPlacer::placeBorderGuards() {
-    RoadVector roadVector = map.getRoadVector();
-
-    for (const auto &road : roadVector) {
-        vector<int3> path   = road->getPath();
-        int3 currGuardPos   = path[0];
-        int mostBorderTiles = 0;
-        for (auto pos : path) {
-            int borderTileCount = 0;
-            for (auto dir : directions8) {
-                int3 neighborPos = pos + dir;
-                auto tilePtr     = map.getTile(neighborPos);
-                if (tilePtr != nullptr && tilePtr->isTileType("B")) {
-                    borderTileCount++;
-                }
-            }
-
-            if (borderTileCount > mostBorderTiles) {
-                mostBorderTiles = borderTileCount;
-                currGuardPos    = pos;
-            }
-        }
-
-        auto guardPtr = createGuard(GuardType::BORDER, currGuardPos);
-        if (guardPtr != nullptr) {
-            map.addCreature(guardPtr);
-        }
-    }
-}
-
-void GuardPlacer::placeMineGuards() {
-    ObjectVector objectVector = map.getObjectVector();
-
-    for (const auto &object : objectVector) {
-        if (auto mine = dynamic_pointer_cast<Mine>(object)) {
-
-            auto guardPtr = mine->getGuardPtr();
-            // cerr << guardPtr->getName() << " guard created for mine at position (" <<
-            // mine->getPosition().x << ", " << mine->getPosition().y << ", " <<
-            // mine->getPosition().z << ")\n";
-            if (guardPtr != nullptr) {
-                map.addCreature(guardPtr);
-            }
-        }
-    }
-}
-
-void GuardPlacer::placeGuards() {
-    placeBorderGuards();
-    placeMineGuards();
 }

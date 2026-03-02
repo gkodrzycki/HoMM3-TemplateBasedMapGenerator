@@ -40,7 +40,7 @@ inline int3 getMineSize(MineType mineType) {
 inline ResourceType mineTypeToResourceType(MineType mineType) {
     switch (mineType) {
     case MineType::MINE_ALCHEMISTS_LAB:
-        return ResourceType::RESOURCE_SULFUR;
+        return ResourceType::RESOURCE_MERCURY;
     case MineType::MINE_CRYSTAL_CAVERN:
         return ResourceType::RESOURCE_CRYSTAL;
     case MineType::MINE_GEM_POND:
