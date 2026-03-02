@@ -4,7 +4,7 @@ RegionInfo::RegionInfo() : id(0), name("") {}
 
 int RegionInfo::getID() { return id; }
 string RegionInfo::getName() { return name; }
-vector<ZoneInfo> RegionInfo::getZoneInfoList() { return zoneInfoList; }
+vector<ZoneLayout> RegionInfo::getZoneLayoutList() { return zoneLayoutList; }
 
 void RegionInfo::deserializeRegion(const json &region) {
     int id      = getOrError<int>(region, "id");
@@ -17,14 +17,14 @@ void RegionInfo::deserializeRegion(const json &region) {
     defaults.size    = getOrDefault<string>(region, "size", "");
     defaults.terrain = getOrDefault<string>(region, "terrain", "");
     defaults.faction = getOrDefault<string>(region, "faction", "");
-    defaults.owner   = getOrDefault<string>(region, "owner_id", "None");
+    defaults.owner   = getOrDefault<string>(region, "ownerId", "None");
     defaults.type    = getOrDefault<string>(region, "type", "");
 
     const auto &zoneList = getOrError<json>(region, "zones");
     for (const auto &zone : zoneList) {
-        ZoneInfo zoneInfo;
-        zoneInfo.deserializeZone(zone, defaults);
-        zoneInfoList.push_back(zoneInfo);
+        ZoneLayout zoneLayout;
+        zoneLayout.deserializeZone(zone, defaults);
+        zoneLayoutList.push_back(zoneLayout);
     }
 }
 
@@ -32,7 +32,7 @@ void RegionInfo::printRegion() {
     cerr << "  Region id: " << id << "\n";
     cerr << "  Region name: " << name << "\n";
 
-    for (auto zone : zoneInfoList) {
+    for (auto zone : zoneLayoutList) {
         zone.printZone();
     }
 }

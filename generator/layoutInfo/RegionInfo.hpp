@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../global/Global.hpp"
-#include "./ZoneInfo.hpp"
+#include "./ZoneLayout.hpp"
 
-class ZoneInfo;
+class ZoneLayout;
 
 class RegionInfo {
   public:
@@ -11,7 +11,7 @@ class RegionInfo {
 
     int getID();
     string getName();
-    vector<ZoneInfo> getZoneInfoList();
+    vector<ZoneLayout> getZoneLayoutList();
 
     void deserializeRegion(const json &region);
     void printRegion();
@@ -19,5 +19,5 @@ class RegionInfo {
   private:
     int id;
     string name;
-    vector<ZoneInfo> zoneInfoList;
+    vector<ZoneLayout> zoneLayoutList;
 };

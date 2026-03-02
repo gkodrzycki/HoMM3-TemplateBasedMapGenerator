@@ -76,7 +76,7 @@ shared_ptr<Creature> GuardPlacer::createGuard(GuardType type, int3 position) {
     string creatureId = getGuardCreatureId(type, level);
     int targetPower   = getGuardPower(type);
 
-    ifstream file("CRTRAITS.json");
+    ifstream file("stats/CRTRAITS.json");
     if (!file.is_open()) {
         cerr << "Failed to open CRTRAITS.json file." << endl;
         return nullptr;

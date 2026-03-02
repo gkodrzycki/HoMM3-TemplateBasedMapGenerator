@@ -1,6 +1,7 @@
 #include "./Map.hpp"
 
-Map::Map(RNG &rng, LayoutInfo layoutInfo) : rng(rng), layoutInfo(layoutInfo) {}
+Map::Map(RNG &rng, LayoutInfo layoutInfo, BlueprintInfo blueprintInfo)
+    : rng(rng), layoutInfo(layoutInfo), blueprintInfo(blueprintInfo) {}
 
 pair<int, int> decodeMapSize(string mapSize) {
     if (mapSize == "S")
@@ -13,6 +14,7 @@ pair<int, int> decodeMapSize(string mapSize) {
         return {144, 144};
     return {-1, -1};
 }
+
 shared_ptr<Tile> Map::getTile(int3 pos) {
     if (pos.x < 0 || pos.x >= width || pos.y < 0 || pos.y >= height)
         return nullptr;
@@ -21,6 +23,7 @@ shared_ptr<Tile> Map::getTile(int3 pos) {
 }
 
 LayoutInfo Map::getLayoutInfo() { return layoutInfo; }
+BlueprintInfo Map::getBlueprintInfo() { return blueprintInfo; }
 RNG &Map::getRNG() { return rng; }
 RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
@@ -63,7 +66,6 @@ void Map::initMap() {
 }
 
 void Map::generateMap() {
-
     initMap();
 
     RegionPlacer regionPlacer(*this);
@@ -80,6 +82,8 @@ void Map::generateMap() {
 
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeBasicMines();
+    objectPlacer.placeMines();
+    objectPlacer.placeMineResources();
     objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
@@ -112,16 +116,25 @@ void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const
     }
 }
 
-bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string &types) {
+bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string &types,
+                                 const int3 &offset, bool debug) {
     auto zoneMap = getZoneMap();
 
-    for (int dx = 0; dx < size.x; dx++) {
-        for (int dy = 0; dy < size.y; dy++) {
+    if (debug) {
+        cerr << "debugging checkplacement conflict\n";
+    }
+
+    for (int dx = 0; dx < size.x + offset.x; dx++) {
+        for (int dy = 0; dy < size.y + offset.y; dy++) {
             int3 tilePos(pos.x - size.x + dx + 1, pos.y - size.y + dy + 1, pos.z);
             auto tilePtr = getTile(tilePos);
 
             if (tilePtr == nullptr)
                 continue;
+
+            if (debug) {
+                cerr << tilePos.toString() << "\n";
+            }
 
             if (tilePtr->isTileType(types)) {
                 return true;

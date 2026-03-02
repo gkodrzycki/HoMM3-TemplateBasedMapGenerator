@@ -1,14 +1,14 @@
 #pragma once
 
 #include "../global/Global.hpp"
-#include "../layoutInfo/ZoneInfo.hpp"
+#include "../layoutInfo/ZoneLayout.hpp"
 #include "./Faction.hpp"
 
 enum class Faction;
 
 class Zone {
   public:
-    Zone(ZoneInfo zoneInfo);
+    Zone(ZoneLayout zoneLayout);
 
     void setCenter(int3 center);
     void setZoneID(int zoneID);

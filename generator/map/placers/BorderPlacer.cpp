@@ -64,7 +64,6 @@ void BorderPlacer::reserveBorderTiles() {
 }
 
 void BorderPlacer::placeBorders() {
-
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
     for (int x = 0; x < mapWidth; x++) {

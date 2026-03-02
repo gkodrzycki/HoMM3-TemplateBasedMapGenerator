@@ -131,8 +131,18 @@ make
 ./Generator [--seed <number>] [--location <path>]
 ```
 
-# Conclusions
+## Enable pre-commit:
+```bash
+pip install pre-commit
+pre-commit install
+```
 
+To check if everything is ok, run:
+```bash
+pre-commit run --all-files
+```
+
+# Conclusions
 ### Overview
 - Implemented a layout + blueprint pipeline separating macro-structure (layout) from per-zone content (blueprint), improving template reusability and control over balance.
 - Replaced center-based zone assignment with a weighted-chunk abstract grid and probabilistic growth to produce size-aware zones.
@@ -142,9 +152,9 @@ make
 
 ### Future work (short list)
 - Extend usage of layout and blueprint
-- Preparing architecture for mutation
-- Obstacle generation (noise, cellular automata)
 - Better treasure/mine  placement
+- Obstacle generation (noise, cellular automata)
+- Preparing architecture for mutation
 - Natural look of biomes
 
 # Any number of appendices containing more useful information / images / results
