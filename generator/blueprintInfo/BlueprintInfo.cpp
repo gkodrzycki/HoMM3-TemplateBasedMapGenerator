@@ -1,6 +1,6 @@
 #include "./BlueprintInfo.hpp"
 
-BlueprintInfo::BlueprintInfo() {}
+BlueprintInfo::BlueprintInfo(RNG &rng) : rng(rng) {}
 
 vector<ZoneBlueprint> BlueprintInfo::getBlueprints() { return blueprints; }
 
@@ -16,7 +16,7 @@ ZoneBlueprint BlueprintInfo::getTypeBlueprint(const string &type) {
 void BlueprintInfo::deserialize(const json &blueprint) {
     const auto &zonesList = getOrError<json>(blueprint, "zones");
     for (const auto &zone : zonesList) {
-        ZoneBlueprint zoneBlueprint;
+        ZoneBlueprint zoneBlueprint(rng);
         zoneBlueprint.deserializeZoneBlueprint(zone);
         blueprints.push_back(zoneBlueprint);
     }

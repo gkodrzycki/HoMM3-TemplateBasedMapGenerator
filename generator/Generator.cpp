@@ -13,8 +13,8 @@ LayoutInfo parseLayout(const json &layout) {
     return layoutInfo;
 }
 
-BlueprintInfo parseBlueprint(const json &blueprint) {
-    BlueprintInfo blueprintInfo;
+BlueprintInfo parseBlueprint(const json &blueprint, RNG &rng) {
+    BlueprintInfo blueprintInfo(rng);
     blueprintInfo.deserialize(blueprint);
 
     return blueprintInfo;
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     if (layoutInfo.getDebug() > 1)
         layoutInfo.printLayout();
 
-    BlueprintInfo blueprintInfo = parseBlueprint(blueprint);
+    BlueprintInfo blueprintInfo = parseBlueprint(blueprint, rng);
     if (layoutInfo.getDebug() > 1)
         blueprintInfo.printBlueprint();
 

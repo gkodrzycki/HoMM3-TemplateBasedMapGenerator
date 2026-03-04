@@ -1,4 +1,5 @@
 #include "./ObjectPlacer.hpp"
+#include "./GuardPlacer.hpp"
 
 ObjectPlacer::ObjectPlacer(Map &map) : map(map) {}
 
@@ -39,10 +40,11 @@ void ObjectPlacer::placeBasicMines() {
 
     for (const auto &object : objectVector) {
         if (auto town = dynamic_pointer_cast<Town>(object)) {
-            auto townZoneID = map.getTile(town->getPosition())->getZoneID();
-            auto zoneMap    = map.getZoneMap();
-            auto zoneType   = zoneMap[townZoneID]->getType();
-            if (!map.getBlueprintInfo().getTypeBlueprint(zoneType).getPlaceBasicMines()) {
+            auto townZoneID    = map.getTile(town->getPosition())->getZoneID();
+            auto zoneMap       = map.getZoneMap();
+            auto zoneType      = zoneMap[townZoneID]->getType();
+            auto zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
+            if (!zoneBlueprint.getPlaceBasicMines()) {
                 continue;
             }
 
@@ -87,28 +89,13 @@ void ObjectPlacer::placeBasicMines() {
 
             auto [B, C] = BC;
 
-            int anchorZoneID = map.getTile(anchorPoint)->getZoneID();
-            // array<int, 4> &basicResourceCount = map.getBasicResourceCount();
-            // int3 left                         = int3(-2, 1, 0);
-            // int3 right                        = int3(0, 1, 0);
+            placeMine(B, zoneBlueprint.getMineGuards()[MineTypeInfo::SAWMILL][0],
+                      MineType::MINE_SAWMILL,
+                      zoneBlueprint.getMineResourcesCount()[MineTypeInfo::SAWMILL][0]);
 
-            Mine mineSawmill(MineType::MINE_SAWMILL, -1, B, "Mine");
-            auto mineSawmillPtr = make_shared<Mine>(mineSawmill);
-            map.addObject(mineSawmillPtr);
-            map.fixNeighbourTiles(B, sawmillSize, anchorZoneID);
-            // placeResource(ResourceType::RESOURCE_WOOD, B + left, basicResourceCount[0]);
-            // map.getTile(B + left)->setTileType(TileType::TILE_OCCUPIED);
-            // placeResource(ResourceType::RESOURCE_WOOD, B + right, basicResourceCount[1]);
-            // map.getTile(B + right)->setTileType(TileType::TILE_OCCUPIED);
-
-            Mine mineOrePit(MineType::MINE_ORE_PIT, -1, C, "Mine");
-            auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
-            map.addObject(mineOrePitPtr);
-            map.fixNeighbourTiles(C, orePitSize, anchorZoneID);
-            // placeResource(ResourceType::RESOURCE_ORE, C + left, basicResourceCount[2]);
-            // map.getTile(C + left)->setTileType(TileType::TILE_OCCUPIED);
-            // placeResource(ResourceType::RESOURCE_ORE, C + right, basicResourceCount[3]);
-            // map.getTile(C + right)->setTileType(TileType::TILE_OCCUPIED);
+            placeMine(C, zoneBlueprint.getMineGuards()[MineTypeInfo::ORE_PIT][0],
+                      MineType::MINE_ORE_PIT,
+                      zoneBlueprint.getMineResourcesCount()[MineTypeInfo::ORE_PIT][0]);
         }
     }
 }
@@ -139,13 +126,26 @@ void ObjectPlacer::placeMines() {
 
         ZoneBlueprint zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
         auto mines                  = zoneBlueprint.getMines();
+
         for (const auto &[mineTypeInfo, count] : mines) {
             string mineTypeStr = getMineType(mineTypeInfo, rng, zone->getFaction());
+            if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
+                mineTypeStr =
+                    getMineType(zoneBlueprint.getRandomMineTypes()[0], rng, zone->getFaction());
+            }
             cerr << "Placing " << count << " mines of type " << mineTypeStr << " in zone " << zoneID
                  << endl;
+
             MineType mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
             int3 mineSize     = getMineSize(mineType);
+
             for (int i = 0; i < count; i++) {
+                if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
+                    mineTypeStr =
+                        getMineType(zoneBlueprint.getRandomMineTypes()[i], rng, zone->getFaction());
+                    mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
+                    mineSize = getMineSize(mineType);
+                }
                 bool placed               = false;
                 int maxNumberOfIterations = 10000;
                 while (!placed && maxNumberOfIterations-- >= 0) {
@@ -157,10 +157,8 @@ void ObjectPlacer::placeMines() {
                         continue;
                     }
 
-                    Mine mine(mineType, -1, tilePos, "Mine");
-                    auto minePtr = make_shared<Mine>(mine);
-                    map.addObject(minePtr);
-                    map.fixNeighbourTiles(tilePos, mineSize, zoneID);
+                    placeMine(tilePos, zoneBlueprint.getMineGuards()[mineTypeInfo][i], mineType,
+                              zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i]);
                     placed = true;
                 }
                 if (maxNumberOfIterations <= 0)
@@ -170,25 +168,39 @@ void ObjectPlacer::placeMines() {
     }
 }
 
-void ObjectPlacer::placeMineResources() {
-    // auto &rng     = map.getRNG();
+void ObjectPlacer::placeMine(int3 pos, Creature guard, MineType mineType,
+                             pair<int, int> mineResourcesCount) {
+    int3 down = int3(-1, 1, 0);
 
+    auto guardPtr = make_shared<Creature>(guard);
+    guardPtr->setPosition(pos + down);
+
+    Mine mine(mineType, -1, pos, "Mine", mineResourcesCount, guardPtr);
+    auto minePtr = make_shared<Mine>(mine);
+
+    map.addObject(minePtr);
+    map.fixNeighbourTiles(pos, getMineSize(mineType), map.getTile(pos)->getZoneID());
+}
+
+void ObjectPlacer::placeMineResources() {
     int3 left  = int3(-2, 1, 0);
     int3 right = int3(0, 1, 0);
 
     for (auto &object : map.getObjectVector()) {
         if (auto mine = dynamic_pointer_cast<Mine>(object)) {
+
             auto mineType             = mine->getMineType();
             ResourceType resourceType = mineTypeToResourceType(mineType);
 
             int3 pos = mine->getPosition();
-            placeResource(resourceType, pos + left, 1);
+            placeResource(resourceType, pos + left, mine->getMineResourcesCount().first);
             map.getTile(pos + left)->setTileType(TileType::TILE_OCCUPIED);
-            placeResource(resourceType, pos + right, 1);
+            placeResource(resourceType, pos + right, mine->getMineResourcesCount().second);
             map.getTile(pos + right)->setTileType(TileType::TILE_OCCUPIED);
         }
     }
 }
+
 int ObjectPlacer::getNumberOfTreasures(int zoneID) {
     auto &rng = map.getRNG();
 

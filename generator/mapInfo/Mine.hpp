@@ -1,13 +1,15 @@
 #pragma once
 
 #include "../global/int3.hpp"
+#include "./Creature.hpp"
 #include "./MineType.hpp"
 #include "./Object.hpp"
 
 class Mine : public Object {
   public:
     Mine();
-    Mine(const MineType &mineType, int ownerID, const int3 &position, const string &name);
+    Mine(const MineType &mineType, int ownerID, const int3 &position, const string &name,
+         pair<int, int> mineResourcesCount, shared_ptr<Creature> guardPtr);
 
     void setMineType(const MineType &mineType);
     const MineType getMineType() const;
@@ -15,9 +17,15 @@ class Mine : public Object {
     void setOwner(const int &ownerID);
     int getOwner() const;
 
+    pair<int, int> getMineResourcesCount() const;
+
+    shared_ptr<Creature> getGuardPtr() const;
+
     void printObject() const override;
 
   private:
     MineType mineType;
     int ownerID;
+    pair<int, int> mineResourcesCount;
+    shared_ptr<Creature> guardPtr;
 };

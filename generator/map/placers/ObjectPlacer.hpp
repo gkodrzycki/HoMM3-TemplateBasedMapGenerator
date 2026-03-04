@@ -17,6 +17,7 @@ class ObjectPlacer {
 
     void placeBasicMines();
     void placeMines();
+    void placeMine(int3 pos, Creature guard, MineType mineType, pair<int, int> mineResourcesCount);
     void placeMineResources();
     void placeTreasures();
 
