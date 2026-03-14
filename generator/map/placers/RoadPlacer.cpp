@@ -34,6 +34,7 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
         if (auto town = dynamic_pointer_cast<Town>(object)) {
             int3 objPos  = object->getPosition();
             int3 objSize = object->getSize();
+
             // TODO: real town footprint
             for (int x = objPos.x - objSize.x + 1; x <= objPos.x; x++) {
                 for (int y = objPos.y - objSize.y + 1; y <= objPos.y; y++) {
@@ -53,6 +54,10 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     for (int x = 0; x < mapWidth; x++) {
         for (int y = 0; y < mapHeight; y++) {
             int3 p(x, y, 0);
+            if (x == 0 || x == mapWidth - 1 || y == 0 || y == mapHeight - 1) {
+                state[x][y] = 1;
+                continue;
+            }
             if (hardBlocked[x][y]) {
                 state[x][y] = 1;
                 continue;
