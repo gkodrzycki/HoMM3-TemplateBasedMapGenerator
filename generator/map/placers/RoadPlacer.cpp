@@ -78,19 +78,72 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     state[destPos.x][destPos.y] = 2;
     forcedCount                 = 2;
 
-    auto neighbors4 = [&](const int3 &p) {
-        std::array<int3, 4> out;
-        for (int i = 0; i < 4; i++)
-            out[i] = p + directions4[i];
-        return out;
+    // Zone-monotone BFS: once the path crosses into destZoneID it may not return to fromZoneID.
+    // Phase 0 = still in fromZone, Phase 1 = crossed into destZone (stays there).
+    struct BFSState {
+        int x, y, phase;
     };
-    auto passable = [&](const int3 &p) {
-        if (!isInside(0, 0, mapWidth, mapHeight, p))
-            return false;
-        return state[p.x][p.y] != 1;
+    vector<vector<array<bool, 2>>> bfsVis(mapWidth,
+                                          vector<array<bool, 2>>(mapHeight, {false, false}));
+    vector<vector<array<BFSState, 2>>> bfsPar(
+        mapWidth,
+        vector<array<BFSState, 2>>(mapHeight, {BFSState{-1, -1, -1}, BFSState{-1, -1, -1}}));
+
+    auto zoneBFS = [&](int3 start, int3 goal) -> vector<int3> {
+        for (int x = 0; x < mapWidth; x++)
+            for (int y = 0; y < mapHeight; y++) {
+                bfsVis[x][y] = {false, false};
+                bfsPar[x][y] = {BFSState{-1, -1, -1}, BFSState{-1, -1, -1}};
+            }
+
+        int startPhase = (map.getTile(start)->getZoneID() == destZoneID) ? 1 : 0;
+        bfsVis[start.x][start.y][startPhase] = true;
+
+        queue<BFSState> q;
+        q.push({start.x, start.y, startPhase});
+
+        while (!q.empty()) {
+            auto [cx, cy, cp] = q.front();
+            q.pop();
+
+            if (cx == goal.x && cy == goal.y && cp == 1) {
+                vector<int3> path;
+                BFSState s{cx, cy, cp};
+                while (s.x != -1) {
+                    path.push_back(int3(s.x, s.y, 0));
+                    BFSState p = bfsPar[s.x][s.y][s.phase];
+                    s          = p;
+                }
+                reverse(path.begin(), path.end());
+                return path;
+            }
+
+            for (int i = 0; i < 4; i++) {
+                int3 nb = int3(cx, cy, 0) + directions4[i];
+                if (!isInside(0, 0, mapWidth, mapHeight, nb))
+                    continue;
+                if (state[nb.x][nb.y] == 1)
+                    continue;
+                int nbZone = map.getTile(nb)->getZoneID();
+                int np;
+                if (cp == 1) {
+                    if (nbZone != destZoneID)
+                        continue;
+                    np = 1;
+                } else {
+                    np = (nbZone == destZoneID) ? 1 : 0;
+                }
+                if (!bfsVis[nb.x][nb.y][np]) {
+                    bfsVis[nb.x][nb.y][np] = true;
+                    bfsPar[nb.x][nb.y][np] = {cx, cy, cp};
+                    q.push({nb.x, nb.y, np});
+                }
+            }
+        }
+        return {};
     };
 
-    vector<int3> witness = bfs_path_xy(mapWidth, mapHeight, fromPos, destPos, neighbors4, passable);
+    vector<int3> witness = zoneBFS(fromPos, destPos);
     if (witness.empty())
         return witness;
 
@@ -113,9 +166,8 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
         state[c.x][c.y] = 1;
 
         if (inWitness[c.x][c.y]) {
-            inWitness[c.x][c.y] = false;
-            vector<int3> newPath =
-                bfs_path_xy(mapWidth, mapHeight, fromPos, destPos, neighbors4, passable);
+            inWitness[c.x][c.y]  = false;
+            vector<int3> newPath = zoneBFS(fromPos, destPos);
             if (newPath.empty()) {
                 state[c.x][c.y]     = 2;
                 inWitness[c.x][c.y] = true;
