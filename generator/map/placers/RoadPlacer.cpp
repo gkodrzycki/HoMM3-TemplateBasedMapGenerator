@@ -26,6 +26,9 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
     RNG &rng = map.getRNG();
 
+    const int TRIES = 10;
+    int forcedCount = 0;
+
     int fromZoneID = map.getTile(fromPos)->getZoneID();
     int destZoneID = map.getTile(destPos)->getZoneID();
 
@@ -73,6 +76,7 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     }
     state[fromPos.x][fromPos.y] = 2;
     state[destPos.x][destPos.y] = 2;
+    forcedCount                 = 2;
 
     auto neighbors4 = [&](const int3 &p) {
         std::array<int3, 4> out;
@@ -115,6 +119,10 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
             if (newPath.empty()) {
                 state[c.x][c.y]     = 2;
                 inWitness[c.x][c.y] = true;
+
+                forcedCount++;
+                if (forcedCount >= TRIES + 2)
+                    break;
             } else {
                 for (const auto &p : witness)
                     inWitness[p.x][p.y] = false;
