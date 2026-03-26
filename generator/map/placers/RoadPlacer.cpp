@@ -26,7 +26,7 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
     RNG &rng = map.getRNG();
 
-    const int TRIES = 10;
+    const int TRIES = 5;
     int forcedCount = 0;
 
     int fromZoneID = map.getTile(fromPos)->getZoneID();
