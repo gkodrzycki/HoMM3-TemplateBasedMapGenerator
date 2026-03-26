@@ -22,7 +22,9 @@ pair<int, int> ZoneBlueprint::getRandomResourcesCount() {
     if (richness == "high") {
         return {rng.nextInt(7, 10), rng.nextInt(7, 10)};
     }
-    return {0, 0};
+
+    throw runtime_error("Richness level '" + richness +
+                        "' is not recognized. Valid values are: low, medium, high.");
 }
 
 void ZoneBlueprint::deserializeZoneBlueprint(const json &zone) {

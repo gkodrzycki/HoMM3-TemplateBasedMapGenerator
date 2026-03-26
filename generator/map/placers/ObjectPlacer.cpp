@@ -89,28 +89,13 @@ void ObjectPlacer::placeBasicMines() {
 
             auto [B, C] = BC;
 
-            int anchorZoneID = map.getTile(anchorPoint)->getZoneID();
-            int3 down        = int3(-1, 1, 0);
+            placeMine(B, zoneBlueprint.getMineGuards()[MineTypeInfo::SAWMILL][0],
+                      MineType::MINE_SAWMILL,
+                      zoneBlueprint.getMineResourcesCount()[MineTypeInfo::SAWMILL][0]);
 
-            auto guard    = zoneBlueprint.getMineGuards()[MineTypeInfo::SAWMILL][0];
-            auto guardPtr = make_shared<Creature>(guard);
-            guardPtr->setPosition(B + down);
-            Mine mineSawmill(MineType::MINE_SAWMILL, -1, B, "Mine",
-                             zoneBlueprint.getMineResourcesCount()[MineTypeInfo::SAWMILL][0],
-                             guardPtr);
-            auto mineSawmillPtr = make_shared<Mine>(mineSawmill);
-            map.addObject(mineSawmillPtr);
-            map.fixNeighbourTiles(B, sawmillSize, anchorZoneID);
-
-            guard    = zoneBlueprint.getMineGuards()[MineTypeInfo::ORE_PIT][0];
-            guardPtr = make_shared<Creature>(guard);
-            guardPtr->setPosition(C + down);
-            Mine mineOrePit(MineType::MINE_ORE_PIT, -1, C, "Mine",
-                            zoneBlueprint.getMineResourcesCount()[MineTypeInfo::ORE_PIT][0],
-                            guardPtr);
-            auto mineOrePitPtr = make_shared<Mine>(mineOrePit);
-            map.addObject(mineOrePitPtr);
-            map.fixNeighbourTiles(C, orePitSize, anchorZoneID);
+            placeMine(C, zoneBlueprint.getMineGuards()[MineTypeInfo::ORE_PIT][0],
+                      MineType::MINE_ORE_PIT,
+                      zoneBlueprint.getMineResourcesCount()[MineTypeInfo::ORE_PIT][0]);
         }
     }
 }
@@ -173,6 +158,7 @@ void ObjectPlacer::placeMines() {
 
         ZoneBlueprint zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
         auto mines                  = zoneBlueprint.getMines();
+
         for (const auto &[mineTypeInfo, count] : mines) {
             string mineTypeStr = getMineType(mineTypeInfo, rng, zone->getFaction());
             if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
@@ -181,8 +167,10 @@ void ObjectPlacer::placeMines() {
             }
             cerr << "Placing " << count << " mines of type " << mineTypeStr << " in zone " << zoneID
                  << endl;
+
             MineType mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
             int3 mineSize     = getMineSize(mineType);
+
             for (int i = 0; i < count; i++) {
                 if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
                     mineTypeStr =
@@ -255,9 +243,21 @@ void ObjectPlacer::placeMines() {
     }
 }
 
-void ObjectPlacer::placeMineResources() {
-    // auto &rng     = map.getRNG();
+void ObjectPlacer::placeMine(int3 pos, Creature guard, MineType mineType,
+                             pair<int, int> mineResourcesCount) {
+    int3 down = int3(-1, 1, 0);
 
+    auto guardPtr = make_shared<Creature>(guard);
+    guardPtr->setPosition(pos + down);
+
+    Mine mine(mineType, -1, pos, "Mine", mineResourcesCount, guardPtr);
+    auto minePtr = make_shared<Mine>(mine);
+
+    map.addObject(minePtr);
+    map.fixNeighbourTiles(pos, getMineSize(mineType), map.getTile(pos)->getZoneID());
+}
+
+void ObjectPlacer::placeMineResources() {
     int3 left  = int3(-2, 1, 0);
     int3 right = int3(0, 1, 0);
 
@@ -275,6 +275,7 @@ void ObjectPlacer::placeMineResources() {
         }
     }
 }
+
 int ObjectPlacer::getNumberOfTreasures(int zoneID) {
     auto &rng = map.getRNG();
 
