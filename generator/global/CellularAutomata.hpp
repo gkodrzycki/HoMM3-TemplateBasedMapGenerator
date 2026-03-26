@@ -5,10 +5,10 @@
 struct AutomataConfig {
     int width;
     int height;
-    float initialFillProbability; // Często w przedziale 0.4 - 0.55 [16]
-    int birthLimit;               // Rekomendowane: 5 [15, 18]
-    int survivalLimit;            // Rekomendowane: 4 [15, 18]
-    int smoothingIterations;      // Ilość przebiegów ewolucyjnych (zwykle 4-5)
+    float initialFillProbability;
+    int birthLimit;
+    int survivalLimit;
+    int smoothingIterations;
 };
 
 class CellularAutomata {
@@ -16,10 +16,8 @@ class CellularAutomata {
     CellularAutomata(const AutomataConfig &config);
     ~CellularAutomata() = default;
 
-    // Główna procedura ewoluująca początkowy szum w organiczne struktury
     void generate(Map &map);
 
-    // Eksport wygładzonej mapy: true oznacza obecność masywnego przeszkodzenia, false to pustka
     const std::vector<bool> &getGrid() const { return m_grid; }
 
   private:
@@ -28,5 +26,5 @@ class CellularAutomata {
 
     AutomataConfig m_config;
     std::vector<bool> m_grid;
-    std::vector<bool> m_tempGrid; // Podwójne buforowanie zapobiega brudnym terytoriom
+    std::vector<bool> m_tempGrid;
 };

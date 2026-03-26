@@ -6,7 +6,6 @@ CellularAutomata::CellularAutomata(const AutomataConfig &config)
 
 void CellularAutomata::generate(Map &map) {
 
-    // Read from class Map objects of border and set them as alive to create a natural boundary
     for (int y = 0; y < m_config.height; ++y) {
         for (int x = 0; x < m_config.width; ++x) {
             auto tilePtr = map.getTile(int3(x, y, 0));
@@ -26,7 +25,6 @@ void CellularAutomata::generate(Map &map) {
 
 int CellularAutomata::countAliveNeighbors(int x, int y) const {
     int count = 0;
-    // Ewaluacja pełnego sąsiedztwa Moore'a
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
             if (i == 0 && j == 0)
@@ -35,7 +33,6 @@ int CellularAutomata::countAliveNeighbors(int x, int y) const {
             int nx = x + i;
             int ny = y + j;
 
-            // Interpretacja krańców przestrzeni jako mur strukturalny
             if (nx < 0 || nx >= m_config.width || ny < 0 || ny >= m_config.height) {
                 count++;
             } else if (m_grid[ny * m_config.width + nx]) {
@@ -59,6 +56,5 @@ void CellularAutomata::doSimulationStep() {
             }
         }
     }
-    // Nadpisanie w czasie stałym dla relokacji wskaźników po swap wektorów pod spodem
     m_grid.swap(m_tempGrid);
 }
