@@ -67,7 +67,7 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
         auto tile = map.getTile(p);
         if (!tile)
             return false;
-        if (tile->isTileType("T"))
+        if (tile->isTileType("TO"))
             return false;
         // TODO check if this is needed
         // check if neighbour tiles belong to fromZoneID or destZoneID

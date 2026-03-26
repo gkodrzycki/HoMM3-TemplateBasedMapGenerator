@@ -22,7 +22,7 @@ class ObjectPlacer {
 
   private:
     Map &map;
-
+    int evalMinePos(int3 minePos, int3 mineSize);
     void placeCreature(CreatureType creatureType, int3 pos, int quantity);
     void placeResource(ResourceType resourceType, int3 pos, int quantity);
     void placeArtifact(ArtifactType artifactType, int3 pos);

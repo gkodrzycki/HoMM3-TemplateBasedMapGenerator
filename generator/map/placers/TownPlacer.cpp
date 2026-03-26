@@ -4,7 +4,7 @@ TownPlacer::TownPlacer(Map &map) : map(map) {}
 
 void TownPlacer::placeTowns() {
     ZoneMap zoneMap = map.getZoneMap();
-    int3 offset(0, 0, 0);
+    int3 offset(1, 1, 0);
 
     for (auto [zoneID, zone] : zoneMap) {
         string zoneType = zone->getType();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../blueprintInfo/BlueprintInfo.hpp"
+#include "../global/CellularAutomata.hpp"
 #include "../global/Global.hpp"
 #include "../global/Random.hpp"
 #include "../layoutInfo/LayoutInfo.hpp"
@@ -15,6 +16,7 @@
 #include "./placers/ObjectPlacer.hpp"
 #include "./placers/RegionPlacer.hpp"
 #include "./placers/RoadPlacer.hpp"
+#include "./placers/TerrainPlacer.hpp"
 #include "./placers/TownPlacer.hpp"
 
 using ZoneMap        = map<int, shared_ptr<Zone>>;
