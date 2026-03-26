@@ -205,16 +205,19 @@ void ObjectPlacer::placeMines() {
                     throw runtime_error("Failed to place mine after maximum iterations");
                 }
 
-                int3 down = int3(-1, 1, 0);
+                // int3 down = int3(-1, 1, 0);
 
-                auto guard    = zoneBlueprint.getMineGuards()[mineTypeInfo][i];
-                auto guardPtr = make_shared<Creature>(guard);
-                guardPtr->setPosition(bestPos + down);
-                Mine mine(mineType, -1, bestPos, "Mine",
-                          zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i], guardPtr);
-                auto minePtr = make_shared<Mine>(mine);
-                map.addObject(minePtr);
-                map.fixNeighbourTiles(bestPos, mineSize, zoneID);
+                // auto guard    = zoneBlueprint.getMineGuards()[mineTypeInfo][i];
+                // auto guardPtr = make_shared<Creature>(guard);
+                // guardPtr->setPosition(bestPos + down);
+                // Mine mine(mineType, -1, bestPos, "Mine",
+                //           zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i], guardPtr);
+                // auto minePtr = make_shared<Mine>(mine);
+                // map.addObject(minePtr);
+                // map.fixNeighbourTiles(bestPos, mineSize, zoneID);
+
+                placeMine(bestPos, zoneBlueprint.getMineGuards()[mineTypeInfo][i], mineType,
+                          zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i]);
 
                 // while (!placed && maxNumberOfIterations-- >= 0) {
                 //     auto [tilePos, tile] =
