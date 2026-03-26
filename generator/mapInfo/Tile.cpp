@@ -35,6 +35,8 @@ char tileTypeToChar(TileType tileType) {
     case TileType::TILE_TAKEN:
         return 'T';
     case TileType::TILE_OCCUPIED:
+        return 'o';
+    case TileType::TILE_OBSTACLE:
         return 'O';
     case TileType::TILE_ROAD:
         return 'r';
@@ -55,8 +57,10 @@ TileType charToTileType(char c) {
         return TileType::TILE_FREE;
     case 'T':
         return TileType::TILE_TAKEN;
-    case 'O':
+    case 'o':
         return TileType::TILE_OCCUPIED;
+    case 'O':
+        return TileType::TILE_OBSTACLE;
     case 'r':
         return TileType::TILE_ROAD;
     case 'R':

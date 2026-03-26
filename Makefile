@@ -38,6 +38,7 @@ COMMON_SOURCES = \
               $(BLUEPRINT_INFO_DIR)/BlueprintInfo.cpp \
               $(BLUEPRINT_INFO_DIR)/ZoneBlueprint.cpp \
               $(GLOBAL_DIR)/Random.cpp \
+              $(GLOBAL_DIR)/CellularAutomata.cpp \
 			  $(PLACERS_DIR)/RegionPlacer.cpp \
 			  $(PLACERS_DIR)/ObjectPlacer.cpp \
 			  $(PLACERS_DIR)/TownPlacer.cpp \
@@ -45,6 +46,7 @@ COMMON_SOURCES = \
 			  $(PLACERS_DIR)/BorderPlacer.cpp \
 			  $(PLACERS_DIR)/GuardPlacer.cpp \
 			  $(PLACERS_DIR)/GuardHandler.cpp \
+			  $(PLACERS_DIR)/TerrainPlacer.cpp \
               $(UTILS_DIR)/luaHelpers.cpp \
 			  $(MAP_DIR)/Map.cpp \
 			  $(MAP_INFO_DIR)/Tile.cpp \

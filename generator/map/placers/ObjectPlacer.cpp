@@ -100,6 +100,38 @@ void ObjectPlacer::placeBasicMines() {
     }
 }
 
+int ObjectPlacer::evalMinePos(int3 minePos, int3 mineSize) {
+    int score = 0;
+
+    for (int x = minePos.x - mineSize.x / 2; x <= minePos.x + mineSize.x / 2; x++) {
+        for (int y = minePos.y - mineSize.y / 2; y <= minePos.y + mineSize.y / 2; y++) {
+            auto tile = map.getTile(int3(x, y, 0));
+            if (tile != nullptr && tile->isTileType("F")) {
+                score += 2;
+            }
+        }
+    }
+
+    for (int x = minePos.x - mineSize.x / 2 - 1; x <= minePos.x + mineSize.x / 2 + 1; x++) {
+        auto upperTile = map.getTile(int3(x, minePos.y - mineSize.y / 2 - 1, 0));
+        if (upperTile != nullptr && upperTile->isTileType("O"))
+            score += 1;
+    }
+
+    auto leftTile =
+        map.getTile(int3(minePos.x - mineSize.x / 2 - 1, minePos.y - mineSize.y / 2, 0));
+    auto rightTile =
+        map.getTile(int3(minePos.x + mineSize.x / 2 + 1, minePos.y - mineSize.y / 2, 0));
+
+    if (leftTile != nullptr && leftTile->isTileType("O"))
+        score += 1;
+
+    if (rightTile != nullptr && rightTile->isTileType("O"))
+        score += 1;
+
+    return score;
+}
+
 void ObjectPlacer::placeMines() {
     int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
@@ -146,23 +178,32 @@ void ObjectPlacer::placeMines() {
                     mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
                     mineSize = getMineSize(mineType);
                 }
-                bool placed               = false;
-                int maxNumberOfIterations = 10000;
-                while (!placed && maxNumberOfIterations-- >= 0) {
+                int numberOfIterations = 100;
+                int3 bestPos           = int3(-1, -1, -1);
+                int bestEvalScore      = -1;
+
+                while (numberOfIterations-- >= 0) {
                     auto [tilePos, tile] =
                         zoneTiles[zoneID][rng.nextInt(0, zoneTiles[zoneID].size() - 1)];
 
                     if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, tilePos) ||
-                        map.checkPlacementConflict(tilePos, mineSize, "BbOTRr", mineOffset)) {
+                        map.checkPlacementConflict(tilePos, mineSize, "BbTRr", mineOffset)) {
                         continue;
                     }
 
-                    placeMine(tilePos, zoneBlueprint.getMineGuards()[mineTypeInfo][i], mineType,
-                              zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i]);
-                    placed = true;
+                    int evalScore = evalMinePos(tilePos, mineSize);
+
+                    if (evalScore > bestEvalScore) {
+                        bestPos       = tilePos;
+                        bestEvalScore = evalScore;
+                    }
                 }
-                if (maxNumberOfIterations <= 0)
+
+                if (bestEvalScore == -1) {
                     throw runtime_error("Failed to place mine after maximum iterations");
+                }
+                placeMine(bestPos, zoneBlueprint.getMineGuards()[mineTypeInfo][i], mineType,
+                          zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i]);
             }
         }
     }

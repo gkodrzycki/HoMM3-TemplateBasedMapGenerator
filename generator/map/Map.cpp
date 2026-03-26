@@ -71,25 +71,29 @@ void Map::generateMap() {
     RegionPlacer regionPlacer(*this);
     regionPlacer.placeRegions();
 
+    BorderPlacer borderPlacer(*this);
+    borderPlacer.reserveBorderTiles();
+
+    TerrainPlacer terrainPlacer(*this);
+    terrainPlacer.generateNoise();
+
     TownPlacer townPlacer(*this);
     townPlacer.placeTowns();
 
     RoadPlacer roadPlacer(*this);
     roadPlacer.placeRoads();
 
-    BorderPlacer borderPlacer(*this);
-    borderPlacer.reserveBorderTiles();
-
     ObjectPlacer objectPlacer(*this);
-    objectPlacer.placeBasicMines();
+    // objectPlacer.placeBasicMines();
     objectPlacer.placeMines();
     objectPlacer.placeMineResources();
-    objectPlacer.placeTreasures();
+    // objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
 
     borderPlacer.placeBorders();
+    terrainPlacer.placeObstacles();
 }
 
 void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {
