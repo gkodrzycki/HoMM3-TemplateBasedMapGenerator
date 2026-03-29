@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    rng.setSeed(42);
+    // rng.setSeed(42);
 
     LayoutInfo layoutInfo = parseLayout(layout);
     if (layoutInfo.getDebug() > 1)
