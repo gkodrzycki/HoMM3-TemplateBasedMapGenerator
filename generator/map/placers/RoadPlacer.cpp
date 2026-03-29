@@ -18,6 +18,7 @@ void RoadPlacer::placeRoads() {
 
         for (const auto &pos : path) {
             map.getTile(pos)->setTileType(TileType::TILE_ROAD);
+            map.getTile(pos + int3(0, 1, 0))->setTileType(TileType::TILE_RESERVED);
         }
     }
 }
