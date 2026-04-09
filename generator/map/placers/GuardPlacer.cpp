@@ -123,7 +123,8 @@ void GuardPlacer::placeBorderGuards() {
             }
         } else {
             throw runtime_error("Failed to find valid guard position between zones " +
-                                to_string(zoneA) + " and " + to_string(zoneB));
+                                to_string(zoneA) + " and " + to_string(zoneB) + " using seed " +
+                                to_string(map.getRNG().getOriginalSeed()));
         }
     }
 }

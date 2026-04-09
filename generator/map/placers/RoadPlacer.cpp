@@ -12,6 +12,13 @@ void RoadPlacer::placeRoads() {
 
         vector<int3> path = createPath(fromPos, destPos);
 
+        if (path.empty()) {
+            throw runtime_error("Failed to create a path between zones " +
+                                to_string(connection.getZoneFrom()) + " and " +
+                                to_string(connection.getZoneDest()) + " on seed " +
+                                to_string(map.getRNG().getOriginalSeed()) + "\n");
+        }
+
         Road road(1, path, "Road");
         auto roadPtr = make_shared<Road>(road);
         map.addRoad(roadPtr);
@@ -20,7 +27,7 @@ void RoadPlacer::placeRoads() {
             map.getTile(pos)->setTileType(TileType::TILE_ROAD);
             int3 posBelow = pos + int3(0, 1, 0);
 
-            if (map.getTile(posBelow)->getTileType() != TileType::TILE_ROAD)
+            if (!map.getTile(posBelow)->isTileType("rTB"))
                 map.getTile(posBelow)->setTileType(TileType::TILE_RESERVED);
         }
     }

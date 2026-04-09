@@ -66,6 +66,10 @@ void Map::initMap() {
 }
 
 void Map::generateMap() {
+    if (layoutInfo.getDebug() > 0) {
+        cerr << "==== SEED: " << rng.getOriginalSeed() << " ====\n";
+    }
+
     initMap();
 
     RegionPlacer regionPlacer(*this);
@@ -85,15 +89,15 @@ void Map::generateMap() {
 
     ObjectPlacer objectPlacer(*this);
     // objectPlacer.placeBasicMines();
-    objectPlacer.placeMines();
-    objectPlacer.placeMineResources();
+    // objectPlacer.placeMines();
+    // objectPlacer.placeMineResources();
     // objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
-    guardPlacer.placeGuards();
+    // guardPlacer.placeGuards();
 
-    borderPlacer.placeBorders();
-    terrainPlacer.placeObstacles();
+    // borderPlacer.placeBorders();
+    // terrainPlacer.placeObstacles();
 }
 
 void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {
