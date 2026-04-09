@@ -168,6 +168,9 @@ void Map::printMap(int debugLevel) {
         for (int j = 0; j < width; j++) {
             TileType tileType = tileMap[i][j]->getTileType();
             switch (tileType) {
+            case TileType::TILE_DEBUG:
+                printColor(RED, tileTypeToChar(tileType));
+                break;
             case TileType::TILE_FREE:
                 printColor(GREEN, tileTypeToChar(tileType));
                 break;
@@ -178,16 +181,16 @@ void Map::printMap(int debugLevel) {
                 cerr << tileTypeToChar(tileType);
                 break;
             case TileType::TILE_TAKEN:
-                printColor(RED, tileTypeToChar(tileType));
+                printColor(CYAN, tileTypeToChar(tileType));
                 break;
             case TileType::TILE_ROAD:
-                cerr << tileTypeToChar(tileType);
+                printColor(MAGENTA, tileTypeToChar(tileType));
                 break;
             case TileType::TILE_BORDER_INNER:
-                cerr << tileTypeToChar(tileType);
+                printColor(BLUE, tileTypeToChar(tileType));
                 break;
             case TileType::TILE_BORDER_OUTER:
-                cerr << tileTypeToChar(tileType);
+                printColor(BRIGHT_BLUE, tileTypeToChar(tileType));
                 break;
             default:
                 cerr << tileTypeToChar(tileType);

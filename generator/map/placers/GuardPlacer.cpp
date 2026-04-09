@@ -54,14 +54,18 @@ void GuardPlacer::placeBorderGuards() {
                 if (zid != zoneA && zid != zoneB)
                     continue;
                 bool nearBorder = false;
+                bool nearRoad   = false;
+
                 for (const auto &dir : directions8) {
                     auto neighborTile = map.getTile(pos + dir);
                     if (neighborTile && neighborTile->isTileType("B")) {
                         nearBorder = true;
-                        break;
+                    }
+                    if (neighborTile && neighborTile->isTileType("r")) {
+                        nearRoad = true;
                     }
                 }
-                if (nearBorder)
+                if (nearBorder && nearRoad)
                     candidates.push_back(pos);
             }
         }
@@ -69,7 +73,9 @@ void GuardPlacer::placeBorderGuards() {
         stable_partition(candidates.begin(), candidates.end(),
                          [&](const int3 &p) { return pathSet.count(p) > 0; });
 
-        bool placed = false;
+        int mostBorderTiles = -1;
+        int3 bestGuardPos;
+
         for (const auto &candidatePos : candidates) {
             // Skip candidates whose 3x3 block would overlap zone centers
             if (abs(candidatePos.x - centerA.x) <= 1 && abs(candidatePos.y - centerA.y) <= 1)
@@ -81,10 +87,12 @@ void GuardPlacer::placeBorderGuards() {
                 auto tile = map.getTile(p);
                 if (!tile)
                     return false;
-                if (tile->isTileType("B"))
+                if (tile->isTileType("BbOT"))
                     return false;
                 // 3x3 blocked area around the guard candidate
                 if (abs(p.x - candidatePos.x) <= 1 && abs(p.y - candidatePos.y) <= 1)
+                    return false;
+                if (tile->getZoneID() != zoneA && tile->getZoneID() != zoneB)
                     return false;
                 return true;
             };
@@ -92,17 +100,28 @@ void GuardPlacer::placeBorderGuards() {
             auto reachPath = bfs_path_xy(W, H, centerA, centerB, neighbors8, passable);
 
             if (reachPath.empty()) {
-                GuardHandler guardHandler(map.getRNG());
-                auto guardPtr = guardHandler.createGuard(GuardTypeHandler::BORDER, candidatePos);
-                if (guardPtr != nullptr) {
-                    map.addCreature(guardPtr);
+                int borderTileCount = 0;
+                for (auto dir : directions8) {
+                    int3 neighborPos = candidatePos + dir;
+                    auto tilePtr     = map.getTile(neighborPos);
+                    if (tilePtr != nullptr && tilePtr->isTileType("B")) {
+                        borderTileCount++;
+                    }
                 }
-                placed = true;
-                break;
+                if (borderTileCount > mostBorderTiles) {
+                    mostBorderTiles = borderTileCount;
+                    bestGuardPos    = candidatePos;
+                }
             }
         }
 
-        if (!placed) {
+        if (mostBorderTiles != -1) {
+            GuardHandler guardHandler(map.getRNG());
+            auto guardPtr = guardHandler.createGuard(GuardTypeHandler::BORDER, bestGuardPos);
+            if (guardPtr != nullptr) {
+                map.addCreature(guardPtr);
+            }
+        } else {
             throw runtime_error("Failed to find valid guard position between zones " +
                                 to_string(zoneA) + " and " + to_string(zoneB));
         }

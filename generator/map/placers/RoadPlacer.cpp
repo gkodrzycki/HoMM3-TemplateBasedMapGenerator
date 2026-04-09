@@ -50,10 +50,16 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
                 state[x][y] = 1;
                 continue;
             }
+            if (!tile || tile->isTileType("r")) {
+                state[x][y] = 2;
+                continue;
+            }
+
             if (tile->getZoneID() != fromZoneID && tile->getZoneID() != destZoneID)
                 state[x][y] = 1;
         }
     }
+
     state[fromPos.x][fromPos.y] = 2;
     state[destPos.x][destPos.y] = 2;
     forcedCount                 = 2;
@@ -61,34 +67,38 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     // Zone-monotone BFS: once the path crosses into destZoneID it may not return to fromZoneID.
     // Phase 0 = still in fromZone, Phase 1 = crossed into destZone (stays there).
     struct BFSState {
-        int x, y, phase;
+        int type, x, y, phase;
+        bool operator<(const BFSState &o) const {
+            return type < o.type; // max-heap: prefer type 2 (FORCED) over 0 (OPEN)
+        }
     };
+
     vector<vector<array<bool, 2>>> bfsVis(mapWidth,
                                           vector<array<bool, 2>>(mapHeight, {false, false}));
     vector<vector<array<BFSState, 2>>> bfsPar(
-        mapWidth,
-        vector<array<BFSState, 2>>(mapHeight, {BFSState{-1, -1, -1}, BFSState{-1, -1, -1}}));
+        mapWidth, vector<array<BFSState, 2>>(mapHeight,
+                                             {BFSState{-1, -1, -1, -1}, BFSState{-1, -1, -1, -1}}));
 
     auto zoneBFS = [&](int3 start, int3 goal) -> vector<int3> {
         for (int x = 0; x < mapWidth; x++)
             for (int y = 0; y < mapHeight; y++) {
                 bfsVis[x][y] = {false, false};
-                bfsPar[x][y] = {BFSState{-1, -1, -1}, BFSState{-1, -1, -1}};
+                bfsPar[x][y] = {BFSState{-1, -1, -1, -1}, BFSState{-1, -1, -1, -1}};
             }
 
         int startPhase = (map.getTile(start)->getZoneID() == destZoneID) ? 1 : 0;
         bfsVis[start.x][start.y][startPhase] = true;
 
-        queue<BFSState> q;
-        q.push({start.x, start.y, startPhase});
+        priority_queue<BFSState> q;
+        q.push({0, start.x, start.y, startPhase});
 
         while (!q.empty()) {
-            auto [cx, cy, cp] = q.front();
+            auto [ct, cx, cy, cp] = q.top();
             q.pop();
 
             if (cx == goal.x && cy == goal.y && cp == 1) {
                 vector<int3> path;
-                BFSState s{cx, cy, cp};
+                BFSState s{ct, cx, cy, cp};
                 while (s.x != -1) {
                     path.push_back(int3(s.x, s.y, 0));
                     BFSState p = bfsPar[s.x][s.y][s.phase];
@@ -115,8 +125,9 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
                 }
                 if (!bfsVis[nb.x][nb.y][np]) {
                     bfsVis[nb.x][nb.y][np] = true;
-                    bfsPar[nb.x][nb.y][np] = {cx, cy, cp};
-                    q.push({nb.x, nb.y, np});
+                    bfsPar[nb.x][nb.y][np] = {ct, cx, cy, cp};
+                    int nt                 = state[nb.x][nb.y];
+                    q.push({nt, nb.x, nb.y, np});
                 }
             }
         }
