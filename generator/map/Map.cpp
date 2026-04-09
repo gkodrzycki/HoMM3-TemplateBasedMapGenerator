@@ -88,16 +88,16 @@ void Map::generateMap() {
     roadPlacer.placeRoads();
 
     ObjectPlacer objectPlacer(*this);
-    // objectPlacer.placeBasicMines();
-    // objectPlacer.placeMines();
-    // objectPlacer.placeMineResources();
+    objectPlacer.placeBasicMines();
+    objectPlacer.placeMines();
+    objectPlacer.placeMineResources();
     // objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
-    // guardPlacer.placeGuards();
+    guardPlacer.placeGuards();
 
-    // borderPlacer.placeBorders();
-    // terrainPlacer.placeObstacles();
+    borderPlacer.placeBorders();
+    terrainPlacer.placeObstacles();
 }
 
 void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {

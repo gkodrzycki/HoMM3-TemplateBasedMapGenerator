@@ -71,10 +71,6 @@ void BorderPlacer::placeBorders() {
             int3 currentPos(x, y, 0);
             auto currentTilePtr = map.getTile(currentPos);
 
-            auto upperTile = map.getTile(currentPos + int3(0, -1, 0));
-            if (upperTile != nullptr && upperTile->isTileType("r"))
-                continue;
-
             if (currentTilePtr->isTileType("Bb")) {
                 Obstacle obstacle("Pine Trees", currentPos, "Obstacle");
                 auto obstaclePtr = make_shared<Obstacle>(obstacle);

@@ -123,6 +123,8 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
                     continue;
                 int nbZone = map.getTile(nb)->getZoneID();
                 int np;
+                if (nbZone != destZoneID && nbZone != fromZoneID)
+                    continue;
                 if (cp == 1) {
                     if (nbZone != destZoneID)
                         continue;
