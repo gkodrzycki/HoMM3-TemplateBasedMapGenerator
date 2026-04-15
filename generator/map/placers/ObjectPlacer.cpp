@@ -85,7 +85,9 @@ void ObjectPlacer::placeBasicMines() {
             }
 
             if (maxIter <= 0)
-                throw runtime_error("Failed to place basic mines after maximum iterations");
+                throw runtime_error(
+                    "Failed to place basic mines after maximum iterations using seed " +
+                    to_string(map.getRNG().getOriginalSeed()));
 
             auto [B, C] = BC;
 
@@ -200,7 +202,9 @@ void ObjectPlacer::placeMines() {
                 }
 
                 if (bestEvalScore == -1) {
-                    throw runtime_error("Failed to place mine after maximum iterations");
+                    throw runtime_error(
+                        "Failed to place mine after maximum iterations using seed " +
+                        to_string(map.getRNG().getOriginalSeed()));
                 }
                 placeMine(bestPos, zoneBlueprint.getMineGuards()[mineTypeInfo][i], mineType,
                           zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i]);

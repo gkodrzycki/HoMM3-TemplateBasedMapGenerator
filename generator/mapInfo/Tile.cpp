@@ -46,6 +46,8 @@ char tileTypeToChar(TileType tileType) {
         return 'B';
     case TileType::TILE_BORDER_OUTER:
         return 'b';
+    case TileType::TILE_DEBUG:
+        return 'D';
     default:
         return '?';
     }
@@ -69,6 +71,8 @@ TileType charToTileType(char c) {
         return TileType::TILE_BORDER_INNER;
     case 'b':
         return TileType::TILE_BORDER_OUTER;
+    case 'D':
+        return TileType::TILE_DEBUG;
     default:
         return TileType::TILE_FREE;
     }

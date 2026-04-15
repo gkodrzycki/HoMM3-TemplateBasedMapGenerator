@@ -17,6 +17,7 @@ class RNG {
     bool nextBool(float probability);
     void setSeed(int seed);
     int getSeed();
+    int getOriginalSeed();
 
     pair<int3, int3> getRandomTriangle(int3 anchorPoint, int perimeter);
 
@@ -25,6 +26,7 @@ class RNG {
   private:
     random_device rd;
     mt19937 gen;
+    int originalSeed;
 };
 
 template <typename T> void RNG::shuffle(vector<T> &vec) {

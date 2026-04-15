@@ -1,8 +1,14 @@
 #include "./Random.hpp"
 
-RNG::RNG() { gen = mt19937(rd()); }
+RNG::RNG() {
+    originalSeed = rd();
+    gen          = mt19937(originalSeed);
+}
 
-RNG::RNG(int seed) { gen = mt19937(seed); }
+RNG::RNG(int seed) {
+    gen          = mt19937(seed);
+    originalSeed = seed;
+}
 
 int RNG::nextInt() {
     uniform_int_distribution<> dis;
@@ -51,9 +57,14 @@ bool RNG::nextBool(float probability) {
     return dis(gen);
 }
 
-void RNG::setSeed(int seed) { gen = mt19937(seed); }
+void RNG::setSeed(int seed) {
+    gen          = mt19937(seed);
+    originalSeed = seed;
+}
 
 int RNG::getSeed() { return gen(); }
+
+int RNG::getOriginalSeed() { return originalSeed; }
 
 pair<int3, int3> RNG::getRandomTriangle(int3 anchorPoint, int perimeter) {
 

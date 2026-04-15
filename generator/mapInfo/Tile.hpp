@@ -11,7 +11,8 @@ enum class TileType {
     TILE_ROAD,
     TILE_BORDER_INNER,
     TILE_BORDER_OUTER,
-    TILE_OBSTACLE
+    TILE_OBSTACLE,
+    TILE_DEBUG
 };
 
 char tileTypeToChar(TileType tileType);

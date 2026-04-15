@@ -182,7 +182,8 @@ void RegionPlacer::generateRegions() {
         }
     }
     if (numberOfIterations <= 0) {
-        throw runtime_error("Could not generate valid abstract grid for regions!");
+        throw runtime_error("Could not generate valid abstract grid for regions using seed " +
+                            to_string(map.getRNG().getOriginalSeed()));
     }
     placeAbstractGridOnRealMap();
 }
@@ -304,7 +305,6 @@ void RegionPlacer::placeRegions() {
     calculateZoneCenters();
 
     if (map.getLayoutInfo().getDebug() > 0) {
-
         cerr << "=== Abstract grid ===\n";
         for (int i = 0; i < gridN; i++) {
             for (int j = 0; j < gridN; j++) {
