@@ -9,6 +9,7 @@ class ConnectionInfo {
 
     int getZoneFrom();
     int getZoneDest();
+    string getType();
 
     void deserializeConnection(const json &connection);
     void printConnection();
@@ -16,4 +17,5 @@ class ConnectionInfo {
   private:
     int zoneFrom;
     int zoneDest;
+    string type;
 };

@@ -42,7 +42,7 @@ COMMON_SOURCES = \
 			  $(PLACERS_DIR)/RegionPlacer.cpp \
 			  $(PLACERS_DIR)/ObjectPlacer.cpp \
 			  $(PLACERS_DIR)/TownPlacer.cpp \
-			  $(PLACERS_DIR)/RoadPlacer.cpp \
+			  $(PLACERS_DIR)/ConnectionPlacer.cpp \
 			  $(PLACERS_DIR)/BorderPlacer.cpp \
 			  $(PLACERS_DIR)/GuardPlacer.cpp \
 			  $(PLACERS_DIR)/GuardHandler.cpp \

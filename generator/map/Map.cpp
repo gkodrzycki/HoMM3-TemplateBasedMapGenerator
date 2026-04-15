@@ -32,6 +32,7 @@ ObjectVector Map::getObjectVector() { return objectVector; }
 RoadVector Map::getRoadVector() { return roadVector; }
 CreatureVector Map::getCreatureVector() { return creatureVector; }
 TreasureVector Map::getTreasureVector() { return treasureVector; }
+MonolithVector Map::getMonolithVector() { return monolithVector; }
 array<int, 4> &Map::getBasicResourceCount() { return basicResourceCount; }
 
 int Map::getWidth() { return width; }
@@ -43,6 +44,10 @@ void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(ob
 void Map::addRoad(shared_ptr<Road> road) { this->roadVector.push_back(road); }
 void Map::addCreature(shared_ptr<Creature> creature) { this->creatureVector.push_back(creature); }
 void Map::addTreasure(shared_ptr<Treasure> treasure) { this->treasureVector.push_back(treasure); }
+void Map::addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest) {
+    this->monolithVector.push_back({monolithFrom, monolithDest});
+}
+
 void Map::initTiles() {
     pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
 
@@ -84,8 +89,9 @@ void Map::generateMap() {
     TownPlacer townPlacer(*this);
     townPlacer.placeTowns();
 
-    RoadPlacer roadPlacer(*this);
-    roadPlacer.placeRoads();
+    ConnectionPlacer connectionPlacer(*this);
+    connectionPlacer.placeRoads();
+    connectionPlacer.createMonoliths();
 
     ObjectPlacer objectPlacer(*this);
     objectPlacer.placeBasicMines();
@@ -164,6 +170,14 @@ void Map::printMap(int debugLevel) {
         cerr << "==== Objects ====\n";
         for (auto &object : objectVector) {
             object->printObject();
+        }
+
+        cerr << "==== Monoliths ====\n";
+        for (auto &monoliths : monolithVector) {
+            cerr << "Monolith from ";
+            monoliths.first->printObject();
+            cerr << "Monolith dest ";
+            monoliths.second->printObject();
         }
     }
 

@@ -12,10 +12,10 @@
 #include "../mapInfo/Tile.hpp"
 #include "../mapInfo/Zone.hpp"
 #include "./placers/BorderPlacer.hpp"
+#include "./placers/ConnectionPlacer.hpp"
 #include "./placers/GuardPlacer.hpp"
 #include "./placers/ObjectPlacer.hpp"
 #include "./placers/RegionPlacer.hpp"
-#include "./placers/RoadPlacer.hpp"
 #include "./placers/TerrainPlacer.hpp"
 #include "./placers/TownPlacer.hpp"
 
@@ -26,6 +26,7 @@ using ObjectVector   = vector<shared_ptr<Object>>;
 using CreatureVector = vector<shared_ptr<Creature>>;
 using RoadVector     = vector<shared_ptr<Road>>;
 using TreasureVector = vector<shared_ptr<Treasure>>;
+using MonolithVector = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
 
 class Map {
   public:
@@ -44,6 +45,7 @@ class Map {
     void addRoad(shared_ptr<Road> road);
     void addCreature(shared_ptr<Creature> creature);
     void addTreasure(shared_ptr<Treasure> treasure);
+    void addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest);
     shared_ptr<Tile> getTile(int3 pos);
     LayoutInfo getLayoutInfo();
     BlueprintInfo getBlueprintInfo();
@@ -54,6 +56,7 @@ class Map {
     RoadVector getRoadVector();
     CreatureVector getCreatureVector();
     TreasureVector getTreasureVector();
+    MonolithVector getMonolithVector();
     array<int, 4> &getBasicResourceCount();
     RNG &getRNG();
     int getWidth();
@@ -79,4 +82,5 @@ class Map {
     CreatureVector creatureVector;
     TreasureVector treasureVector;
     RoadVector roadVector;
+    MonolithVector monolithVector;
 };

@@ -18,4 +18,5 @@ class GuardPlacer {
 
     void placeBorderGuards();
     void placeMineGuards();
+    void placeMonolithGuards();
 };

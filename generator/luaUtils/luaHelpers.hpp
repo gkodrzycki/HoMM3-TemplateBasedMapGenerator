@@ -18,6 +18,8 @@ void AddTerrainTiles(ofstream &luaFile, Map &map);
 void AddBorderObstacles(ofstream &luaFile, Map &map);
 void AddRoad(ofstream &luaFile, const int &tier, int3 pos);
 void AddRoads(ofstream &luaFile, Map &map);
+void AddMonolith(ofstream &luaFile, int3 pos);
+void AddMonoliths(ofstream &luaFile, Map &map);
 void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature);
 void AddCreatures(ofstream &luaFile, Map &map);
 void AddMine(ofstream &luaFile, shared_ptr<Mine> mine);
