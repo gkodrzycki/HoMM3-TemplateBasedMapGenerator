@@ -22,6 +22,7 @@ class RNG {
     pair<int3, int3> getRandomTriangle(int3 anchorPoint, int perimeter);
 
     template <typename T> void shuffle(vector<T> &vec);
+    template <typename T> T getRandomFromVector(vector<T> &vec);
 
   private:
     random_device rd;
@@ -31,4 +32,8 @@ class RNG {
 
 template <typename T> void RNG::shuffle(vector<T> &vec) {
     std::shuffle(vec.begin(), vec.end(), gen);
+}
+
+template <typename T> T RNG::getRandomFromVector(vector<T> &vec) {
+    return vec[nextInt(0, vec.size() - 1)];
 }

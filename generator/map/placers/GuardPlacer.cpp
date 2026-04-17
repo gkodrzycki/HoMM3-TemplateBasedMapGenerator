@@ -144,7 +144,32 @@ void GuardPlacer::placeMineGuards() {
     }
 }
 
+void GuardPlacer::placeMonolithGuards() {
+    MonolithVector monolithVector = map.getMonolithVector();
+
+    for (const auto &monoliths : monolithVector) {
+        int3 monolithFromPos = monoliths.first->getPosition();
+        int3 monolithDestPos = monoliths.second->getPosition();
+
+        int3 belowFromPos = monolithFromPos + int3(0, 1, 0);
+        int3 belowDestPos = monolithDestPos + int3(0, 1, 0);
+
+        GuardHandler guardHandlerFrom(map.getRNG());
+        auto guardPtrFrom = guardHandlerFrom.createGuard(GuardTypeHandler::BORDER, belowFromPos);
+        if (guardPtrFrom != nullptr) {
+            map.addCreature(guardPtrFrom);
+        }
+
+        GuardHandler guardHandlerDest(map.getRNG());
+        auto guardPtrDest = guardHandlerDest.createGuard(GuardTypeHandler::BORDER, belowDestPos);
+        if (guardPtrDest != nullptr) {
+            map.addCreature(guardPtrDest);
+        }
+    }
+}
+
 void GuardPlacer::placeGuards() {
     placeBorderGuards();
     placeMineGuards();
+    placeMonolithGuards();
 }

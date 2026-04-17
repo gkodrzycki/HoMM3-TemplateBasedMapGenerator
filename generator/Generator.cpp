@@ -48,6 +48,8 @@ void generateLuaScript(Map map, string &saveLocation) {
 
     AddRoads(luaFile, map);
 
+    AddMonoliths(luaFile, map);
+
     AddMines(luaFile, map);
 
     AddCreatures(luaFile, map);

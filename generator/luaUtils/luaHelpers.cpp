@@ -151,6 +151,34 @@ void AddRoads(ofstream &luaFile, Map &map) {
     luaFile << "end)\n";
 }
 
+// @function    AddMonolith
+// @tparam      ofstream    luaFile          file where we save lua script.
+// @tparam      int3        pos              position of monolith.
+// @param       connectionNumber             connection number.
+void AddMonolith(ofstream &luaFile, int3 pos, int connectionNumber) {
+    luaFile << "instance:obstacle('" << "Monolith Two Way" << connectionNumber << "', {x=" << pos.x
+            << ", y=" << pos.y << ", z=" << pos.z << "})\n";
+}
+
+// @function    AddMonoliths
+// @tparam      ofstream    luaFile         file where we save lua script.
+// @tparam      Map         map             object of map class with finished setup.
+void AddMonoliths(ofstream &luaFile, Map &map) {
+    MonolithVector monolithVector = map.getMonolithVector();
+
+    int counter = 0;
+    for (const auto &monoliths : monolithVector) {
+        if (counter >= 5) {
+            throw out_of_range("Too many monoliths, only 5 connections are supported. Found " +
+                               to_string(counter + 1) + " on seed " +
+                               to_string(map.getRNG().getOriginalSeed()) + "\n");
+        }
+        AddMonolith(luaFile, monoliths.first->getPosition(), counter);
+        AddMonolith(luaFile, monoliths.second->getPosition(), counter);
+        counter++;
+    }
+}
+
 // @function    AddCreature
 // @tparam      ofstream                luaFile          file where we save lua script.
 // @tparam      shared_ptr<Creature>    creature         pointer to creature.

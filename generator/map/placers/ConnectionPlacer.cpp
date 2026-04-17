@@ -1,12 +1,15 @@
-#include "./RoadPlacer.hpp"
+#include "./ConnectionPlacer.hpp"
 
-RoadPlacer::RoadPlacer(Map &map) : map(map) {}
+ConnectionPlacer::ConnectionPlacer(Map &map) : map(map) {}
 
-void RoadPlacer::placeRoads() {
+void ConnectionPlacer::placeRoads() {
     std::map<int, int3> connectionsPoints = getConnectionsPoints();
 
     auto connections = map.getLayoutInfo().getConnectionInfoList();
     for (auto connection : connections) {
+        if (connection.getType() != "road")
+            continue;
+
         int3 fromPos = connectionsPoints[connection.getZoneFrom()];
         int3 destPos = connectionsPoints[connection.getZoneDest()];
 
@@ -33,7 +36,78 @@ void RoadPlacer::placeRoads() {
     }
 }
 
-vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
+void ConnectionPlacer::createMonoliths() {
+    int mapWidth                          = map.getWidth();
+    int mapHeight                         = map.getHeight();
+    auto &rng                             = map.getRNG();
+    std::map<int, int3> connectionsPoints = getConnectionsPoints();
+
+    std::map<int, vector<int3>> zoneTiles;
+
+    for (int x = 0; x < mapWidth; x++) {
+        for (int y = 0; y < mapHeight; y++) {
+            int3 tilePos = int3(x, y, 0);
+            auto tile    = map.getTile(tilePos);
+            int zoneID   = tile->getZoneID();
+            if (tile->isTileType("FO")) {
+                zoneTiles[zoneID].push_back(tilePos);
+            }
+        }
+    }
+
+    int connectionCount    = 0;
+    int distanceFromCenter = 20; // Distance of monoliths from zone centers to avoid blocking them
+    auto connections       = map.getLayoutInfo().getConnectionInfoList();
+    for (auto connection : connections) {
+        if (connection.getType() != "monolith")
+            continue;
+
+        int3 centerFromPos = connectionsPoints[connection.getZoneFrom()];
+        int3 centerDestPos = connectionsPoints[connection.getZoneDest()];
+
+        vector<int3> fromZoneTiles = zoneTiles[connection.getZoneFrom()];
+        vector<int3> destZoneTiles = zoneTiles[connection.getZoneDest()];
+
+        // filter tiles which are exactly distanceFromCenter away from the center of their zone
+        fromZoneTiles.erase(remove_if(fromZoneTiles.begin(), fromZoneTiles.end(),
+                                      [&](int3 pos) {
+                                          return pos.distance2DMH(centerFromPos) !=
+                                                 distanceFromCenter;
+                                      }),
+                            fromZoneTiles.end());
+        destZoneTiles.erase(remove_if(destZoneTiles.begin(), destZoneTiles.end(),
+                                      [&](int3 pos) {
+                                          return pos.distance2DMH(centerDestPos) !=
+                                                 distanceFromCenter;
+                                      }),
+                            destZoneTiles.end());
+
+        if (fromZoneTiles.empty() || destZoneTiles.empty()) {
+            throw runtime_error("Failed to find suitable tiles for monoliths in zones " +
+                                to_string(connection.getZoneFrom()) + " and " +
+                                to_string(connection.getZoneDest()) + " on seed " +
+                                to_string(map.getRNG().getOriginalSeed()) + "\n");
+        }
+
+        int3 fromPos = rng.getRandomFromVector(fromZoneTiles);
+        int3 destPos = rng.getRandomFromVector(destZoneTiles);
+        int3 size = (connectionCount == 0 || connectionCount == 5) ? int3(1, 1, 1) : int3(2, 2, 1);
+
+        Object monolithFrom(fromPos, "Monolith", size);
+        Object monolithDest(destPos, "Monolith", size);
+
+        auto monolithFromPtr = make_shared<Object>(monolithFrom);
+        auto monolithDestPtr = make_shared<Object>(monolithDest);
+
+        map.addMonoliths(monolithFromPtr, monolithDestPtr);
+
+        map.fixNeighbourTiles(fromPos, size, map.getTile(fromPos)->getZoneID());
+        map.fixNeighbourTiles(destPos, size, map.getTile(destPos)->getZoneID());
+        connectionCount++;
+    }
+}
+
+vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
     RNG &rng = map.getRNG();
 
@@ -188,7 +262,7 @@ vector<int3> RoadPlacer::createPath(int3 fromPos, int3 destPos) {
     return witness;
 }
 
-std::map<int, int3> RoadPlacer::getConnectionsPoints() {
+std::map<int, int3> ConnectionPlacer::getConnectionsPoints() {
     ObjectVector objectVector = map.getObjectVector();
     std::map<int, int3> connectionsPoints;
 

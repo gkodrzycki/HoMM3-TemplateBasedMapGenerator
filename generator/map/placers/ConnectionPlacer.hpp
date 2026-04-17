@@ -7,11 +7,13 @@
 
 class Map;
 
-class RoadPlacer {
+class ConnectionPlacer {
   public:
-    RoadPlacer(Map &map);
+    ConnectionPlacer(Map &map);
 
     void placeRoads();
+    void createMonoliths();
+
     vector<int3> createPath(int3 fromPos, int3 destPos);
     std::map<int, int3> getConnectionsPoints();
 
