@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../global/Global.hpp"
+#include "../../global/GridSearch.hpp"
 #include "../../mapInfo/Artifact.hpp"
 #include "../../mapInfo/Creature.hpp"
 #include "../../mapInfo/Mine.hpp"
@@ -27,6 +28,8 @@ class ObjectPlacer {
     void placeCreature(CreatureType creatureType, int3 pos, int quantity);
     void placeResource(ResourceType resourceType, int3 pos, int quantity);
     void placeArtifact(ArtifactType artifactType, int3 pos);
+    double evalTreasureCandidate(int3 candidatePosition);
+    void placeTreasuresAroundTreasurePoint(int3 treasurePoint, ArtifactTier tierOfTreasures);
     int getNumberOfTreasures(int zoneID);
     ArtifactTier getTierOfTreasures(int zoneID);
 };

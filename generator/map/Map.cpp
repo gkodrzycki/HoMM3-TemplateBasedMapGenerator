@@ -97,13 +97,30 @@ void Map::generateMap() {
     objectPlacer.placeBasicMines();
     objectPlacer.placeMines();
     objectPlacer.placeMineResources();
-    // objectPlacer.placeTreasures();
+    objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
 
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
+
+    placeDebugObjects();
+}
+
+void Map::placeDebugObjects() {
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            int3 currentPos(x, y, 0);
+            auto currentTilePtr = getTile(currentPos);
+
+            if (currentTilePtr->isTileType("D")) {
+                Obstacle obstacle("Pine Trees_Snow", currentPos, "Obstacle");
+                auto obstaclePtr = make_shared<Obstacle>(obstacle);
+                addObject(obstaclePtr);
+            }
+        }
+    }
 }
 
 void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {

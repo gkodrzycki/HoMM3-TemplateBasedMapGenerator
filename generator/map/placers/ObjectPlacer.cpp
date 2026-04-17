@@ -316,41 +316,122 @@ ArtifactTier ObjectPlacer::getTierOfTreasures(int zoneID) {
     return static_cast<ArtifactTier>(tier);
 }
 
-void ObjectPlacer::placeTreasures() {
-    int mapWidth  = map.getWidth();
-    int mapHeight = map.getHeight();
-    auto &rng     = map.getRNG();
+double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition) {
+    return map.getRNG().nextDouble(); // TODO: implement a better evaluation function that takes
+                                      // into account distance to town, distance to mines, etc.
+}
 
-    std::map<int, vector<pair<int3, shared_ptr<Tile>>>> zoneTiles;
+void ObjectPlacer::placeTreasures() {
+    int mapWidth               = map.getWidth();
+    int mapHeight              = map.getHeight();
+    auto &rng                  = map.getRNG();
+    int numberOfCandidates     = 50;
+    int numberOfTreasurePoints = 10;
+
+    std::map<int, vector<int3>> zoneTiles;
 
     for (int x = 0; x < mapWidth; x++) {
         for (int y = 0; y < mapHeight; y++) {
             int3 tilePos = int3(x, y, 0);
-            auto tile    = map.getTile(tilePos);
-            int zoneID   = tile->getZoneID();
-            if (tile->isTileType("F")) {
-                zoneTiles[zoneID].push_back({tilePos, tile});
+            int zoneID   = map.getTile(tilePos)->getZoneID();
+            if (map.getTile(tilePos)->isTileType("F")) {
+                zoneTiles[zoneID].push_back(tilePos);
             }
         }
     }
+
+    auto neighbors4 = [&](const int3 &p) {
+        std::array<int3, 4> out;
+        for (int i = 0; i < 4; i++)
+            out[i] = p + directions4[i];
+        return out;
+    };
+    auto passable = [&](const int3 &p) { return map.getTile(p)->isTileType("F"); };
+
+    std::map<int, vector<int3>> tilesWithinTrees;
+    for (const auto &[zoneID, tiles] : zoneTiles) {
+        for (const auto &tilePos : tiles) {
+            for (const auto &n : neighbors4(tilePos)) {
+                if (map.getTile(n) && map.getTile(n)->isTileType("OBb")) {
+                    tilesWithinTrees[zoneID].push_back(tilePos);
+                    break;
+                }
+            }
+        }
+    }
+
+    // for (const auto &[zoneID, tiles] : zoneTiles) {
+    //     cerr << "Zone " << zoneID << " has " << tiles.size() << " free tiles, "
+    //          << tilesWithinTrees[zoneID].size() << " of which are within trees\n";
+
+    //     for (const auto &tilePos : tilesWithinTrees[zoneID]) {
+    //         // mark in map debugly those tiles
+    //         map.getTile(tilePos)->setTileType(TileType::TILE_DEBUG);
+    //     }
+    // }
 
     for (auto [id, tiles] : zoneTiles) {
         int numberOfTreasures        = getNumberOfTreasures(id);
         ArtifactTier tierOfTreasures = getTierOfTreasures(id);
 
-        for (int i = 0; i < numberOfTreasures; i++) {
-            bool placed               = false;
-            int maxNumberOfIterations = 100;
-            while (!placed && maxNumberOfIterations-- >= 0) {
-                auto [tilePos, tile] = tiles[rng.nextInt(0, tiles.size() - 1)];
-                if (tile->isTileType("F")) { // need to check again because we may claim it :DD
-                    tile->setTileType(TileType::TILE_OCCUPIED);
+        auto sources = tilesWithinTrees[id];
+        auto possibleCandidates =
+            bfs_collect_depth_xy(mapWidth, mapHeight, sources, 1, neighbors4, passable);
 
-                    auto randomArtifactType = getArtifactFromTier(tierOfTreasures, rng);
-                    placeArtifact(randomArtifactType, tilePos);
-                    placed = true;
-                }
+        vector<int3> candidates;
+        for (const auto &candidate : possibleCandidates) {
+            // candidate should not be in sources BUT ITS SLOW METHOD, TODO: optimize by using a
+            // hash set or something
+            if (std::find(sources.begin(), sources.end(), candidate) == sources.end()) {
+                candidates.push_back(candidate);
             }
+        }
+
+        vector<pair<double, int3>> candidatesWithEval;
+        // for (auto candidate : candidates) {
+        //     candidatesWithEval.push_back({evalTreasureCandidate(candidate), candidate});
+        // }
+        for (int i = 0; i < numberOfCandidates; i++) {
+            int3 candidatePosition = rng.getRandomFromVector(candidates);
+            candidatesWithEval.push_back(
+                {evalTreasureCandidate(candidatePosition), candidatePosition});
+        }
+
+        sort(candidatesWithEval.begin(), candidatesWithEval.end(),
+             [](const pair<double, int3> &a, const pair<double, int3> &b) {
+                 return a.first > b.first;
+             });
+
+        // for (auto &[eval, candidatePosition] : candidatesWithEval) {
+        //     cerr << "Candidate at " << candidatePosition.toString() << " has eval " << eval <<
+        //     endl; map.getTile(candidatePosition)->setTileType(TileType::TILE_DEBUG);
+        // }
+
+        for (int i = 0; i < numberOfTreasurePoints; i++) {
+            if (i >= (int)candidatesWithEval.size()) {
+                cerr << "Not enough candidates for treasures in zone " << id << endl;
+                break;
+            }
+            auto candidatePosition = candidatesWithEval[i].second;
+            // place "guard" at candidatePosition and mark tile as occupied
+            // place treasures around candidatePosition and mark those tiles as occupied
+            placeTreasuresAroundTreasurePoint(candidatePosition, tierOfTreasures);
+            map.getTile(candidatePosition)->setTileType(TileType::TILE_DEBUG);
+        }
+    }
+}
+
+void ObjectPlacer::placeTreasuresAroundTreasurePoint(int3 treasurePoint,
+                                                     ArtifactTier tierOfTreasures) {
+    vector<int3> offsets = {int3(-1, -1, 0), int3(0, -1, 0), int3(1, -1, 0), int3(-1, 0, 0),
+                            int3(1, 0, 0),   int3(-1, 1, 0), int3(0, 1, 0),  int3(1, 1, 0)};
+
+    for (const auto &offset : offsets) {
+        int3 pos = treasurePoint + offset;
+        if (map.getTile(pos) && map.getTile(pos)->isTileType("F")) {
+            auto randomArtifactType = getArtifactFromTier(tierOfTreasures, map.getRNG());
+            placeArtifact(randomArtifactType, pos);
+            map.getTile(pos)->setTileType(TileType::TILE_OCCUPIED);
         }
     }
 }

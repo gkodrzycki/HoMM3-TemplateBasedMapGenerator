@@ -37,6 +37,7 @@ class Map {
 
     void generateMap();
 
+    void placeDebugObjects();
     void printMap(int debugLevel);
 
     void addRegion(shared_ptr<Region> region);
