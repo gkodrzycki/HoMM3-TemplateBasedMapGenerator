@@ -282,6 +282,19 @@ int ObjectPlacer::getNumberOfTreasures(int zoneID) {
     return numberOfTreasures;
 }
 
+double ObjectPlacer::getPercentageOfMaxTreasures(ArtifactTier tierOfTreasures) {
+    switch (tierOfTreasures) {
+    case ArtifactTier::LOW:
+        return 0.3;
+    case ArtifactTier::MID:
+        return 0.5;
+    case ArtifactTier::HIGH:
+        return 0.7;
+    default:
+        return 0.5;
+    }
+}
+
 ArtifactTier ObjectPlacer::getTierOfTreasures(int zoneID) {
     int tier;
 
@@ -316,9 +329,69 @@ ArtifactTier ObjectPlacer::getTierOfTreasures(int zoneID) {
     return static_cast<ArtifactTier>(tier);
 }
 
-double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition) {
-    return map.getRNG().nextDouble(); // TODO: implement a better evaluation function that takes
-                                      // into account distance to town, distance to mines, etc.
+double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition,
+                                           std::map<int3, int> &tilesTreeCount,
+                                           vector<int3> &freeTiles, int acceptableBlockedTiles) {
+    double score = 0.0;
+
+    for (int i = 0; i < 8; i++) {
+        auto neighborPos = candidatePosition + directions8[i];
+        if (!map.getTile(neighborPos))
+            continue;
+        if (map.getTile(neighborPos)->isTileType("OBb")) {
+            score += 1.0;
+        } else {
+            score += tilesTreeCount[neighborPos];
+        }
+    }
+
+    auto passable = [&](const int3 &p) -> bool {
+        auto tile = map.getTile(p);
+        if (!tile)
+            return false;
+        if (tile->isTileType("BbOT"))
+            return false;
+        if (abs(p.x - candidatePosition.x) <= 1 && abs(p.y - candidatePosition.y) <= 1)
+            return false;
+        if (tile->getZoneID() != map.getTile(candidatePosition)->getZoneID())
+            return false;
+        return true;
+    };
+
+    auto neighbours8 = [&](const int3 &p) {
+        std::array<int3, 8> out;
+        for (int i = 0; i < 8; i++)
+            out[i] = p + directions8[i];
+        return out;
+    };
+
+    auto zoneCenter = map.getZoneMap()[map.getTile(candidatePosition)->getZoneID()]->getCenter();
+    vector<pair<int, int3>> source = {{2, zoneCenter}};
+
+    if (abs(candidatePosition.x - zoneCenter.x) <= 1 &&
+        abs(candidatePosition.y - zoneCenter.y) <= 1)
+        return numeric_limits<double>::min();
+
+    auto claimedTiles =
+        bfs_claim_xy(map.getWidth(), map.getHeight(), source, neighbours8, passable);
+
+    int blockedTiles = 0;
+    for (auto &tilePos : freeTiles) {
+        if (abs(tilePos.x - candidatePosition.x) <= 1 &&
+            abs(tilePos.y - candidatePosition.y) <= 1) {
+            continue;
+        }
+        if (claimedTiles[tilePos.x][tilePos.y] == 0) {
+            blockedTiles++;
+        }
+    }
+    if (blockedTiles < acceptableBlockedTiles) {
+        score += blockedTiles * 2;
+    } else {
+        score -= (blockedTiles - acceptableBlockedTiles) * 2;
+    }
+
+    return score;
 }
 
 void ObjectPlacer::placeTreasures() {
@@ -326,7 +399,7 @@ void ObjectPlacer::placeTreasures() {
     int mapHeight              = map.getHeight();
     auto &rng                  = map.getRNG();
     int numberOfCandidates     = 50;
-    int numberOfTreasurePoints = 10;
+    int acceptableBlockedTiles = 5;
 
     std::map<int, vector<int3>> zoneTiles;
 
@@ -349,12 +422,17 @@ void ObjectPlacer::placeTreasures() {
     auto passable = [&](const int3 &p) { return map.getTile(p)->isTileType("F"); };
 
     std::map<int, vector<int3>> tilesWithinTrees;
+    std::map<int3, int> tilesTreeCount;
     for (const auto &[zoneID, tiles] : zoneTiles) {
         for (const auto &tilePos : tiles) {
+            bool alreadyPushed = false;
             for (const auto &n : neighbors4(tilePos)) {
                 if (map.getTile(n) && map.getTile(n)->isTileType("OBb")) {
-                    tilesWithinTrees[zoneID].push_back(tilePos);
-                    break;
+                    if (!alreadyPushed)
+                        tilesWithinTrees[zoneID].push_back(tilePos);
+                    alreadyPushed = true;
+
+                    tilesTreeCount[tilePos]++;
                 }
             }
         }
@@ -371,7 +449,7 @@ void ObjectPlacer::placeTreasures() {
     // }
 
     for (auto [id, tiles] : zoneTiles) {
-        int numberOfTreasures        = getNumberOfTreasures(id);
+        int numberOfTreasurePoints   = getNumberOfTreasures(id);
         ArtifactTier tierOfTreasures = getTierOfTreasures(id);
 
         auto sources = tilesWithinTrees[id];
@@ -388,13 +466,11 @@ void ObjectPlacer::placeTreasures() {
         }
 
         vector<pair<double, int3>> candidatesWithEval;
-        // for (auto candidate : candidates) {
-        //     candidatesWithEval.push_back({evalTreasureCandidate(candidate), candidate});
-        // }
         for (int i = 0; i < numberOfCandidates; i++) {
             int3 candidatePosition = rng.getRandomFromVector(candidates);
-            candidatesWithEval.push_back(
-                {evalTreasureCandidate(candidatePosition), candidatePosition});
+            candidatesWithEval.push_back({evalTreasureCandidate(candidatePosition, tilesTreeCount,
+                                                                tiles, acceptableBlockedTiles),
+                                          candidatePosition});
         }
 
         sort(candidatesWithEval.begin(), candidatesWithEval.end(),
@@ -407,31 +483,155 @@ void ObjectPlacer::placeTreasures() {
         //     endl; map.getTile(candidatePosition)->setTileType(TileType::TILE_DEBUG);
         // }
 
-        for (int i = 0; i < numberOfTreasurePoints; i++) {
-            if (i >= (int)candidatesWithEval.size()) {
-                cerr << "Not enough candidates for treasures in zone " << id << endl;
+        vector<int3> pickedTreasurePoints;
+        for (int i = 0; i < (int)candidatesWithEval.size(); i++) {
+            if (numberOfTreasurePoints <= 0)
                 break;
-            }
+
             auto candidatePosition = candidatesWithEval[i].second;
-            // place "guard" at candidatePosition and mark tile as occupied
-            // place treasures around candidatePosition and mark those tiles as occupied
-            placeTreasuresAroundTreasurePoint(candidatePosition, tierOfTreasures);
-            map.getTile(candidatePosition)->setTileType(TileType::TILE_DEBUG);
+
+            bool tooClose = false;
+            for (const auto &pickedPos : pickedTreasurePoints) {
+                if (candidatePosition.distance2DMH(pickedPos) <= 5) {
+                    tooClose = true;
+                    break;
+                }
+            }
+            if (tooClose)
+                continue;
+
+            placeTreasuresNearCandidate(candidatePosition, tierOfTreasures);
+            map.getTile(candidatePosition)->setTileType(TileType::TILE_GUARD);
+            pickedTreasurePoints.push_back(candidatePosition);
+            numberOfTreasurePoints--;
         }
     }
 }
 
-void ObjectPlacer::placeTreasuresAroundTreasurePoint(int3 treasurePoint,
-                                                     ArtifactTier tierOfTreasures) {
-    vector<int3> offsets = {int3(-1, -1, 0), int3(0, -1, 0), int3(1, -1, 0), int3(-1, 0, 0),
-                            int3(1, 0, 0),   int3(-1, 1, 0), int3(0, 1, 0),  int3(1, 1, 0)};
+void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition,
+                                               ArtifactTier tierOfTreasures) {
 
-    for (const auto &offset : offsets) {
-        int3 pos = treasurePoint + offset;
-        if (map.getTile(pos) && map.getTile(pos)->isTileType("F")) {
-            auto randomArtifactType = getArtifactFromTier(tierOfTreasures, map.getRNG());
-            placeArtifact(randomArtifactType, pos);
-            map.getTile(pos)->setTileType(TileType::TILE_OCCUPIED);
+    auto passable = [&](const int3 &p) -> bool {
+        auto tile = map.getTile(p);
+        if (!tile)
+            return false;
+        if (tile->isTileType("BbOT"))
+            return false;
+        if (abs(p.x - candidatePosition.x) <= 1 && abs(p.y - candidatePosition.y) <= 1)
+            return false;
+        if (tile->getZoneID() != map.getTile(candidatePosition)->getZoneID())
+            return false;
+        return true;
+    };
+
+    auto neighbours8 = [&](const int3 &p) {
+        std::array<int3, 8> out;
+        for (int i = 0; i < 8; i++)
+            out[i] = p + directions8[i];
+        return out;
+    };
+
+    int zoneID                     = map.getTile(candidatePosition)->getZoneID();
+    auto zoneCenter                = map.getZoneMap()[zoneID]->getCenter();
+    vector<pair<int, int3>> source = {{2, zoneCenter}};
+
+    auto claimedTiles =
+        bfs_claim_xy(map.getWidth(), map.getHeight(), source, neighbours8, passable);
+
+    vector<pair<double, int3>> possiblePlacementWithScore;
+    for (int x = 0; x < map.getWidth(); x++) {
+        for (int y = 0; y < map.getHeight(); y++) {
+            int3 tilePos = int3(x, y, 0);
+            if (tilePos == candidatePosition)
+                continue;
+            if (claimedTiles[tilePos.x][tilePos.y] == 0 && map.getTile(tilePos)->isTileType("F") &&
+                map.getTile(tilePos)->getZoneID() == zoneID) {
+                double score = 0.0;
+
+                score += floor(tilePos.distance2DSQ(candidatePosition)) * 2;
+                if (tilePos.distance2DMH(candidatePosition) >= 5) {
+                    break;
+                }
+                for (int i = 0; i < 8; i++) {
+                    auto neighborPos = tilePos + directions8[i];
+                    if (map.getTile(neighborPos) && map.getTile(neighborPos)->isTileType("OBb")) {
+                        score += 1.0;
+                    }
+                }
+
+                possiblePlacementWithScore.push_back({score, tilePos});
+            }
         }
     }
+
+    sort(
+        possiblePlacementWithScore.begin(), possiblePlacementWithScore.end(),
+        [](const pair<double, int3> &a, const pair<double, int3> &b) { return a.first > b.first; });
+
+    int maxTreasuresToPlace =
+        getPercentageOfMaxTreasures(tierOfTreasures) * possiblePlacementWithScore.size();
+
+    set<int3> alreadyTaken;
+    for (int i = 0; i < (int)possiblePlacementWithScore.size(); i++) {
+        if (maxTreasuresToPlace <= 0)
+            break;
+
+        if (alreadyTaken.count(possiblePlacementWithScore[i].second))
+            continue;
+
+        auto candidatePos       = possiblePlacementWithScore[i].second;
+        auto randomArtifactType = getArtifactFromTier(tierOfTreasures, map.getRNG());
+        placeArtifact(randomArtifactType, candidatePos);
+        map.getTile(candidatePos)->setTileType(TileType::TILE_OCCUPIED);
+        maxTreasuresToPlace--;
+
+        alreadyTaken.insert(candidatePos);
+        for (int j = 0; j < (int)possiblePlacementWithScore.size(); j++) {
+            if (i == j)
+                continue;
+            auto otherCandidatePos = possiblePlacementWithScore[j].second;
+            if (alreadyTaken.count(otherCandidatePos))
+                continue;
+            bool candidateIsNearOtherCandidate = false;
+            for (int k = 0; k < 8; k++) {
+                auto neighborPos = otherCandidatePos + directions8[k];
+                if (neighborPos == candidatePos) {
+                    possiblePlacementWithScore[j].first += 2;
+                    candidateIsNearOtherCandidate = true;
+                    break;
+                }
+            }
+            if (candidateIsNearOtherCandidate) {
+                i = -1;
+                break;
+            }
+        }
+
+        sort(possiblePlacementWithScore.begin(), possiblePlacementWithScore.end(),
+             [](const pair<double, int3> &a, const pair<double, int3> &b) {
+                 return a.first > b.first;
+             });
+    }
+
+    // int blockedTiles = 0;
+    // for (auto &tilePos : tiles) {
+    //     if (abs(tilePos.x - candidatePosition.x) <= 1 && abs(tilePos.y - candidatePosition.y) <=
+    //     1) {
+    //         continue;
+    //     }
+    //     if (claimedTiles[tilePos.x][tilePos.y] == 0) {
+    //         blockedTiles++;
+    //     }
+    // }
+    // vector<int3> offsets = {int3(-1, -1, 0), int3(0, -1, 0), int3(1, -1, 0), int3(-1, 0, 0),
+    //                         int3(1, 0, 0),   int3(-1, 1, 0), int3(0, 1, 0),  int3(1, 1, 0)};
+
+    // for (const auto &offset : offsets) {
+    //     int3 pos = treasurePoint + offset;
+    //     if (map.getTile(pos) && map.getTile(pos)->isTileType("F")) {
+    //         auto randomArtifactType = getArtifactFromTier(tierOfTreasures, map.getRNG());
+    //         placeArtifact(randomArtifactType, pos);
+    //         map.getTile(pos)->setTileType(TileType::TILE_OCCUPIED);
+    //     }
+    // }
 }

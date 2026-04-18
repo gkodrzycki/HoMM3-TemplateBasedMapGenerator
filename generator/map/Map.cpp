@@ -105,7 +105,9 @@ void Map::generateMap() {
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
 
-    placeDebugObjects();
+    if (layoutInfo.getDebug() > 0) {
+        placeDebugObjects();
+    }
 }
 
 void Map::placeDebugObjects() {
@@ -226,6 +228,9 @@ void Map::printMap(int debugLevel) {
                 break;
             case TileType::TILE_BORDER_OUTER:
                 printColor(BRIGHT_BLUE, tileTypeToChar(tileType));
+                break;
+            case TileType::TILE_GUARD:
+                printColor(RED, tileTypeToChar(tileType));
                 break;
             default:
                 cerr << tileTypeToChar(tileType);

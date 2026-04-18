@@ -7,7 +7,7 @@
 
 class Map;
 
-enum class GuardTypeHandler { MINE, BORDER, DEFAULT };
+enum class GuardTypeHandler { MINE, BORDER, TREASURE, DEFAULT };
 
 class GuardHandler {
   public:
