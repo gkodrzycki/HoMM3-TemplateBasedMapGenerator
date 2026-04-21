@@ -8,6 +8,8 @@ int GuardHandler::getGuardLevel(GuardTypeHandler type) {
         return rng.nextInt(1, 2);
     } else if (type == GuardTypeHandler::BORDER) {
         return rng.nextInt(6, 7);
+    } else if (type == GuardTypeHandler::TREASURE) {
+        return rng.nextInt(1, 5);
     } else {
         return 1;
     }
@@ -18,6 +20,8 @@ int GuardHandler::getGuardPower(GuardTypeHandler type) {
         return 4000;
     } else if (type == GuardTypeHandler::BORDER) {
         return 40000;
+    } else if (type == GuardTypeHandler::TREASURE) {
+        return 10000;
     } else {
         return 1;
     }

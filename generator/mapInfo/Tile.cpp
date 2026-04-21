@@ -48,6 +48,8 @@ char tileTypeToChar(TileType tileType) {
         return 'b';
     case TileType::TILE_DEBUG:
         return 'D';
+    case TileType::TILE_GUARD:
+        return 'G';
     default:
         return '?';
     }
@@ -73,6 +75,8 @@ TileType charToTileType(char c) {
         return TileType::TILE_BORDER_OUTER;
     case 'D':
         return TileType::TILE_DEBUG;
+    case 'G':
+        return TileType::TILE_GUARD;
     default:
         return TileType::TILE_FREE;
     }

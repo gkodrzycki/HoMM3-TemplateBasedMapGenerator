@@ -12,6 +12,7 @@ enum class TileType {
     TILE_BORDER_INNER,
     TILE_BORDER_OUTER,
     TILE_OBSTACLE,
+    TILE_GUARD,
     TILE_DEBUG
 };
 

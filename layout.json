@@ -53,18 +53,15 @@
   "connections": [
     {
       "fromZone": 1,
-      "destZone": 2,
-      "type": "road"
+      "destZone": 2
     },
     {
       "fromZone": 3,
-      "destZone": 4,
-      "type": "monolith"
+      "destZone": 4
     },
     {
       "fromZone": 1,
-      "destZone": 3,
-      "type": "monolith"
+      "destZone": 3
     }
   ]
 }

@@ -168,8 +168,26 @@ void GuardPlacer::placeMonolithGuards() {
     }
 }
 
+void GuardPlacer::placeTreasureGuards() {
+
+    for (int x = 0; x < map.getWidth(); x++) {
+        for (int y = 0; y < map.getHeight(); y++) {
+            int3 tilePos = int3(x, y, 0);
+            auto tile    = map.getTile(tilePos);
+            if (!tile || !tile->isTileType("G"))
+                continue;
+
+            GuardHandler guardHandler(map.getRNG());
+            auto guardPtr = guardHandler.createGuard(GuardTypeHandler::TREASURE, tilePos);
+            if (guardPtr != nullptr) {
+                map.addCreature(guardPtr);
+            }
+        }
+    }
+}
 void GuardPlacer::placeGuards() {
     placeBorderGuards();
     placeMineGuards();
     placeMonolithGuards();
+    placeTreasureGuards();
 }
