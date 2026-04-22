@@ -103,8 +103,9 @@ json readFile(string filename) {
 }
 
 int main(int argc, char *argv[]) {
-    json layout    = readFile("layout.json");
-    json blueprint = readFile("blueprint.json");
+    json _template = readFile("template.json");
+    // json layout    = readFile("layout.json");
+    // json blueprint = readFile("blueprint.json");
 
     RNG rng;
     string saveLocation = "";
@@ -119,11 +120,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    LayoutInfo layoutInfo = parseLayout(layout);
+    LayoutInfo layoutInfo = parseLayout(_template);
     if (layoutInfo.getDebug() > 1)
         layoutInfo.printLayout();
 
-    BlueprintInfo blueprintInfo = parseBlueprint(blueprint, rng);
+    BlueprintInfo blueprintInfo = parseBlueprint(_template, rng);
     if (layoutInfo.getDebug() > 1)
         blueprintInfo.printBlueprint();
 
