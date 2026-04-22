@@ -11,8 +11,8 @@
     "Minimum Size": 9,
     "Maximum Size": 16,
     "Objects": "+95 0 d d d 3 d +144 4 d d d 3 d +144 5 d d d 3 d",
-    "Special weeks disabled": "x",
-    "Spell Research": "x"
+    "Special weeks disabled": true,
+    "Spell Research": true
   },
   "zones": [
     {
@@ -102,7 +102,7 @@
         "Maximum total positions": 4
       },
       "Player towns": {
-        "Ownership": "1",
+        "Ownership": 1,
         "Minimum castles": 1
       },
       "Neutral towns": {
@@ -169,7 +169,7 @@
       "Options": {
         "Objects": "+145 0 d d d d d",
         "Image settings": "-59.7876 81.4128 50 120",
-        "Zone repulsion": "x",
+        "Zone repulsion": true,
         "Monsters disposition (standard)": 3,
         "Monsters joining percentage": 1,
         "Monsters join only for money": true
@@ -188,7 +188,7 @@
         "Maximum total positions": 4
       },
       "Player towns": {
-        "Ownership": "2",
+        "Ownership": 2,
         "Minimum castles": 1
       },
       "Neutral towns": {
@@ -255,7 +255,7 @@
       "Options": {
         "Objects": "+145 0 d d d d d",
         "Image settings": "-60.5328 144.199 -130 120",
-        "Zone repulsion": "x",
+        "Zone repulsion": true,
         "Monsters disposition (standard)": 3,
         "Monsters joining percentage": 1,
         "Monsters join only for money": true
@@ -274,7 +274,7 @@
         "Maximum total positions": 4
       },
       "Player towns": {
-        "Ownership": "3",
+        "Ownership": 3,
         "Minimum castles": 1
       },
       "Neutral towns": {
@@ -341,7 +341,7 @@
       "Options": {
         "Objects": "+145 0 d d d d d",
         "Image settings": "146.685 138.058 -40 210",
-        "Zone repulsion": "x",
+        "Zone repulsion": true,
         "Monsters disposition (standard)": 3,
         "Monsters joining percentage": 1,
         "Monsters join only for money": true
@@ -360,7 +360,7 @@
         "Maximum total positions": 4
       },
       "Player towns": {
-        "Ownership": "4",
+        "Ownership": 4,
         "Minimum castles": 1
       },
       "Neutral towns": {
@@ -427,7 +427,7 @@
       "Options": {
         "Objects": "+145 0 d d d d d",
         "Image settings": "146.359 78.7245 -40 30",
-        "Zone repulsion": "x",
+        "Zone repulsion": true,
         "Monsters disposition (standard)": 3,
         "Monsters joining percentage": 1,
         "Monsters join only for money": true
