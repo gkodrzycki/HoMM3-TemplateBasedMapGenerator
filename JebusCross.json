@@ -1,0 +1,499 @@
+{
+  "pack": {
+    "Options": {
+      "Name": "Jebus Cross",
+      "Description": "XL-U template, not most-balanced, but one of the most popular overall, due to its simple layout and fast pace. Every player starts on a big, poorly guarded and rich zone. From the starting zone they try to enter the extra-rich central zone defeating a strong guard as early as possible.",
+      "Max Battle Rounds": 100
+    }
+  },
+  "map": {
+    "Name": "Jebus Cross",
+    "Minimum Size": 9,
+    "Maximum Size": 16,
+    "Objects": "+95 0 d d d 3 d +144 4 d d d 3 d +144 5 d d d 3 d",
+    "Special weeks disabled": "x",
+    "Spell Research": "x"
+  },
+  "zones": [
+    {
+      "Id": 1,
+      "Type": {
+        "Treasure": true,
+        "Base Size": 40
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      },
+      "Neutral towns": {
+        "Minimum castles": 2
+      },
+      "Town types": [
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Minimum mines": {
+        "Gold": 4
+      },
+      "Terrain": [
+        "Sand"
+      ],
+      "Monsters": [
+        "Neutral",
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Treasure": [
+        {
+          "Low": 35000,
+          "High": 55000,
+          "Density": 3
+        },
+        {
+          "Low": 25000,
+          "High": 35000,
+          "Density": 10
+        },
+        {
+          "Low": 10000,
+          "High": 25000,
+          "Density": 10
+        }
+      ],
+      "Options": {
+        "Image settings": "-166.214 111.544 -40 120",
+        "Monsters disposition (standard)": 3,
+        "Monsters joining percentage": 1,
+        "Monsters join only for money": true
+      }
+    },
+    {
+      "Id": 2,
+      "Type": {
+        "human start": true,
+        "Base Size": 30
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      },
+      "Player towns": {
+        "Ownership": "1",
+        "Minimum castles": 1
+      },
+      "Neutral towns": {
+        "Minimum towns": 2
+      },
+      "Town types": [
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Minimum mines": {
+        "Wood": 4,
+        "Mercury": 1,
+        "Ore": 4,
+        "Sulfur": 1,
+        "Crystal": 1,
+        "Gems": 1,
+        "Gold": 2
+      },
+      "Terrain": [
+        "Match to town"
+      ],
+      "Monsters": [
+        "Neutral",
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Treasure": [
+        {
+          "Low": 12000,
+          "High": 22000,
+          "Density": 1
+        },
+        {
+          "Low": 5000,
+          "High": 16000,
+          "Density": 6
+        },
+        {
+          "Low": 300,
+          "High": 3000,
+          "Density": 14
+        }
+      ],
+      "Options": {
+        "Objects": "+145 0 d d d d d",
+        "Image settings": "-59.7876 81.4128 50 120",
+        "Zone repulsion": "x",
+        "Monsters disposition (standard)": 3,
+        "Monsters joining percentage": 1,
+        "Monsters join only for money": true
+      }
+    },
+    {
+      "Id": 3,
+      "Type": {
+        "human start": true,
+        "Base Size": 30
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      },
+      "Player towns": {
+        "Ownership": "2",
+        "Minimum castles": 1
+      },
+      "Neutral towns": {
+        "Minimum towns": 2
+      },
+      "Town types": [
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Minimum mines": {
+        "Wood": 4,
+        "Mercury": 1,
+        "Ore": 4,
+        "Sulfur": 1,
+        "Crystal": 1,
+        "Gems": 1,
+        "Gold": 2
+      },
+      "Terrain": [
+        "Match to town"
+      ],
+      "Monsters": [
+        "Neutral",
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Treasure": [
+        {
+          "Low": 12000,
+          "High": 22000,
+          "Density": 1
+        },
+        {
+          "Low": 5000,
+          "High": 16000,
+          "Density": 6
+        },
+        {
+          "Low": 300,
+          "High": 3000,
+          "Density": 14
+        }
+      ],
+      "Options": {
+        "Objects": "+145 0 d d d d d",
+        "Image settings": "-60.5328 144.199 -130 120",
+        "Zone repulsion": "x",
+        "Monsters disposition (standard)": 3,
+        "Monsters joining percentage": 1,
+        "Monsters join only for money": true
+      }
+    },
+    {
+      "Id": 4,
+      "Type": {
+        "human start": true,
+        "Base Size": 30
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      },
+      "Player towns": {
+        "Ownership": "3",
+        "Minimum castles": 1
+      },
+      "Neutral towns": {
+        "Minimum towns": 2
+      },
+      "Town types": [
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Minimum mines": {
+        "Wood": 4,
+        "Mercury": 1,
+        "Ore": 4,
+        "Sulfur": 1,
+        "Crystal": 1,
+        "Gems": 1,
+        "Gold": 2
+      },
+      "Terrain": [
+        "Match to town"
+      ],
+      "Monsters": [
+        "Neutral",
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Treasure": [
+        {
+          "Low": 12000,
+          "High": 22000,
+          "Density": 1
+        },
+        {
+          "Low": 5000,
+          "High": 16000,
+          "Density": 6
+        },
+        {
+          "Low": 300,
+          "High": 3000,
+          "Density": 14
+        }
+      ],
+      "Options": {
+        "Objects": "+145 0 d d d d d",
+        "Image settings": "146.685 138.058 -40 210",
+        "Zone repulsion": "x",
+        "Monsters disposition (standard)": 3,
+        "Monsters joining percentage": 1,
+        "Monsters join only for money": true
+      }
+    },
+    {
+      "Id": 5,
+      "Type": {
+        "human start": true,
+        "Base Size": 30
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      },
+      "Player towns": {
+        "Ownership": "4",
+        "Minimum castles": 1
+      },
+      "Neutral towns": {
+        "Minimum towns": 2
+      },
+      "Town types": [
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Minimum mines": {
+        "Wood": 4,
+        "Mercury": 1,
+        "Ore": 4,
+        "Sulfur": 1,
+        "Crystal": 1,
+        "Gems": 1,
+        "Gold": 2
+      },
+      "Terrain": [
+        "Match to town"
+      ],
+      "Monsters": [
+        "Neutral",
+        "Castle",
+        "Rampart",
+        "Tower",
+        "Inferno",
+        "Necropolis",
+        "Dungeon",
+        "Stronghold",
+        "Fortress",
+        "Conflux",
+        "Cove",
+        "Factory",
+        "Bulwark"
+      ],
+      "Treasure": [
+        {
+          "Low": 12000,
+          "High": 22000,
+          "Density": 1
+        },
+        {
+          "Low": 5000,
+          "High": 16000,
+          "Density": 6
+        },
+        {
+          "Low": 300,
+          "High": 3000,
+          "Density": 14
+        }
+      ],
+      "Options": {
+        "Objects": "+145 0 d d d d d",
+        "Image settings": "146.359 78.7245 -40 30",
+        "Zone repulsion": "x",
+        "Monsters disposition (standard)": 3,
+        "Monsters joining percentage": 1,
+        "Monsters join only for money": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "Zones": {
+        "Zone 1": 1,
+        "Zone 2": 2
+      },
+      "Options": {
+        "Value": 45000
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      }
+    },
+    {
+      "Zones": {
+        "Zone 1": 1,
+        "Zone 2": 3
+      },
+      "Options": {
+        "Value": 45000
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      }
+    },
+    {
+      "Zones": {
+        "Zone 1": 1,
+        "Zone 2": 4
+      },
+      "Options": {
+        "Value": 45000
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      }
+    },
+    {
+      "Zones": {
+        "Zone 1": 1,
+        "Zone 2": 5
+      },
+      "Options": {
+        "Value": 45000
+      },
+      "Restrictions": {
+        "Minimum human positions": 1,
+        "Maximum human positions": 4,
+        "Minimum total positions": 2,
+        "Maximum total positions": 4
+      }
+    }
+  ]
+}
