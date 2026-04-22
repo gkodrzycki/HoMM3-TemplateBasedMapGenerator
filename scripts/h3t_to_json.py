@@ -28,12 +28,15 @@ from typing import Any
 
 
 # Subsections whose leaf fields are checkbox flags. They are emitted as a
-# list of selected names rather than an object of booleans.
-FLAG_LIST_SUBSECTIONS = {
-    ("Zone", "Town types"),
-    ("Zone", "Terrain"),
-    ("Zone", "Monsters"),
-    ("Zone", "Allowed Factions"),
+# list of selected names rather than an object of booleans. The optional
+# `value_fields` set names columns inside such a subsection that are NOT
+# checkboxes -- they keep their raw value and are stored alongside the
+# flag list under the dedicated key, e.g. Monsters.Strength.
+FLAG_LIST_SUBSECTIONS: dict[tuple[str, str], set[str]] = {
+    ("Zone", "Town types"): set(),
+    ("Zone", "Terrain"): set(),
+    ("Zone", "Monsters"): {"Strength"},
+    ("Zone", "Allowed Factions"): set(),
 }
 
 # Cells whose value is a boolean checkbox (truthy = "x", "X", "1", "true",
@@ -229,14 +232,29 @@ def collect_record(
         section_key = (target_section, sub_key)
 
         if section_key in FLAG_LIST_SUBSECTIONS:
+            value_fields = FLAG_LIST_SUBSECTIONS[section_key]
             flags: list[str] = []
+            scalars: dict[str, Any] = {}
             for col in (c for tier in tier_columns for c in tier):
                 if col >= len(row):
                     continue
-                if row[col].strip().lower() in _TRUE_LITERALS:
-                    flags.append(triples[col][2])
-            if flags:
+                raw = row[col].strip()
+                if raw == "":
+                    continue
+                field_name = triples[col][2]
+                if field_name in value_fields:
+                    key = (target_section, sub_key, field_name)
+                    coerced = coerce(raw, key)
+                    if coerced is not None:
+                        scalars[field_name] = coerced
+                elif raw.lower() in _TRUE_LITERALS:
+                    flags.append(field_name)
+            if flags and scalars:
+                out[sub_key] = {**scalars, "list": flags}
+            elif flags:
                 out[sub_key] = flags
+            elif scalars:
+                out[sub_key] = scalars
             continue
 
         tier_results: list[dict[str, Any]] = []
