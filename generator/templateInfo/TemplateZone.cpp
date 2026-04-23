@@ -202,6 +202,30 @@ void TemplateZone::print() const {
     if (neutralTowns.minimumTowns || neutralTowns.minimumCastles)
         cerr << "      Neutral towns: towns>=" << neutralTowns.minimumTowns
              << "  castles>=" << neutralTowns.minimumCastles << "\n";
+
+    if (!townTypes.empty()) {
+        cerr << "      Town types:\n";
+        for (const auto &t : townTypes)
+            cerr << "       " << t << "\n";
+    }
+
+    // Print only non-zero mine settings using shared helper.
+    printNonZeroFields("Minimum mines", {{"Wood", minimumMines.wood},
+                                         {"Mercury", minimumMines.mercury},
+                                         {"Ore", minimumMines.ore},
+                                         {"Sulfur", minimumMines.sulfur},
+                                         {"Crystal", minimumMines.crystal},
+                                         {"Gems", minimumMines.gems},
+                                         {"Gold", minimumMines.gold}});
+
+    printNonZeroFields("Mine density", {{"Wood", mineDensity.wood},
+                                        {"Mercury", mineDensity.mercury},
+                                        {"Ore", mineDensity.ore},
+                                        {"Sulfur", mineDensity.sulfur},
+                                        {"Crystal", mineDensity.crystal},
+                                        {"Gems", mineDensity.gems},
+                                        {"Gold", mineDensity.gold}});
+
     if (!terrain.empty()) {
         cerr << "      Terrain:";
         for (const auto &t : terrain)
@@ -210,13 +234,18 @@ void TemplateZone::print() const {
     }
     if (!monsters.strength.empty())
         cerr << "      Monsters strength: " << monsters.strength << "\n";
+    if (!monsters.factions.empty()) {
+        cerr << "      Monster factions:\n";
+        for (const auto &f : monsters.factions)
+            cerr << "       " << f << "\n";
+    }
     if (monsters.matchToTown)
         cerr << "      Monsters: match to town\n";
     if (monsters.neutral)
         cerr << "      Monsters: include Neutral\n";
     cerr << "      Treasure tiers: " << treasure.size() << "\n";
     for (const auto &t : treasure)
-        cerr << "        " << t.low << "-" << t.high << " x" << t.density << "\n";
+        cerr << "        " << t.low << "-" << t.high << " density " << t.density << "\n";
     if (!objects.empty())
         cerr << "      Objects: " << objects << "\n";
     if (!placement.empty())
