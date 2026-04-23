@@ -10,7 +10,7 @@ struct ZoneRestrictions {
 };
 
 struct TownSettings {
-    int ownership         = 0; // 1-based player index; 0 = neutral
+    int ownership         = 0;
     int minimumTowns      = 0;
     int minimumCastles    = 0;
     int townDensity       = 0;
@@ -41,6 +41,8 @@ struct ZoneMonsters {
     string strength;
     // Faction names that can appear as guards, plus "Neutral".
     vector<string> factions;
+    bool matchToTown = false;
+    bool neutral     = false;
 };
 
 class TemplateZone {
@@ -48,8 +50,8 @@ class TemplateZone {
     TemplateZone();
 
     int getId() const;
-    // Zone role: "human_start", "computer_start", "treasure", "junction"
-    string getRole() const;
+    // Zone type: "human_start", "computer_start", "treasure", "junction"
+    string getType() const;
     int getBaseSize() const;
 
     const ZoneRestrictions &getRestrictions() const;
@@ -63,23 +65,32 @@ class TemplateZone {
     const vector<TreasureTier> &getTreasure() const;
 
     // Zone-level options
+    string getPlacement() const;
     string getObjects() const;
+    int getMinimumObjects() const;
     string getImageSettings() const;
+
     bool getZoneRepulsion() const;
     int getMonstersDisposition() const;
+    int getMonstersDispositionCustom() const;
     int getMonstersJoiningPercentage() const;
     bool getMonstersJoinOnlyForMoney() const;
     bool getForceNeutralCreatures() const;
     bool getAllowNonCoherentRoad() const;
-    int getMinimumObjects() const;
     int getMaxBlockValue() const;
+    int getMinimumAirshipShipyards() const;
+    int getAirshipShipyardDensity() const;
+    string getTownHint() const;
+    string getTerrainHint() const;
+    const vector<string> &getAllowedFactions() const;
+    string getFactionHint() const;
 
     void deserialize(const json &zone);
     void print() const;
 
   private:
     int id;
-    string role;
+    string type;
     int baseSize;
 
     ZoneRestrictions restrictions;
@@ -93,15 +104,23 @@ class TemplateZone {
     vector<TreasureTier> treasure;
 
     // Options
+    string placement;
     string objects;
+    int minimumObjects;
     string imageSettings;
-    bool zoneRepulsion;
-    int monstersDisposition;
-    int monstersJoiningPercentage;
-    bool monstersJoinOnlyForMoney;
     bool forceNeutralCreatures;
     bool allowNonCoherentRoad;
-    int minimumObjects;
+    bool zoneRepulsion;
+    string townHint;
+    int monstersDisposition;
+    int monstersDispositionCustom;
+    int monstersJoiningPercentage;
+    bool monstersJoinOnlyForMoney;
+    int minimumAirshipShipyards;
+    int airshipShipyardDensity;
+    string terrainHint;
+    vector<string> allowedFactions;
+    string factionHint;
     int maxBlockValue;
 
     static MineSettings deserializeMines(const json &j);

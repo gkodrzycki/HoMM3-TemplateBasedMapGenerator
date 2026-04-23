@@ -17,7 +17,8 @@ class TemplateConnection {
     int getZone2() const;
     int getValue() const;
     bool isWide() const;
-    bool hasBorderGuard() const;
+    bool isBorder() const;
+    bool isGuard() const;
     bool isFictive() const;
     int getPortalRepulsion() const;
     const TemplateConnectionRestrictions &getRestrictions() const;
@@ -30,7 +31,8 @@ class TemplateConnection {
     int zone2;
     int value;
     bool wide;
-    bool borderGuard;
+    bool border;
+    bool guard;
     bool fictive;
     int portalRepulsion;
     TemplateConnectionRestrictions restrictions;

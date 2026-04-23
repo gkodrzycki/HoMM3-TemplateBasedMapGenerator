@@ -5,6 +5,7 @@
 #include "./global/Random.hpp"
 #include "./layoutInfo/LayoutInfo.hpp"
 #include "./map/Map.hpp"
+#include "./templateInfo/TemplateInfo.hpp"
 
 LayoutInfo parseLayout(const json &layout) {
     LayoutInfo layoutInfo;
@@ -103,7 +104,7 @@ json readFile(string filename) {
 }
 
 int main(int argc, char *argv[]) {
-    json _template = readFile("template.json");
+    json _template = readFile("JebusCross.json");
     // json layout    = readFile("layout.json");
     // json blueprint = readFile("blueprint.json");
 
@@ -120,27 +121,31 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    LayoutInfo layoutInfo = parseLayout(_template);
-    if (layoutInfo.getDebug() > 1)
-        layoutInfo.printLayout();
+    // LayoutInfo layoutInfo = parseLayout(_template);
+    // if (layoutInfo.getDebug() > 1)
+    //     layoutInfo.printLayout();
 
-    BlueprintInfo blueprintInfo = parseBlueprint(_template, rng);
-    if (layoutInfo.getDebug() > 1)
-        blueprintInfo.printBlueprint();
-
-    Map map(rng, layoutInfo, blueprintInfo);
-    map.generateMap();
-    if (layoutInfo.getDebug() > 0) {
-        cerr << "========== MAP ==========\n";
-        map.printMap(layoutInfo.getDebug());
-        cerr << "Map printed!\n";
-    }
-
-    generateLuaScript(map, saveLocation);
-
-    cout << "Executing Lua script...\n";
-    executeLuaScript("generated_script.lua");
-    cout << "Lua script executed successfully and saved to generated_script.lua\n";
+    // BlueprintInfo blueprintInfo = parseBlueprint(_template, rng);
+    // if (layoutInfo.getDebug() > 1)
+    //     blueprintInfo.printBlueprint();
+    TemplateInfo templateInfo;
+    templateInfo.deserialize(_template);
+    templateInfo.print();
 
     return 0;
+    // Map map(rng, layoutInfo, blueprintInfo);
+    // map.generateMap();
+    // if (layoutInfo.getDebug() > 0) {
+    //     cerr << "========== MAP ==========\n";
+    //     map.printMap(layoutInfo.getDebug());
+    //     cerr << "Map printed!\n";
+    // }
+
+    // generateLuaScript(map, saveLocation);
+
+    // cout << "Executing Lua script...\n";
+    // executeLuaScript("generated_script.lua");
+    // cout << "Lua script executed successfully and saved to generated_script.lua\n";
+
+    // return 0;
 }

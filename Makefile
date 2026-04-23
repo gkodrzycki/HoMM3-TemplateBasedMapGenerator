@@ -27,6 +27,7 @@ MAP_INFO_DIR = $(GENERATOR_DIR)/mapInfo
 GLOBAL_DIR = $(GENERATOR_DIR)/global
 LAYOUT_INFO_DIR = $(GENERATOR_DIR)/layoutInfo
 BLUEPRINT_INFO_DIR = $(GENERATOR_DIR)/blueprintInfo
+TEMPLATE_INFO_DIR = $(GENERATOR_DIR)/templateInfo
 MAP_DIR = $(GENERATOR_DIR)/map
 PLACERS_DIR = $(MAP_DIR)/placers
 
@@ -37,6 +38,9 @@ COMMON_SOURCES = \
               $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
               $(BLUEPRINT_INFO_DIR)/BlueprintInfo.cpp \
               $(BLUEPRINT_INFO_DIR)/ZoneBlueprint.cpp \
+			  $(TEMPLATE_INFO_DIR)/TemplateInfo.cpp \
+			  $(TEMPLATE_INFO_DIR)/TemplateZone.cpp \
+			  $(TEMPLATE_INFO_DIR)/TemplateConnection.cpp \
               $(GLOBAL_DIR)/Random.cpp \
               $(GLOBAL_DIR)/CellularAutomata.cpp \
 			  $(PLACERS_DIR)/RegionPlacer.cpp \
