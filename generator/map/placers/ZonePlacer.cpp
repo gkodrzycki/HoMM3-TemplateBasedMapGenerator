@@ -13,23 +13,12 @@ void ZonePlacer::initZones() {
 }
 
 int ZonePlacer::calculateTotalSize() {
-    // LayoutInfo layout = map.getLayoutInfo();
-
     int sumOfSizes = 0;
 
     auto zoneMap = map.getZoneMap();
     for (auto [id, zone] : zoneMap) {
-        cerr << "Zone " << id << " has size " << zone->getSize() << "\n";
         sumOfSizes += zone->getSize();
     }
-
-    // for (auto regionInfo : layout.getRegionInfoList()) {
-    //     Region region(regionInfo);
-    //     for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
-    //         Zone zone(zoneLayout);
-    //         sumOfSizes += zone.getSize();
-    //     }
-    // }
     return sumOfSizes;
 }
 
@@ -44,7 +33,7 @@ void ZonePlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
     }
 
     auto neighbors4 = [&](const int3 &p) {
-        std::array<int3, 4> out;
+        array<int3, 4> out;
         for (int i = 0; i < 4; i++)
             out[i] = p + directions4[i];
         return out;
@@ -63,12 +52,27 @@ void ZonePlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
     RNG &rng = map.getRNG();
     rng.shuffle(filteredTiles);
 
-    // TODO: better selection based on distance to zoneCenter
+    if (filteredTiles.empty()) {
+        return;
+    }
+
+    int3 bestTile   = filteredTiles[0];
+    float bestScore = bestTile.distance2DSQ(zoneCenter) + rng.nextFloat(0.0, 2.5f);
 
     for (const auto &tile : filteredTiles) {
-        grid[tile.x][tile.y] = zoneID;
-        break;
+        float dist = tile.distance2DSQ(zoneCenter);
+
+        // TODO: Calibrate parameter for noise
+        float randomNoise = rng.nextFloat(0.0, 1.5f);
+
+        float score = dist + randomNoise;
+
+        if (score < bestScore) {
+            bestScore = score;
+            bestTile  = tile;
+        }
     }
+    grid[bestTile.x][bestTile.y] = zoneID;
 }
 
 void ZonePlacer::initGrid() {
@@ -76,9 +80,12 @@ void ZonePlacer::initGrid() {
     grid = vector<vector<int>>(gridN, vector<int>(gridN, 0));
 }
 
-int ZonePlacer::getPercentageSize(int zoneSize, int totalSize) {
-    int tempGridN = gridN - 2;
-    return floor(zoneSize * ((float)(tempGridN * tempGridN) / (float)(totalSize)));
+int ZonePlacer::getPercentageSize(int zoneSize, int gridN, int totalSize) {
+    float percentage = floor(zoneSize * ((float)(gridN * gridN) / (float)(totalSize)));
+    if (percentage < 1) {
+        percentage = 1;
+    }
+    return (int)percentage;
 }
 
 void ZonePlacer::generateAbstractGrid() {
@@ -89,68 +96,119 @@ void ZonePlacer::generateAbstractGrid() {
     for (auto [id, zone] : zoneMap)
         zoneIDs.push_back(id);
 
-    gridN = ceil(sqrt(totalSize)) + 2;
+    gridN = ceil(sqrt(totalSize)) + 3;
 
     initGrid();
 
-    size_t x = 0, y = 0; // start from 0,0
-    if (zoneMap[zoneIDs[0]]->getType() == "human_start") {
-        x = 0;
-        y = 0;
-    } else {
-        RNG &rng = map.getRNG();
-        x        = gridN / 2;
-        y        = x;
+    RNG &rng = map.getRNG();
+
+    struct ZonePos {
+        int id;
+        int3 pos;
+    };
+    vector<ZonePos> centers;
+
+    for (int zoneID : zoneIDs) {
+        while (true) {
+            int rx = rng.nextInt(0, gridN - 1);
+            int ry = rng.nextInt(0, gridN - 1);
+            if (grid[rx][ry] == 0) {
+                grid[rx][ry] = zoneID;
+                centers.push_back({zoneID, int3(rx, ry, 0)});
+                break;
+            }
+        }
     }
-    // TODO: copy random edge from engineer
 
-    grid[x][y] = zoneIDs[0];
-
-    int percentageSize = getPercentageSize(zoneMap[zoneIDs[0]]->getSize(), totalSize);
-    // for (int i = 1; i < percentageSize; i++) {
-    //     claimAbstractTile(zoneIDs[0], int3(x, y, 0));
-    // }
-
-    for (size_t i = 1; i < zoneIDs.size(); i++) {
-        int zoneID = zoneIDs[i];
-
-        float bestDist = numeric_limits<float>::lowest();
-        int3 bestPos;
-
-        for (int freeX = 0; freeX < gridN; freeX++) {
-            for (int freeY = 0; freeY < gridN; freeY++) {
-                int3 freePos = int3(freeX, freeY, 0);
-                if (grid[freeX][freeY] != 0)
+    auto calculateEnergy = [&]() {
+        float energy = 0.0f;
+        for (size_t i = 0; i < centers.size(); i++) {
+            for (size_t j = i + 1; j < centers.size(); j++) {
+                if (i == j)
                     continue;
+                int z1             = centers[i].id;
+                int z2             = centers[j].id;
+                float mapDist      = centers[i].pos.distance2DMH(centers[j].pos);
+                float abstractDist = distancedBetweenZones[z1][z2];
 
-                float scoreOfPos = 0;
-                for (int otherX = 0; otherX < gridN; otherX++) {
-                    for (int otherY = 0; otherY < gridN; otherY++) {
-                        int3 otherPos   = int3(otherX, otherY, 0);
-                        int otherZoneID = grid[otherX][otherY];
-                        if (otherZoneID == 0)
-                            continue;
-
-                        float abstractDist = distancedBetweenZones[zoneID][otherZoneID];
-                        if (abstractDist == 1) {
-                            scoreOfPos -= freePos.distance2DMH(otherPos);
-                        } else {
-                            scoreOfPos += freePos.distance2DMH(otherPos) * (abstractDist + 1);
-                        }
+                if (abstractDist == 1) {
+                    energy += mapDist * mapDist;
+                } else {
+                    if (mapDist > 0) {
+                        energy += (500.0f * abstractDist) / mapDist;
                     }
-                }
-                if (scoreOfPos > bestDist) {
-                    bestDist = scoreOfPos;
-                    bestPos  = freePos;
                 }
             }
         }
-        grid[bestPos.x][bestPos.y] = zoneID;
+        return energy;
+    };
 
-        int percentageSize = getPercentageSize(zoneMap[zoneID]->getSize(), totalSize);
-        // for (int i = 1; i < percentageSize; i++) {
-        //     claimAbstractTile(zoneID, int3(bestPos.x, bestPos.y, 0));
-        // }
+    float temperature    = 100.0f;
+    float coolingRate    = 0.999f;
+    float minTemperature = 0.01f;
+    float currentEnergy  = calculateEnergy();
+
+    while (temperature > minTemperature) {
+        int randomIdx = rng.nextInt(0, centers.size() - 1);
+        int3 oldPos   = centers[randomIdx].pos;
+
+        int rx = rng.nextInt(0, gridN - 1);
+        int ry = rng.nextInt(0, gridN - 1);
+        int3 newPos(rx, ry, 0);
+
+        if (oldPos == newPos)
+            continue;
+
+        int targetZoneID = grid[rx][ry];
+
+        grid[oldPos.x][oldPos.y] = targetZoneID;
+        grid[newPos.x][newPos.y] = centers[randomIdx].id;
+        centers[randomIdx].pos   = newPos;
+
+        int targetZoneIdx = -1;
+        if (targetZoneID != 0) {
+            for (size_t i = 0; i < centers.size(); i++) {
+                if (centers[i].id == targetZoneID) {
+                    targetZoneIdx              = i;
+                    centers[targetZoneIdx].pos = oldPos;
+                    break;
+                }
+            }
+        }
+
+        float newEnergy   = calculateEnergy();
+        float deltaEnergy = newEnergy - currentEnergy;
+        bool accept       = false;
+
+        if (deltaEnergy < 0) {
+            accept = true;
+        } else {
+            float randProb = rng.nextFloat(0.0f, 1.0f);
+            if (randProb < exp(-deltaEnergy / temperature)) {
+                accept = true;
+            }
+        }
+
+        if (accept) {
+            currentEnergy = newEnergy;
+        } else {
+            grid[oldPos.x][oldPos.y] = centers[randomIdx].id;
+            grid[newPos.x][newPos.y] = targetZoneID;
+            centers[randomIdx].pos   = oldPos;
+            if (targetZoneIdx != -1) {
+                centers[targetZoneIdx].pos = newPos;
+            }
+        }
+
+        temperature *= coolingRate;
+    }
+
+    for (const auto &center : centers) {
+        int zoneID         = center.id;
+        int percentageSize = getPercentageSize(zoneMap[zoneID]->getSize(), gridN - 2, totalSize);
+        for (int i = 1; i < percentageSize; i++) {
+            claimAbstractTile(zoneID, center.pos);
+        }
     }
 }
 
@@ -217,50 +275,61 @@ void ZonePlacer::calculateDistances() {
     auto zoneMap = map.getZoneMap();
     for (auto [zoneID, zone] : zoneMap) {
         distancedBetweenZones[zoneID] = bfs_distances<int>(zoneID, zoneNeighbors);
-        for (auto [otherZoneID, dist] : distancedBetweenZones[zoneID]) {
-            cerr << "Distance between zone " << zoneID << " and " << otherZoneID << " is " << dist
-                 << "\n";
-        }
     }
-
-    // for (auto regionInfo : layout.getRegionInfoList()) {
-    //     Region region(regionInfo);
-    //     for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
-    //         Zone zone(zoneLayout);
-
-    //         int zoneID                    = zone.getZoneID();
-    //         distancedBetweenZones[zoneID] = bfs_distances<int>(zoneID, zoneNeighbors);
-    //     }
-    // }
 }
 
-void ZonePlacer::claimTiles(vector<pair<int, int3>> &zoneTiles) {
+bool ZonePlacer::claimTiles(vector<pair<int, int3>> &zoneTiles, bool fullClaim) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
     auto neighbors4 = [&](const int3 &p) {
-        std::array<int3, 4> out;
+        array<int3, 4> out;
         for (int i = 0; i < 4; i++)
             out[i] = p + directions4[i];
         return out;
     };
 
+    std::map<int, int> currentZoneSize;
+    std::map<int, int> maxZoneSize;
+    for (const auto &[zoneID, zone] : map.getZoneMap()) {
+        maxZoneSize[zoneID] =
+            getPercentageSize(zone->getSize(), map.getWidth(), calculateTotalSize());
+    }
+
     auto passable = [&](const int3 &p) { return true; };
 
-    auto claim = bfs_claim_xyz2(mapWidth, mapHeight, zoneTiles, neighbors4, passable);
+    auto claimFn = [&](int zoneID, const int3 &pos) {
+        if (fullClaim)
+            return true;
+        currentZoneSize[zoneID]++;
+        if (currentZoneSize[zoneID] > maxZoneSize[zoneID] * 1.1)
+            return false;
+        return true;
+    };
+
+    auto claim = bfs_claim_xyz2(mapWidth, mapHeight, zoneTiles, neighbors4, passable, claimFn);
 
     ZoneMap zoneMap = map.getZoneMap();
 
+    bool fullyClaimed = true;
     for (int y = 0; y < mapHeight; y++) {
         for (int x = 0; x < mapWidth; x++) {
-            int zoneID   = claim[x][y][0];
+            int zoneID = claim[x][y][0];
+            if (!fullClaim && zoneID == 0) {
+                fullyClaimed = false;
+                continue;
+            } else if (zoneID == 0) {
+                throw runtime_error("Tile at (" + to_string(x) + ", " + to_string(y) +
+                                    ") was not claimed by any zone during claiming process.");
+            }
             auto tilePtr = map.getTile(int3(x, y, 0));
             tilePtr->setZoneID(zoneID);
             tilePtr->setTerrain(zoneMap[zoneID]->getTerrain());
         }
     }
+    return fullyClaimed;
 }
 
-void ZonePlacer::claimFreeTiles() {
+bool ZonePlacer::claimFreeTiles(bool fullClaim) {
     vector<pair<int, int3>> zoneTiles;
 
     for (int y = 0; y < map.getHeight(); y++) {
@@ -272,41 +341,66 @@ void ZonePlacer::claimFreeTiles() {
             zoneTiles.push_back({zoneID, int3(x, y, 0)});
         }
     }
-    claimTiles(zoneTiles);
+    return claimTiles(zoneTiles, fullClaim);
 }
 
 void ZonePlacer::calculateZoneCenters() {
     ZoneMap zoneMap = map.getZoneMap();
+    int mapWidth    = map.getWidth();
+    int mapHeight   = map.getHeight();
 
     std::map<int, vector<int3>> zoneTiles;
 
-    for (auto &[zoneID, zone] : zoneMap) {
-        for (int y = 0; y < map.getHeight(); y++) {
-            for (int x = 0; x < map.getWidth(); x++) {
-                auto tilePtr = map.getTile(int3(x, y, 0));
-                if (tilePtr->getZoneID() != zoneID)
-                    continue;
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            auto tilePtr = map.getTile(int3(x, y, 0));
+            int zoneID   = tilePtr->getZoneID();
+            if (zoneID != 0) {
                 zoneTiles[zoneID].push_back(int3(x, y, 0));
             }
         }
     }
 
-    for (auto &[zoneID, zone] : zoneMap) {
-        // take tile with lowest distance to others within same zone
-        int3 bestPos;
-        float bestDist = numeric_limits<float>::max();
+    auto neighbors4 = [&](const int3 &p) {
+        array<int3, 4> out;
+        for (int i = 0; i < 4; i++)
+            out[i] = p + directions4[i];
+        return out;
+    };
 
-        for (size_t i = 0; i < zoneTiles[zoneID].size(); i++) {
-            float distSum = 0;
-            for (const auto &pos : zoneTiles[zoneID]) {
-                distSum += pos.distance2DMH(zoneTiles[zoneID][i]);
+    for (auto &[zoneID, zone] : zoneMap) {
+        if (zoneTiles[zoneID].empty())
+            continue;
+
+        vector<int3> borderTiles;
+
+        for (const auto &pos : zoneTiles[zoneID]) {
+            bool isBorder = false;
+            for (const auto &nPos : neighbors4(pos)) {
+                if (nPos.x < 0 || nPos.x >= mapWidth || nPos.y < 0 || nPos.y >= mapHeight ||
+                    map.getTile(nPos)->getZoneID() != zoneID) {
+                    isBorder = true;
+                    break;
+                }
             }
-            if (distSum < bestDist) {
-                bestDist = distSum;
-                bestPos  = zoneTiles[zoneID][i];
+
+            if (isBorder) {
+                borderTiles.push_back(pos);
             }
         }
-        zone->setCenter(bestPos);
+
+        if (borderTiles.empty()) {
+            zone->setCenter(zoneTiles[zoneID].front());
+            continue;
+        }
+
+        auto visitedNodes = bfs_collect_depth_xy(
+            mapWidth, mapHeight, borderTiles, numeric_limits<int>::max(), neighbors4,
+            [&](const int3 &p) { return map.getTile(p)->getZoneID() == zoneID; });
+
+        // last element in visitedNodes will be the farthest from border, so it will be in the
+        // center
+        zone->setCenter(visitedNodes.back());
     }
 }
 
@@ -314,7 +408,27 @@ void ZonePlacer::placeZones() {
     initZones();
     calculateDistances();
     generateZones();
-    claimFreeTiles();
+    bool allClaimed = claimFreeTiles();
+    if (!allClaimed) {
+        cerr << "Not all tiles were claimed in the first pass, claiming remaining tiles with "
+                "fullClaim=true\n";
+        claimFreeTiles(true);
+    }
+
+    std::map<int, int> zoneSizes;
+    auto zoneMap = map.getZoneMap();
+    for (auto [zoneID, zone] : zoneMap) {
+        zoneSizes[zoneID] = 0;
+    }
+    for (int y = 0; y < map.getHeight(); y++) {
+        for (int x = 0; x < map.getWidth(); x++) {
+            auto tilePtr = map.getTile(int3(x, y, 0));
+            int zoneID   = tilePtr->getZoneID();
+            if (zoneID != 0) {
+                zoneSizes[zoneID]++;
+            }
+        }
+    }
 
     calculateZoneCenters();
 

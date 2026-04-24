@@ -111,7 +111,7 @@ vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
     RNG &rng = map.getRNG();
 
-    const int TRIES = 5;
+    const int TRIES = 3;
     int forcedCount = 0;
 
     int fromZoneID = map.getTile(fromPos)->getZoneID();

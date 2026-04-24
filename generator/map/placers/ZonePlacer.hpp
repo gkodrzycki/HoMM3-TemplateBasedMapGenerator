@@ -25,12 +25,12 @@ class ZonePlacer {
 
     void initGrid();
 
-    void claimTiles(vector<pair<int, int3>> &zoneTiles);
-    void claimFreeTiles();
+    bool claimTiles(vector<pair<int, int3>> &zoneTiles, bool fullClaim);
+    bool claimFreeTiles(bool fullClaim = false);
 
     void calculateDistances();
 
-    int getPercentageSize(int zoneSize, int totalSize);
+    int getPercentageSize(int zoneSize, int gridN, int totalSize);
 
     void generateAbstractGrid();
     bool validateAbstractGrid();

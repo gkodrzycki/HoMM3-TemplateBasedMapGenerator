@@ -6,14 +6,18 @@ pair<int, int> Map::chooseMapSize(int minimumSize, int maximumSize) {
     vector<string> sizes;
 
     for (int i = minimumSize; i <= maximumSize; i++) {
-        if (i == 1)
+        if (i == 1 || i == 2)
             sizes.push_back("S");
-        else if (i == 4)
+        else if (i == 4 || i == 8)
             sizes.push_back("M");
-        else if (i == 9)
+        else if (i == 9 || i == 18)
             sizes.push_back("L");
-        else if (i == 16)
+        else if (i == 16 || i == 32)
             sizes.push_back("XL");
+    }
+
+    if (sizes.empty()) {
+        throw runtime_error("No valid map sizes available for the given range.");
     }
 
     string mapSize = rng.getRandomFromVector(sizes);
@@ -27,7 +31,7 @@ pair<int, int> Map::chooseMapSize(int minimumSize, int maximumSize) {
     if (mapSize == "XL")
         return {144, 144};
 
-    return {-1, -1};
+    throw runtime_error("Invalid map size selected: " + mapSize);
 }
 
 shared_ptr<Tile> Map::getTile(int3 pos) {
@@ -94,18 +98,18 @@ void Map::generateMap() {
     ZonePlacer zonePlacer(*this);
     zonePlacer.placeZones();
 
-    // BorderPlacer borderPlacer(*this);
-    // borderPlacer.reserveBorderTiles();
+    BorderPlacer borderPlacer(*this);
+    borderPlacer.reserveBorderTiles();
 
-    // TerrainPlacer terrainPlacer(*this);
-    // terrainPlacer.generateNoise();
+    TerrainPlacer terrainPlacer(*this);
+    terrainPlacer.generateNoise();
 
-    // TownPlacer townPlacer(*this);
-    // townPlacer.placeTowns();
+    TownPlacer townPlacer(*this);
+    townPlacer.placeTowns();
 
-    // ConnectionPlacer connectionPlacer(*this);
-    // connectionPlacer.placeRoads();
-    // connectionPlacer.createMonoliths();
+    ConnectionPlacer connectionPlacer(*this);
+    connectionPlacer.placeRoads();
+    connectionPlacer.createMonoliths();
 
     // ObjectPlacer objectPlacer(*this);
     // objectPlacer.placeBasicMines();
@@ -116,8 +120,8 @@ void Map::generateMap() {
     // GuardPlacer guardPlacer(*this);
     // guardPlacer.placeGuards();
 
-    // borderPlacer.placeBorders();
-    // terrainPlacer.placeObstacles();
+    borderPlacer.placeBorders();
+    terrainPlacer.placeObstacles();
 
     // if (templateInfo.getDebug() > 0) {
     //     placeDebugObjects();

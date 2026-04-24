@@ -14,9 +14,14 @@ Zone::Zone(ZoneTemplate zoneTemplate) {
     this->setSize(zoneTemplate.getBaseSize());
 
     if (zoneTemplate.getMatchTerrainToTown()) {
+        cerr << "Zone template " << zoneTemplate.getId()
+             << " matches terrain to town. Setting terrain to GRASS.\n";
         this->setTerrain("Grass");
     } else if (!zoneTemplate.getTerrain().empty()) {
         // TODO add rng and choose random terrain from zoneTemplate.getTerrain()
+        cerr << "Zone template " << zoneTemplate.getId()
+             << " has multiple terrains specified. Choosing the first one: "
+             << zoneTemplate.getTerrain()[0] << "\n";
         this->setTerrain(zoneTemplate.getTerrain()[0]);
     } else {
         throw runtime_error("Zone template " + to_string(zoneTemplate.getId()) +

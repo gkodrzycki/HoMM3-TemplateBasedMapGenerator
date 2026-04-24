@@ -2,12 +2,12 @@
 
 ZoneTemplate::ZoneTemplate()
     : id(0), type(""), baseSize(0), restrictions(), playerTowns(), neutralTowns(), townTypes(),
-      minimumMines(), mineDensity(), terrain(), monsters(), treasure(), placement(""), objects(""),
-      minimumObjects(0), imageSettings(""), forceNeutralCreatures(false),
-      allowNonCoherentRoad(false), zoneRepulsion(false), townHint(""), monstersDisposition(0),
-      monstersDispositionCustom(0), monstersJoiningPercentage(0), monstersJoinOnlyForMoney(false),
-      minimumAirshipShipyards(0), airshipShipyardDensity(0), terrainHint(""), allowedFactions(),
-      factionHint(""), maxBlockValue(0) {}
+      minimumMines(), mineDensity(), matchTerrainToTown(false), terrain(), monsters(), treasure(),
+      placement(""), objects(""), minimumObjects(0), imageSettings(""),
+      forceNeutralCreatures(false), allowNonCoherentRoad(false), zoneRepulsion(false), townHint(""),
+      monstersDisposition(0), monstersDispositionCustom(0), monstersJoiningPercentage(0),
+      monstersJoinOnlyForMoney(false), minimumAirshipShipyards(0), airshipShipyardDensity(0),
+      terrainHint(""), allowedFactions(), factionHint(""), maxBlockValue(0) {}
 
 int ZoneTemplate::getId() const { return id; }
 string ZoneTemplate::getType() const { return type; }

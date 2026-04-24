@@ -121,10 +121,13 @@ inline vector<vector<int>> bfs_claim_xy(int W, int H, const vector<pair<int, int
  *
  * Idealne do ZonePlacer::claimTiles, gdzie masz currentClaim[..][..][2].
  */
-template <typename NeighFn, typename PassableFn>
-inline vector<vector<array<int, 2>>> bfs_claim_xyz2(int W, int H,
-                                                    const vector<pair<int, int3>> &sources,
-                                                    NeighFn neighbors, PassableFn passable) {
+struct NoOpClaim {
+    void operator()(int, const int3 &) const {}
+};
+template <typename NeighFn, typename PassableFn, typename ClaimFn>
+inline vector<vector<array<int, 2>>>
+bfs_claim_xyz2(int W, int H, const vector<pair<int, int3>> &sources, NeighFn neighbors,
+               PassableFn passable, ClaimFn claimFn = NoOpClaim{}) {
     vector<vector<array<int, 2>>> claim(W, vector<array<int, 2>>(H, {0, 0}));
     queue<int3> q;
 
@@ -146,6 +149,10 @@ inline vector<vector<array<int, 2>>> bfs_claim_xyz2(int W, int H,
         int3 cur = q.front();
         q.pop();
         int id = claim[cur.x][cur.y][cur.z];
+
+        if (claimFn(id, cur) == false) {
+            continue;
+        }
 
         for (const auto &nxt : neighbors(cur)) {
             if (!isInside(0, 0, W, H, nxt))
