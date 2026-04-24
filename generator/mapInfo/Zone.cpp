@@ -1,22 +1,37 @@
 #include "./Zone.hpp"
 
-int decodeZoneSize(string size) {
-    if (size == "S")
-        return 1;
-    if (size == "M")
-        return 2;
-    if (size == "L")
-        return 3;
-    return 0;
-}
+Zone::Zone(ZoneTemplate zoneTemplate) {
+    vector<string> allowedFactions = zoneTemplate.getTownTypes();
+    // TODO add rng and select random faction from allowed factions
+    this->setFaction(getEnumFromNameOrThrow<Faction>(allowedFactions[0]));
 
-Zone::Zone(ZoneLayout zoneLayout) {
-    this->setFaction(getEnumFromNameOrThrow<Faction>(zoneLayout.getFaction()));
-    this->setOwner(zoneLayout.getOwner());
-    this->setSize(decodeZoneSize(zoneLayout.getSize()));
-    this->setTerrain(zoneLayout.getTerrain());
-    this->setType(zoneLayout.getType());
-    this->setZoneID(zoneLayout.getID());
+    int owner = 0;
+    if (zoneTemplate.getType() == "human_start" || zoneTemplate.getType() == "computer_start") {
+        owner = zoneTemplate.getPlayerTowns().ownership;
+    }
+
+    this->setOwner(owner);
+    this->setSize(zoneTemplate.getBaseSize());
+
+    if (zoneTemplate.getMatchTerrainToTown()) {
+        this->setTerrain("Grass");
+    } else if (!zoneTemplate.getTerrain().empty()) {
+        // TODO add rng and choose random terrain from zoneTemplate.getTerrain()
+        this->setTerrain(zoneTemplate.getTerrain()[0]);
+    } else {
+        throw runtime_error("Zone template " + to_string(zoneTemplate.getId()) +
+                            " has no terrain specified and does not match terrain to town");
+    }
+
+    this->setType(zoneTemplate.getType());
+    this->setZoneID(zoneTemplate.getId());
+
+    // this->setFaction(getEnumFromNameOrThrow<Faction>(zoneLayout.getFaction()));
+    // this->setOwner(zoneLayout.getOwner());
+    // this->setSize(decodeZoneSize(zoneLayout.getSize()));
+    // this->setTerrain(zoneLayout.getTerrain());
+    // this->setType(zoneLayout.getType());
+    // this->setZoneID(zoneLayout.getID());
 }
 
 void Zone::setCenter(int3 center) { this->center = center; }
@@ -29,7 +44,7 @@ void Zone::setTerrain(string terrain) { this->terrain = terrain; }
 
 void Zone::setFaction(Faction faction) { this->faction = faction; }
 
-void Zone::setOwner(string owner) { this->owner = owner; }
+void Zone::setOwner(int owner) { this->owner = owner; }
 
 void Zone::setType(string type) { this->type = type; }
 
@@ -37,13 +52,13 @@ int3 Zone::getCenter() { return center; }
 
 int Zone::getZoneID() { return zoneID; }
 
-int Zone::getSize() { return size; }
+int Zone::getSize() { return size / 10; }
 
 string Zone::getTerrain() { return terrain; }
 
 Faction Zone::getFaction() { return faction; }
 
-string Zone::getOwner() { return owner; }
+int Zone::getOwner() { return owner; }
 
 string Zone::getType() { return type; }
 

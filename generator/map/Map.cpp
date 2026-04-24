@@ -1,9 +1,23 @@
 #include "./Map.hpp"
 
-Map::Map(RNG &rng, LayoutInfo layoutInfo, BlueprintInfo blueprintInfo)
-    : rng(rng), layoutInfo(layoutInfo), blueprintInfo(blueprintInfo) {}
+Map::Map(RNG &rng, TemplateInfo templateInfo) : rng(rng), templateInfo(templateInfo) {}
 
-pair<int, int> decodeMapSize(string mapSize) {
+pair<int, int> Map::chooseMapSize(int minimumSize, int maximumSize) {
+    vector<string> sizes;
+
+    for (int i = minimumSize; i <= maximumSize; i++) {
+        if (i == 1)
+            sizes.push_back("S");
+        else if (i == 4)
+            sizes.push_back("M");
+        else if (i == 9)
+            sizes.push_back("L");
+        else if (i == 16)
+            sizes.push_back("XL");
+    }
+
+    string mapSize = rng.getRandomFromVector(sizes);
+
     if (mapSize == "S")
         return {36, 36};
     if (mapSize == "M")
@@ -12,6 +26,7 @@ pair<int, int> decodeMapSize(string mapSize) {
         return {108, 108};
     if (mapSize == "XL")
         return {144, 144};
+
     return {-1, -1};
 }
 
@@ -22,8 +37,7 @@ shared_ptr<Tile> Map::getTile(int3 pos) {
     return tileMap[pos.y][pos.x];
 }
 
-LayoutInfo Map::getLayoutInfo() { return layoutInfo; }
-BlueprintInfo Map::getBlueprintInfo() { return blueprintInfo; }
+TemplateInfo Map::getTemplateInfo() { return templateInfo; }
 RNG &Map::getRNG() { return rng; }
 RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
@@ -38,7 +52,6 @@ array<int, 4> &Map::getBasicResourceCount() { return basicResourceCount; }
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
 
-void Map::addRegion(shared_ptr<Region> region) { this->regionMap[region->getRegionID()] = region; }
 void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zone; }
 void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(object); }
 void Map::addRoad(shared_ptr<Road> road) { this->roadVector.push_back(road); }
@@ -49,7 +62,8 @@ void Map::addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monol
 }
 
 void Map::initTiles() {
-    pair<int, int> width_height = decodeMapSize(layoutInfo.getMapSize());
+    pair<int, int> width_height =
+        chooseMapSize(templateInfo.getMinimumSize(), templateInfo.getMaximumSize());
 
     width  = width_height.first;
     height = width_height.second;
@@ -64,50 +78,50 @@ void Map::initTiles() {
 void Map::initMap() {
     initTiles();
 
-    // TODO Choose values based on layout/blueprint info richness?
+    // TODO Choose values based on templateInfo info?
     for (int i = 0; i < 4; i++) {
         basicResourceCount[i] = rng.nextInt(0, 15);
     }
 }
 
 void Map::generateMap() {
-    if (layoutInfo.getDebug() > 0) {
+    if (templateInfo.getDebug() > 0) {
         cerr << "==== SEED: " << rng.getOriginalSeed() << " ====\n";
     }
 
     initMap();
 
-    RegionPlacer regionPlacer(*this);
-    regionPlacer.placeRegions();
+    ZonePlacer zonePlacer(*this);
+    zonePlacer.placeZones();
 
-    BorderPlacer borderPlacer(*this);
-    borderPlacer.reserveBorderTiles();
+    // BorderPlacer borderPlacer(*this);
+    // borderPlacer.reserveBorderTiles();
 
-    TerrainPlacer terrainPlacer(*this);
-    terrainPlacer.generateNoise();
+    // TerrainPlacer terrainPlacer(*this);
+    // terrainPlacer.generateNoise();
 
-    TownPlacer townPlacer(*this);
-    townPlacer.placeTowns();
+    // TownPlacer townPlacer(*this);
+    // townPlacer.placeTowns();
 
-    ConnectionPlacer connectionPlacer(*this);
-    connectionPlacer.placeRoads();
-    connectionPlacer.createMonoliths();
+    // ConnectionPlacer connectionPlacer(*this);
+    // connectionPlacer.placeRoads();
+    // connectionPlacer.createMonoliths();
 
-    ObjectPlacer objectPlacer(*this);
-    objectPlacer.placeBasicMines();
-    objectPlacer.placeMines();
-    objectPlacer.placeMineResources();
-    objectPlacer.placeTreasures();
+    // ObjectPlacer objectPlacer(*this);
+    // objectPlacer.placeBasicMines();
+    // objectPlacer.placeMines();
+    // objectPlacer.placeMineResources();
+    // objectPlacer.placeTreasures();
 
-    GuardPlacer guardPlacer(*this);
-    guardPlacer.placeGuards();
+    // GuardPlacer guardPlacer(*this);
+    // guardPlacer.placeGuards();
 
-    borderPlacer.placeBorders();
-    terrainPlacer.placeObstacles();
+    // borderPlacer.placeBorders();
+    // terrainPlacer.placeObstacles();
 
-    if (layoutInfo.getDebug() > 0) {
-        placeDebugObjects();
-    }
+    // if (templateInfo.getDebug() > 0) {
+    //     placeDebugObjects();
+    // }
 }
 
 void Map::placeDebugObjects() {

@@ -2,16 +2,16 @@
 
 #include "../global/Global.hpp"
 
-struct TemplateConnectionRestrictions {
+struct ConnectionTemplateRestrictions {
     int minHumanPositions = 0;
     int maxHumanPositions = 0;
     int minTotalPositions = 0;
     int maxTotalPositions = 0;
 };
 
-class TemplateConnection {
+class ConnectionTemplate {
   public:
-    TemplateConnection();
+    ConnectionTemplate();
 
     int getZone1() const;
     int getZone2() const;
@@ -21,7 +21,8 @@ class TemplateConnection {
     bool isGuard() const;
     bool isFictive() const;
     int getPortalRepulsion() const;
-    const TemplateConnectionRestrictions &getRestrictions() const;
+    string getType() const;
+    const ConnectionTemplateRestrictions &getRestrictions() const;
 
     void deserialize(const json &connection);
     void print() const;
@@ -34,6 +35,7 @@ class TemplateConnection {
     bool border;
     bool guard;
     bool fictive;
+    string type; // possible "ground", "teleport", "random", "underground"
     int portalRepulsion;
-    TemplateConnectionRestrictions restrictions;
+    ConnectionTemplateRestrictions restrictions;
 };

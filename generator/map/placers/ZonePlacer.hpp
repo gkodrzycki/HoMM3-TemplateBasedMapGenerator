@@ -8,16 +8,16 @@ class Map;
 
 using DistanceMap = std::map<int, unordered_map<int, int>>;
 
-class RegionPlacer {
+class ZonePlacer {
   public:
-    RegionPlacer(Map &map);
+    ZonePlacer(Map &map);
 
-    void initRegions();
-    void generateRegions();
+    void initZones();
+    void generateZones();
 
     int calculateTotalSize();
 
-    void placeRegions();
+    void placeZones();
 
     void calculateZoneCenters();
 

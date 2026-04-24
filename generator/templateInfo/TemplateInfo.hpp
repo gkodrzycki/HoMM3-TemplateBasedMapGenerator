@@ -1,13 +1,14 @@
 #pragma once
 
 #include "../global/Global.hpp"
-#include "./TemplateConnection.hpp"
-#include "./TemplateZone.hpp"
+#include "./ConnectionTemplate.hpp"
+#include "./ZoneTemplate.hpp"
 
 class TemplateInfo {
   public:
-    TemplateInfo();
+    TemplateInfo(int debug);
 
+    int getDebug() const;
     // Pack metadata
     string getName() const;
     string getDescription() const;
@@ -33,16 +34,17 @@ class TemplateInfo {
     int getZoneSparseness() const;
     bool getAnarchy() const;
 
-    const vector<TemplateZone> &getZones() const;
-    const vector<TemplateConnection> &getConnections() const;
+    const vector<ZoneTemplate> &getZones() const;
+    const vector<ConnectionTemplate> &getConnections() const;
 
     // Looks up a zone by id; throws if not found.
-    const TemplateZone &getZoneById(int id) const;
+    const ZoneTemplate &getZoneById(int id) const;
 
     void deserialize(const json &tmpl);
     void print() const;
 
   private:
+    int debug;
     // Pack
     string name;
     string description;
@@ -68,6 +70,6 @@ class TemplateInfo {
     bool spellResearch;
     bool anarchy;
 
-    vector<TemplateZone> zones;
-    vector<TemplateConnection> connections;
+    vector<ZoneTemplate> zones;
+    vector<ConnectionTemplate> connections;
 };

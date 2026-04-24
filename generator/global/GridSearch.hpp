@@ -119,7 +119,7 @@ inline vector<vector<int>> bfs_claim_xy(int W, int H, const vector<pair<int, int
  * Multi-source BFS "claim" w 2 warstwach z (z=0/1):
  * claim[x][y][z] = id
  *
- * Idealne do RegionPlacer::claimTiles, gdzie masz currentClaim[..][..][2].
+ * Idealne do ZonePlacer::claimTiles, gdzie masz currentClaim[..][..][2].
  */
 template <typename NeighFn, typename PassableFn>
 inline vector<vector<array<int, 2>>> bfs_claim_xyz2(int W, int H,

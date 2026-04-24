@@ -1,38 +1,39 @@
-#include "./RegionPlacer.hpp"
+#include "./ZonePlacer.hpp"
 
-RegionPlacer::RegionPlacer(Map &map) : map(map) {}
+ZonePlacer::ZonePlacer(Map &map) : map(map) {}
 
-void RegionPlacer::initRegions() {
-    LayoutInfo layout = map.getLayoutInfo();
+void ZonePlacer::initZones() {
+    TemplateInfo templateInfo = map.getTemplateInfo();
 
-    for (auto regionInfo : layout.getRegionInfoList()) {
-        Region region(regionInfo);
-        for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
-            Zone zone(zoneLayout);
-            auto zonePtr = make_shared<Zone>(zone);
-            region.addZone(zonePtr);
-            map.addZone(zonePtr);
-        }
-
-        map.addRegion(make_shared<Region>(region));
+    for (auto zoneTemplate : templateInfo.getZones()) {
+        Zone zone(zoneTemplate);
+        auto zonePtr = make_shared<Zone>(zone);
+        map.addZone(zonePtr);
     }
 }
 
-int RegionPlacer::calculateTotalSize() {
-    LayoutInfo layout = map.getLayoutInfo();
+int ZonePlacer::calculateTotalSize() {
+    // LayoutInfo layout = map.getLayoutInfo();
 
     int sumOfSizes = 0;
-    for (auto regionInfo : layout.getRegionInfoList()) {
-        Region region(regionInfo);
-        for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
-            Zone zone(zoneLayout);
-            sumOfSizes += zone.getSize();
-        }
+
+    auto zoneMap = map.getZoneMap();
+    for (auto [id, zone] : zoneMap) {
+        cerr << "Zone " << id << " has size " << zone->getSize() << "\n";
+        sumOfSizes += zone->getSize();
     }
+
+    // for (auto regionInfo : layout.getRegionInfoList()) {
+    //     Region region(regionInfo);
+    //     for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
+    //         Zone zone(zoneLayout);
+    //         sumOfSizes += zone.getSize();
+    //     }
+    // }
     return sumOfSizes;
 }
 
-void RegionPlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
+void ZonePlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
     vector<int3> zoneTiles;
     for (int x = 0; x < gridN; x++) {
         for (int y = 0; y < gridN; y++) {
@@ -70,16 +71,17 @@ void RegionPlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
     }
 }
 
-void RegionPlacer::initGrid() {
+void ZonePlacer::initGrid() {
     grid.clear();
     grid = vector<vector<int>>(gridN, vector<int>(gridN, 0));
 }
 
-int RegionPlacer::getPercentageSize(int zoneSize, int totalSize) {
-    return floor(zoneSize * ((float)(gridN * gridN) / (float)(totalSize)));
+int ZonePlacer::getPercentageSize(int zoneSize, int totalSize) {
+    int tempGridN = gridN - 2;
+    return floor(zoneSize * ((float)(tempGridN * tempGridN) / (float)(totalSize)));
 }
 
-void RegionPlacer::generateAbstractGrid() {
+void ZonePlacer::generateAbstractGrid() {
     int totalSize = calculateTotalSize();
 
     auto zoneMap = map.getZoneMap();
@@ -87,20 +89,27 @@ void RegionPlacer::generateAbstractGrid() {
     for (auto [id, zone] : zoneMap)
         zoneIDs.push_back(id);
 
-    gridN = ceil(sqrt(totalSize));
+    gridN = ceil(sqrt(totalSize)) + 2;
 
     initGrid();
 
     size_t x = 0, y = 0; // start from 0,0
-
+    if (zoneMap[zoneIDs[0]]->getType() == "human_start") {
+        x = 0;
+        y = 0;
+    } else {
+        RNG &rng = map.getRNG();
+        x        = gridN / 2;
+        y        = x;
+    }
     // TODO: copy random edge from engineer
 
     grid[x][y] = zoneIDs[0];
 
     int percentageSize = getPercentageSize(zoneMap[zoneIDs[0]]->getSize(), totalSize);
-    for (int i = 1; i < percentageSize; i++) {
-        claimAbstractTile(zoneIDs[0], int3(x, y, 0));
-    }
+    // for (int i = 1; i < percentageSize; i++) {
+    //     claimAbstractTile(zoneIDs[0], int3(x, y, 0));
+    // }
 
     for (size_t i = 1; i < zoneIDs.size(); i++) {
         int zoneID = zoneIDs[i];
@@ -139,18 +148,18 @@ void RegionPlacer::generateAbstractGrid() {
         grid[bestPos.x][bestPos.y] = zoneID;
 
         int percentageSize = getPercentageSize(zoneMap[zoneID]->getSize(), totalSize);
-        for (int i = 1; i < percentageSize; i++) {
-            claimAbstractTile(zoneID, int3(bestPos.x, bestPos.y, 0));
-        }
+        // for (int i = 1; i < percentageSize; i++) {
+        //     claimAbstractTile(zoneID, int3(bestPos.x, bestPos.y, 0));
+        // }
     }
 }
 
-bool RegionPlacer::validateAbstractGrid() {
+bool ZonePlacer::validateAbstractGrid() {
     // TODO: check connectivity based on distancedBetweenZones
     return true;
 }
 
-void RegionPlacer::placeAbstractGridOnRealMap() {
+void ZonePlacer::placeAbstractGridOnRealMap() {
     auto zoneMap      = map.getZoneMap();
     int realMapSize   = map.getWidth();
     int numberOfTiles = realMapSize / gridN;
@@ -173,7 +182,7 @@ void RegionPlacer::placeAbstractGridOnRealMap() {
     }
 }
 
-void RegionPlacer::generateRegions() {
+void ZonePlacer::generateZones() {
     int numberOfIterations = 100;
     while (numberOfIterations--) {
         generateAbstractGrid();
@@ -188,35 +197,44 @@ void RegionPlacer::generateRegions() {
     placeAbstractGridOnRealMap();
 }
 
-void RegionPlacer::calculateDistances() {
-    LayoutInfo layout = map.getLayoutInfo();
-    auto connections  = layout.getConnectionInfoList();
+void ZonePlacer::calculateDistances() {
+    TemplateInfo templateInfo = map.getTemplateInfo();
+    auto connections          = templateInfo.getConnections();
 
     auto zoneNeighbors = [&](const int zoneID) {
         vector<int> out;
         for (auto connection : connections) {
-            if (connection.getZoneFrom() == zoneID) {
-                out.push_back(connection.getZoneDest());
+            if (connection.getZone1() == zoneID) {
+                out.push_back(connection.getZone2());
             }
-            if (connection.getZoneDest() == zoneID) {
-                out.push_back(connection.getZoneFrom());
+            if (connection.getZone2() == zoneID) {
+                out.push_back(connection.getZone1());
             }
         }
         return out;
     };
 
-    for (auto regionInfo : layout.getRegionInfoList()) {
-        Region region(regionInfo);
-        for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
-            Zone zone(zoneLayout);
-
-            int zoneID                    = zone.getZoneID();
-            distancedBetweenZones[zoneID] = bfs_distances<int>(zoneID, zoneNeighbors);
+    auto zoneMap = map.getZoneMap();
+    for (auto [zoneID, zone] : zoneMap) {
+        distancedBetweenZones[zoneID] = bfs_distances<int>(zoneID, zoneNeighbors);
+        for (auto [otherZoneID, dist] : distancedBetweenZones[zoneID]) {
+            cerr << "Distance between zone " << zoneID << " and " << otherZoneID << " is " << dist
+                 << "\n";
         }
     }
+
+    // for (auto regionInfo : layout.getRegionInfoList()) {
+    //     Region region(regionInfo);
+    //     for (auto zoneLayout : regionInfo.getZoneLayoutList()) {
+    //         Zone zone(zoneLayout);
+
+    //         int zoneID                    = zone.getZoneID();
+    //         distancedBetweenZones[zoneID] = bfs_distances<int>(zoneID, zoneNeighbors);
+    //     }
+    // }
 }
 
-void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneTiles) {
+void ZonePlacer::claimTiles(vector<pair<int, int3>> &zoneTiles) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
 
     auto neighbors4 = [&](const int3 &p) {
@@ -242,9 +260,7 @@ void RegionPlacer::claimTiles(vector<pair<int, int3>> &zoneTiles) {
     }
 }
 
-void RegionPlacer::claimFreeTiles() {
-    RegionMap regionMap = map.getRegionMap();
-
+void ZonePlacer::claimFreeTiles() {
     vector<pair<int, int3>> zoneTiles;
 
     for (int y = 0; y < map.getHeight(); y++) {
@@ -259,7 +275,7 @@ void RegionPlacer::claimFreeTiles() {
     claimTiles(zoneTiles);
 }
 
-void RegionPlacer::calculateZoneCenters() {
+void ZonePlacer::calculateZoneCenters() {
     ZoneMap zoneMap = map.getZoneMap();
 
     std::map<int, vector<int3>> zoneTiles;
@@ -294,17 +310,15 @@ void RegionPlacer::calculateZoneCenters() {
     }
 }
 
-void RegionPlacer::placeRegions() {
-    initRegions();
+void ZonePlacer::placeZones() {
+    initZones();
     calculateDistances();
-
-    generateRegions();
-
+    generateZones();
     claimFreeTiles();
 
     calculateZoneCenters();
 
-    if (map.getLayoutInfo().getDebug() > 0) {
+    if (map.getTemplateInfo().getDebug() > 0) {
         cerr << "=== Abstract grid ===\n";
         for (int i = 0; i < gridN; i++) {
             for (int j = 0; j < gridN; j++) {

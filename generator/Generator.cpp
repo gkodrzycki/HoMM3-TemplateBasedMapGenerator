@@ -1,89 +1,73 @@
 #include "./luaUtils/luaHelpers.hpp"
 
-#include "./blueprintInfo/BlueprintInfo.hpp"
 #include "./global/Global.hpp"
 #include "./global/Random.hpp"
-#include "./layoutInfo/LayoutInfo.hpp"
 #include "./map/Map.hpp"
 #include "./templateInfo/TemplateInfo.hpp"
 
-LayoutInfo parseLayout(const json &layout) {
-    LayoutInfo layoutInfo;
-    layoutInfo.deserialize(layout);
+// void generateLuaScript(Map map, string &saveLocation) {
+//     LayoutInfo layoutInfo = map.getLayoutInfo();
 
-    return layoutInfo;
-}
+//     ofstream luaFile("generated_script.lua");
+//     if (!luaFile.is_open()) {
+//         cerr << "Failed to create Lua script file." << endl;
+//         return;
+//     }
+//     AddHeader(luaFile);
 
-BlueprintInfo parseBlueprint(const json &blueprint, RNG &rng) {
-    BlueprintInfo blueprintInfo(rng);
-    blueprintInfo.deserialize(blueprint);
+//     luaFile << "local instance = homm3lua.new(homm3lua.FORMAT_ROE,homm3lua.SIZE_"
+//             << encodeMapSize(layoutInfo.getMapSize()) << ")\n";
 
-    return blueprintInfo;
-}
+//     luaFile << "instance:name('" << layoutInfo.getName() << "')\n";
+//     luaFile << "instance:description('" << layoutInfo.getDescription() << "')\n";
+//     string difficulty = layoutInfo.getDifficulty();
+//     transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::toupper);
+//     luaFile << "instance:difficulty(homm3lua.DIFFICULTY_" << difficulty << ")\n\n";
 
-void generateLuaScript(Map map, string &saveLocation) {
-    LayoutInfo layoutInfo = map.getLayoutInfo();
+//     AddTerrain(luaFile);
+//     AddTerrainTiles(luaFile, map);
 
-    ofstream luaFile("generated_script.lua");
-    if (!luaFile.is_open()) {
-        cerr << "Failed to create Lua script file." << endl;
-        return;
-    }
-    AddHeader(luaFile);
+//     AddTowns(luaFile, map);
 
-    luaFile << "local instance = homm3lua.new(homm3lua.FORMAT_ROE,homm3lua.SIZE_"
-            << encodeMapSize(layoutInfo.getMapSize()) << ")\n";
+//     AddBorderObstacles(luaFile, map);
 
-    luaFile << "instance:name('" << layoutInfo.getName() << "')\n";
-    luaFile << "instance:description('" << layoutInfo.getDescription() << "')\n";
-    string difficulty = layoutInfo.getDifficulty();
-    transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::toupper);
-    luaFile << "instance:difficulty(homm3lua.DIFFICULTY_" << difficulty << ")\n\n";
+//     AddRoads(luaFile, map);
 
-    AddTerrain(luaFile);
-    AddTerrainTiles(luaFile, map);
+//     AddMonoliths(luaFile, map);
 
-    AddTowns(luaFile, map);
+//     AddMines(luaFile, map);
 
-    AddBorderObstacles(luaFile, map);
+//     AddCreatures(luaFile, map);
 
-    AddRoads(luaFile, map);
+//     AddTreasures(luaFile, map);
 
-    AddMonoliths(luaFile, map);
+//     // Finishing luaScript
+//     string homeDir = getenv("HOME");
 
-    AddMines(luaFile, map);
+//     if (saveLocation == "") {
+//         saveLocation = homeDir + "/.local/share/vcmi/Maps/test.h3m";
+//     }
 
-    AddCreatures(luaFile, map);
+//     luaFile << "instance:write('" + saveLocation + "')";
+//     luaFile << "\n";
 
-    AddTreasures(luaFile, map);
+//     luaFile.close();
+//     cout << "Lua script generated successfully." << endl;
+// }
 
-    // Finishing luaScript
-    string homeDir = getenv("HOME");
+// void executeLuaScript(const string &script_name) {
+//     lua_State *L = luaL_newstate();
+//     luaL_openlibs(L);
 
-    if (saveLocation == "") {
-        saveLocation = homeDir + "/.local/share/vcmi/Maps/test.h3m";
-    }
+//     if (luaL_dofile(L, script_name.c_str())) {
+//         cerr << "Error executing Lua script '" << script_name << "': " << lua_tostring(L, -1)
+//              << endl;
+//         lua_close(L);
+//         return;
+//     }
 
-    luaFile << "instance:write('" + saveLocation + "')";
-    luaFile << "\n";
-
-    luaFile.close();
-    cout << "Lua script generated successfully." << endl;
-}
-
-void executeLuaScript(const string &script_name) {
-    lua_State *L = luaL_newstate();
-    luaL_openlibs(L);
-
-    if (luaL_dofile(L, script_name.c_str())) {
-        cerr << "Error executing Lua script '" << script_name << "': " << lua_tostring(L, -1)
-             << endl;
-        lua_close(L);
-        return;
-    }
-
-    lua_close(L);
-}
+//     lua_close(L);
+// }
 
 json readFile(string filename) {
     ifstream file(filename);
@@ -110,6 +94,7 @@ int main(int argc, char *argv[]) {
 
     RNG rng;
     string saveLocation = "";
+    int debug           = 0;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--seed") == 0) {
@@ -118,6 +103,9 @@ int main(int argc, char *argv[]) {
         }
         if (strcmp(argv[i], "--location") == 0) {
             saveLocation = argv[i + 1];
+        }
+        if (strcmp(argv[i], "--debug") == 0) {
+            debug = atoi(argv[i + 1]);
         }
     }
 
@@ -128,18 +116,19 @@ int main(int argc, char *argv[]) {
     // BlueprintInfo blueprintInfo = parseBlueprint(_template, rng);
     // if (layoutInfo.getDebug() > 1)
     //     blueprintInfo.printBlueprint();
-    TemplateInfo templateInfo;
+    TemplateInfo templateInfo(debug);
     templateInfo.deserialize(_template);
-    templateInfo.print();
+    if (templateInfo.getDebug() > 2)
+        templateInfo.print();
 
-    return 0;
-    // Map map(rng, layoutInfo, blueprintInfo);
-    // map.generateMap();
-    // if (layoutInfo.getDebug() > 0) {
-    //     cerr << "========== MAP ==========\n";
-    //     map.printMap(layoutInfo.getDebug());
-    //     cerr << "Map printed!\n";
-    // }
+    Map map(rng, templateInfo);
+    map.generateMap();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "========== MAP ==========\n";
+        map.printMap(templateInfo.getDebug());
+        cerr << "Map printed!\n";
+    }
 
     // generateLuaScript(map, saveLocation);
 
@@ -147,5 +136,5 @@ int main(int argc, char *argv[]) {
     // executeLuaScript("generated_script.lua");
     // cout << "Lua script executed successfully and saved to generated_script.lua\n";
 
-    // return 0;
+    return 0;
 }

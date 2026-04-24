@@ -9,7 +9,9 @@ void TownPlacer::placeTowns() {
     for (auto [zoneID, zone] : zoneMap) {
         string zoneType = zone->getType();
 
-        if (zoneType == "starting_zone") {
+        // TODO place neutral and player towns as described in template, currently just placing one
+        // town in each start zone
+        if (zoneType == "human_start" || zoneType == "computer_start") {
             Town town(zone->getFaction(), zone->getOwner(), zone->getCenter() + int3(2, 0, 0),
                       "Town"); // offset from center
             auto townPtr = make_shared<Town>(town);
