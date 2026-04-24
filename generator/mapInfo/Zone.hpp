@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global/Global.hpp"
+#include "../global/Random.hpp"
 #include "../templateInfo/ZoneTemplate.hpp"
 #include "./Faction.hpp"
 
@@ -8,7 +9,7 @@ enum class Faction;
 
 class Zone {
   public:
-    Zone(ZoneTemplate zoneTemplate);
+    Zone(ZoneTemplate zoneTemplate, RNG &rng);
 
     void setCenter(int3 center);
     void setZoneID(int zoneID);

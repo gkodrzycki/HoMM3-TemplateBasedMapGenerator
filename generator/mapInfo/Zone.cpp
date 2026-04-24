@@ -1,9 +1,39 @@
 #include "./Zone.hpp"
 
-Zone::Zone(ZoneTemplate zoneTemplate) {
+string matchTerrainToTown(const string &townType) {
+    if (townType == "Castle")
+        return "GRASS";
+    if (townType == "Rampart")
+        return "GRASS";
+    if (townType == "Tower")
+        return "SNOW";
+    if (townType == "Inferno")
+        return "LAVA";
+    if (townType == "Necropolis")
+        return "DIRT";
+    if (townType == "Dungeon")
+        return "SUBTERRANEAN";
+    if (townType == "Stronghold")
+        return "ROUGH";
+    if (townType == "Fortress")
+        return "SWAMP";
+
+    throw runtime_error("Unknown town type for terrain matching: " + townType);
+}
+
+Zone::Zone(ZoneTemplate zoneTemplate, RNG &rng) {
     vector<string> allowedFactions = zoneTemplate.getTownTypes();
-    // TODO add rng and select random faction from allowed factions
-    this->setFaction(getEnumFromNameOrThrow<Faction>(allowedFactions[0]));
+
+    // Remove factions that are not playable in the base game (Cove, Factory, Bulwark)
+    allowedFactions.erase(remove_if(allowedFactions.begin(), allowedFactions.end(),
+                                    [](const string &f) {
+                                        return f == "Cove" || f == "Factory" || f == "Bulwark" ||
+                                               f == "Conflux";
+                                    }),
+                          allowedFactions.end());
+
+    string chosenFaction = rng.getRandomFromVector(allowedFactions);
+    this->setFaction(getEnumFromNameOrThrow<Faction>(chosenFaction));
 
     int owner = 0;
     if (zoneTemplate.getType() == "human_start" || zoneTemplate.getType() == "computer_start") {
@@ -14,15 +44,11 @@ Zone::Zone(ZoneTemplate zoneTemplate) {
     this->setSize(zoneTemplate.getBaseSize());
 
     if (zoneTemplate.getMatchTerrainToTown()) {
-        cerr << "Zone template " << zoneTemplate.getId()
-             << " matches terrain to town. Setting terrain to GRASS.\n";
-        this->setTerrain("Grass");
+        string terrain = matchTerrainToTown(chosenFaction);
+        this->setTerrain(terrain);
     } else if (!zoneTemplate.getTerrain().empty()) {
-        // TODO add rng and choose random terrain from zoneTemplate.getTerrain()
-        cerr << "Zone template " << zoneTemplate.getId()
-             << " has multiple terrains specified. Choosing the first one: "
-             << zoneTemplate.getTerrain()[0] << "\n";
-        this->setTerrain(zoneTemplate.getTerrain()[0]);
+        vector<string> terrainOptions = zoneTemplate.getTerrain();
+        this->setTerrain(rng.getRandomFromVector(terrainOptions));
     } else {
         throw runtime_error("Zone template " + to_string(zoneTemplate.getId()) +
                             " has no terrain specified and does not match terrain to town");

@@ -107,9 +107,9 @@ void Map::generateMap() {
     TownPlacer townPlacer(*this);
     townPlacer.placeTowns();
 
-    ConnectionPlacer connectionPlacer(*this);
-    connectionPlacer.placeRoads();
-    connectionPlacer.createMonoliths();
+    // ConnectionPlacer connectionPlacer(*this);
+    // connectionPlacer.placeRoads();
+    // connectionPlacer.createMonoliths();
 
     // ObjectPlacer objectPlacer(*this);
     // objectPlacer.placeBasicMines();

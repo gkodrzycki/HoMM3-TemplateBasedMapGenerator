@@ -6,7 +6,7 @@ void ZonePlacer::initZones() {
     TemplateInfo templateInfo = map.getTemplateInfo();
 
     for (auto zoneTemplate : templateInfo.getZones()) {
-        Zone zone(zoneTemplate);
+        Zone zone(zoneTemplate, map.getRNG());
         auto zonePtr = make_shared<Zone>(zone);
         map.addZone(zonePtr);
     }
