@@ -2,10 +2,12 @@
 
 #include "../../global/Global.hpp"
 #include "../../global/GridSearch.hpp"
+#include "../../mapInfo/Obstacle.hpp"
 #include "../../mapInfo/Town.hpp"
 #include "../Map.hpp"
 
 class Map;
+class Obstacle;
 
 class BorderPlacer {
   public:

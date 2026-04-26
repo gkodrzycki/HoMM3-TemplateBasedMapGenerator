@@ -67,6 +67,7 @@ BOOL_FIELDS = {
     ("Connections", "Options", "Wide"),
     ("Connections", "Options", "Border Guard"),
     ("Connections", "Options", "Fictive"),
+    ("Extras", "Options", "Test"),
 }
 
 # Truthy literals for the checkbox cells above.

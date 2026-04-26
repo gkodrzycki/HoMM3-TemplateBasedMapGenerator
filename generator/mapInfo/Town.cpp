@@ -6,7 +6,7 @@ Town::Town(Faction faction) : Object(int3(1, 1, 1), "Town", int3(5, 3, 1)) {
     this->faction = faction;
 }
 
-Town::Town(Faction faction, const string &owner, const int3 &position, const string &name)
+Town::Town(Faction faction, const int &owner, const int3 &position, const string &name)
     : Object(position, name, int3(5, 3, 1)) {
     this->faction = faction;
     this->owner   = owner;
@@ -16,9 +16,9 @@ void Town::setFaction(Faction faction) { this->faction = faction; }
 
 Faction Town::getFaction() { return faction; }
 
-void Town::setOwner(const string &owner) { this->owner = owner; }
+void Town::setOwner(const int &owner) { this->owner = owner; }
 
-string Town::getOwner() { return owner; }
+int Town::getOwner() { return owner; }
 
 void Town::printObject() const {
     cerr << "Town '" << getName() << "' owned by '" << owner << "' ("

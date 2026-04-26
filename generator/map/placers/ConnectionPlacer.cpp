@@ -5,20 +5,20 @@ ConnectionPlacer::ConnectionPlacer(Map &map) : map(map) {}
 void ConnectionPlacer::placeRoads() {
     std::map<int, int3> connectionsPoints = getConnectionsPoints();
 
-    auto connections = map.getLayoutInfo().getConnectionInfoList();
+    auto connections = map.getTemplateInfo().getConnections();
     for (auto connection : connections) {
-        if (connection.getType() != "road")
+        if (connection.getType() == "teleport" || connection.getType() == "underground")
             continue;
 
-        int3 fromPos = connectionsPoints[connection.getZoneFrom()];
-        int3 destPos = connectionsPoints[connection.getZoneDest()];
+        int3 fromPos = connectionsPoints[connection.getZone1()];
+        int3 destPos = connectionsPoints[connection.getZone2()];
 
         vector<int3> path = createPath(fromPos, destPos);
 
         if (path.empty()) {
             throw runtime_error("Failed to create a path between zones " +
-                                to_string(connection.getZoneFrom()) + " and " +
-                                to_string(connection.getZoneDest()) + " on seed " +
+                                to_string(connection.getZone1()) + " and " +
+                                to_string(connection.getZone2()) + " on seed " +
                                 to_string(map.getRNG().getOriginalSeed()) + "\n");
         }
 
@@ -57,16 +57,16 @@ void ConnectionPlacer::createMonoliths() {
 
     int connectionCount    = 0;
     int distanceFromCenter = 20; // Distance of monoliths from zone centers to avoid blocking them
-    auto connections       = map.getLayoutInfo().getConnectionInfoList();
+    auto connections       = map.getTemplateInfo().getConnections();
     for (auto connection : connections) {
-        if (connection.getType() != "monolith")
+        if (connection.getType() != "teleport")
             continue;
 
-        int3 centerFromPos = connectionsPoints[connection.getZoneFrom()];
-        int3 centerDestPos = connectionsPoints[connection.getZoneDest()];
+        int3 centerFromPos = connectionsPoints[connection.getZone1()];
+        int3 centerDestPos = connectionsPoints[connection.getZone2()];
 
-        vector<int3> fromZoneTiles = zoneTiles[connection.getZoneFrom()];
-        vector<int3> destZoneTiles = zoneTiles[connection.getZoneDest()];
+        vector<int3> fromZoneTiles = zoneTiles[connection.getZone1()];
+        vector<int3> destZoneTiles = zoneTiles[connection.getZone2()];
 
         // filter tiles which are exactly distanceFromCenter away from the center of their zone
         fromZoneTiles.erase(remove_if(fromZoneTiles.begin(), fromZoneTiles.end(),
@@ -84,8 +84,8 @@ void ConnectionPlacer::createMonoliths() {
 
         if (fromZoneTiles.empty() || destZoneTiles.empty()) {
             throw runtime_error("Failed to find suitable tiles for monoliths in zones " +
-                                to_string(connection.getZoneFrom()) + " and " +
-                                to_string(connection.getZoneDest()) + " on seed " +
+                                to_string(connection.getZone1()) + " and " +
+                                to_string(connection.getZone2()) + " on seed " +
                                 to_string(map.getRNG().getOriginalSeed()) + "\n");
         }
 
@@ -111,7 +111,7 @@ vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
     int mapWidth = map.getWidth(), mapHeight = map.getHeight();
     RNG &rng = map.getRNG();
 
-    const int TRIES = 5;
+    const int TRIES = 3;
     int forcedCount = 0;
 
     int fromZoneID = map.getTile(fromPos)->getZoneID();

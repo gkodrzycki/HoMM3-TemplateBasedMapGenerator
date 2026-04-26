@@ -1,23 +1,23 @@
-#pragma once
+// #pragma once
 
-#include "../../global/CreatureIds.hpp"
-#include "../../global/Global.hpp"
-#include "../../mapInfo/Town.hpp"
-#include "../Map.hpp"
-#include "./GuardHandler.hpp"
+// #include "../../global/CreatureIds.hpp"
+// #include "../../global/Global.hpp"
+// #include "../../mapInfo/Town.hpp"
+// #include "../Map.hpp"
+// #include "./GuardHandler.hpp"
 
-class Map;
+// class Map;
 
-class GuardPlacer {
-  public:
-    GuardPlacer(Map &map);
-    void placeGuards();
+// class GuardPlacer {
+//   public:
+//     GuardPlacer(Map &map);
+//     void placeGuards();
 
-  private:
-    Map &map;
+//   private:
+//     Map &map;
 
-    void placeBorderGuards();
-    void placeMineGuards();
-    void placeMonolithGuards();
-    void placeTreasureGuards();
-};
+//     void placeBorderGuards();
+//     void placeMineGuards();
+//     void placeMonolithGuards();
+//     void placeTreasureGuards();
+// };
