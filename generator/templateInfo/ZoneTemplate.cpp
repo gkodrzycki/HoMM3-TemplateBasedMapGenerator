@@ -1,50 +1,52 @@
-#include "./TemplateZone.hpp"
+#include "./ZoneTemplate.hpp"
 
-TemplateZone::TemplateZone()
+ZoneTemplate::ZoneTemplate()
     : id(0), type(""), baseSize(0), restrictions(), playerTowns(), neutralTowns(), townTypes(),
-      minimumMines(), mineDensity(), terrain(), monsters(), treasure(), placement(""), objects(""),
-      minimumObjects(0), imageSettings(""), forceNeutralCreatures(false),
-      allowNonCoherentRoad(false), zoneRepulsion(false), townHint(""), monstersDisposition(0),
-      monstersDispositionCustom(0), monstersJoiningPercentage(0), monstersJoinOnlyForMoney(false),
-      minimumAirshipShipyards(0), airshipShipyardDensity(0), terrainHint(""), allowedFactions(),
-      factionHint(""), maxBlockValue(0) {}
+      minimumMines(), mineDensity(), matchTerrainToTown(false), terrain(), monsters(), treasure(),
+      placement(""), objects(""), minimumObjects(0), imageSettings(""),
+      forceNeutralCreatures(false), allowNonCoherentRoad(false), zoneRepulsion(false), townHint(""),
+      monstersDisposition(0), monstersDispositionCustom(0), monstersJoiningPercentage(0),
+      monstersJoinOnlyForMoney(false), minimumAirshipShipyards(0), airshipShipyardDensity(0),
+      terrainHint(""), allowedFactions(), factionHint(""), maxBlockValue(0) {}
 
-int TemplateZone::getId() const { return id; }
-string TemplateZone::getType() const { return type; }
-int TemplateZone::getBaseSize() const { return baseSize; }
-const ZoneRestrictions &TemplateZone::getRestrictions() const { return restrictions; }
-const TownSettings &TemplateZone::getPlayerTowns() const { return playerTowns; }
-const TownSettings &TemplateZone::getNeutralTowns() const { return neutralTowns; }
-const vector<string> &TemplateZone::getTownTypes() const { return townTypes; }
-const MineSettings &TemplateZone::getMinimumMines() const { return minimumMines; }
-const MineSettings &TemplateZone::getMineDensity() const { return mineDensity; }
-const vector<string> &TemplateZone::getTerrain() const { return terrain; }
-const ZoneMonsters &TemplateZone::getMonsters() const { return monsters; }
-const vector<TreasureTier> &TemplateZone::getTreasure() const { return treasure; }
-string TemplateZone::getObjects() const { return objects; }
-string TemplateZone::getImageSettings() const { return imageSettings; }
-bool TemplateZone::getZoneRepulsion() const { return zoneRepulsion; }
-int TemplateZone::getMonstersDisposition() const { return monstersDisposition; }
-int TemplateZone::getMonstersDispositionCustom() const { return monstersDispositionCustom; }
-int TemplateZone::getMonstersJoiningPercentage() const { return monstersJoiningPercentage; }
-bool TemplateZone::getMonstersJoinOnlyForMoney() const { return monstersJoinOnlyForMoney; }
-bool TemplateZone::getForceNeutralCreatures() const { return forceNeutralCreatures; }
-bool TemplateZone::getAllowNonCoherentRoad() const { return allowNonCoherentRoad; }
-int TemplateZone::getMinimumObjects() const { return minimumObjects; }
-int TemplateZone::getMaxBlockValue() const { return maxBlockValue; }
-string TemplateZone::getPlacement() const { return placement; }
-int TemplateZone::getMinimumAirshipShipyards() const { return minimumAirshipShipyards; }
-int TemplateZone::getAirshipShipyardDensity() const { return airshipShipyardDensity; }
-string TemplateZone::getTownHint() const { return townHint; }
-string TemplateZone::getTerrainHint() const { return terrainHint; }
-const vector<string> &TemplateZone::getAllowedFactions() const { return allowedFactions; }
-string TemplateZone::getFactionHint() const { return factionHint; }
+int ZoneTemplate::getId() const { return id; }
+string ZoneTemplate::getType() const { return type; }
+int ZoneTemplate::getBaseSize() const { return baseSize; }
+const ZoneRestrictions &ZoneTemplate::getRestrictions() const { return restrictions; }
+const TownSettings &ZoneTemplate::getPlayerTowns() const { return playerTowns; }
+const TownSettings &ZoneTemplate::getNeutralTowns() const { return neutralTowns; }
+const vector<string> &ZoneTemplate::getTownTypes() const { return townTypes; }
+const MineSettings &ZoneTemplate::getMinimumMines() const { return minimumMines; }
+const MineSettings &ZoneTemplate::getMineDensity() const { return mineDensity; }
+const vector<string> &ZoneTemplate::getTerrain() const { return terrain; }
+const bool &ZoneTemplate::getMatchTerrainToTown() const { return matchTerrainToTown; }
+
+const ZoneMonsters &ZoneTemplate::getMonsters() const { return monsters; }
+const vector<TreasureTier> &ZoneTemplate::getTreasure() const { return treasure; }
+string ZoneTemplate::getObjects() const { return objects; }
+string ZoneTemplate::getImageSettings() const { return imageSettings; }
+bool ZoneTemplate::getZoneRepulsion() const { return zoneRepulsion; }
+int ZoneTemplate::getMonstersDisposition() const { return monstersDisposition; }
+int ZoneTemplate::getMonstersDispositionCustom() const { return monstersDispositionCustom; }
+int ZoneTemplate::getMonstersJoiningPercentage() const { return monstersJoiningPercentage; }
+bool ZoneTemplate::getMonstersJoinOnlyForMoney() const { return monstersJoinOnlyForMoney; }
+bool ZoneTemplate::getForceNeutralCreatures() const { return forceNeutralCreatures; }
+bool ZoneTemplate::getAllowNonCoherentRoad() const { return allowNonCoherentRoad; }
+int ZoneTemplate::getMinimumObjects() const { return minimumObjects; }
+int ZoneTemplate::getMaxBlockValue() const { return maxBlockValue; }
+string ZoneTemplate::getPlacement() const { return placement; }
+int ZoneTemplate::getMinimumAirshipShipyards() const { return minimumAirshipShipyards; }
+int ZoneTemplate::getAirshipShipyardDensity() const { return airshipShipyardDensity; }
+string ZoneTemplate::getTownHint() const { return townHint; }
+string ZoneTemplate::getTerrainHint() const { return terrainHint; }
+const vector<string> &ZoneTemplate::getAllowedFactions() const { return allowedFactions; }
+string ZoneTemplate::getFactionHint() const { return factionHint; }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-MineSettings TemplateZone::deserializeMines(const json &j) {
+MineSettings ZoneTemplate::deserializeMines(const json &j) {
     MineSettings m;
     m.wood    = getOrDefault<int>(j, "Wood", 0);
     m.mercury = getOrDefault<int>(j, "Mercury", 0);
@@ -56,7 +58,7 @@ MineSettings TemplateZone::deserializeMines(const json &j) {
     return m;
 }
 
-TownSettings TemplateZone::deserializeTownSettings(const json &j) {
+TownSettings ZoneTemplate::deserializeTownSettings(const json &j) {
     TownSettings t;
     t.ownership        = getOrDefault<int>(j, "Ownership", 0);
     t.minimumTowns     = getOrDefault<int>(j, "Minimum towns", 0);
@@ -71,7 +73,7 @@ TownSettings TemplateZone::deserializeTownSettings(const json &j) {
 // Deserialization
 // ---------------------------------------------------------------------------
 
-void TemplateZone::deserialize(const json &zone) {
+void ZoneTemplate::deserialize(const json &zone) {
     id = getOrError<int>(zone, "Id");
 
     // ---- Zone role (Type subsection) ------------------------------------
@@ -116,8 +118,13 @@ void TemplateZone::deserialize(const json &zone) {
 
     // ---- Terrain --------------------------------------------------------
     if (zone.contains("Terrain")) {
-        for (const auto &t : zone.at("Terrain"))
-            terrain.push_back(t.get<string>());
+        if (zone.at("Terrain")[0] == "Match to town") {
+            matchTerrainToTown = true;
+        } else {
+            for (const auto &t : zone.at("Terrain")) {
+                terrain.push_back(t.get<string>());
+            }
+        }
     }
 
     // ---- Monsters -------------------------------------------------------
@@ -191,7 +198,7 @@ void TemplateZone::deserialize(const json &zone) {
 // Debug print
 // ---------------------------------------------------------------------------
 
-void TemplateZone::print() const {
+void ZoneTemplate::print() const {
     cerr << "    Zone id: " << id << "  type: " << type << "  baseSize: " << baseSize << "\n";
     cerr << "      Restrictions: human " << restrictions.minHumanPositions << "-"
          << restrictions.maxHumanPositions << "  total " << restrictions.minTotalPositions << "-"

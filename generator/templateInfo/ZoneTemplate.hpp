@@ -45,9 +45,9 @@ struct ZoneMonsters {
     bool neutral     = false;
 };
 
-class TemplateZone {
+class ZoneTemplate {
   public:
-    TemplateZone();
+    ZoneTemplate();
 
     int getId() const;
     // Zone type: "human_start", "computer_start", "treasure", "junction"
@@ -61,6 +61,7 @@ class TemplateZone {
     const MineSettings &getMinimumMines() const;
     const MineSettings &getMineDensity() const;
     const vector<string> &getTerrain() const;
+    const bool &getMatchTerrainToTown() const;
     const ZoneMonsters &getMonsters() const;
     const vector<TreasureTier> &getTreasure() const;
 
@@ -99,6 +100,7 @@ class TemplateZone {
     vector<string> townTypes;
     MineSettings minimumMines;
     MineSettings mineDensity;
+    bool matchTerrainToTown;
     vector<string> terrain;
     ZoneMonsters monsters;
     vector<TreasureTier> treasure;

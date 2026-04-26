@@ -1,11 +1,13 @@
 #include "./TemplateInfo.hpp"
 
-TemplateInfo::TemplateInfo()
-    : name(""), description(""), townSelection(""), heroes(""), mirror(false), tags(""),
-      maxBattleRounds(0), forbidHiringHeroes(false), mapName(""), minimumSize(0), maximumSize(0),
-      artifacts(""), comboArts(""), spells(""), secondarySkills(""), mapObjects(""), rockBlocks(""),
-      zoneSparseness(0), specialWeeksDisabled(false), spellResearch(false), anarchy(false) {}
+TemplateInfo::TemplateInfo(int debug)
+    : debug(debug), name(""), description(""), townSelection(""), heroes(""), mirror(false),
+      tags(""), maxBattleRounds(0), forbidHiringHeroes(false), mapName(""), minimumSize(0),
+      maximumSize(0), artifacts(""), comboArts(""), spells(""), secondarySkills(""), mapObjects(""),
+      rockBlocks(""), zoneSparseness(0), specialWeeksDisabled(false), spellResearch(false),
+      anarchy(false) {}
 
+int TemplateInfo::getDebug() const { return debug; }
 string TemplateInfo::getName() const { return name; }
 string TemplateInfo::getDescription() const { return description; }
 string TemplateInfo::getTownSelection() const { return townSelection; }
@@ -28,15 +30,15 @@ bool TemplateInfo::getSpecialWeeksDisabled() const { return specialWeeksDisabled
 bool TemplateInfo::getSpellResearch() const { return spellResearch; }
 bool TemplateInfo::getAnarchy() const { return anarchy; }
 
-const vector<TemplateZone> &TemplateInfo::getZones() const { return zones; }
-const vector<TemplateConnection> &TemplateInfo::getConnections() const { return connections; }
+const vector<ZoneTemplate> &TemplateInfo::getZones() const { return zones; }
+const vector<ConnectionTemplate> &TemplateInfo::getConnections() const { return connections; }
 
-const TemplateZone &TemplateInfo::getZoneById(int id) const {
+const ZoneTemplate &TemplateInfo::getZoneById(int id) const {
     for (const auto &z : zones) {
         if (z.getId() == id)
             return z;
     }
-    throw runtime_error("TemplateZone with id " + to_string(id) + " not found.");
+    throw runtime_error("ZoneTemplate with id " + to_string(id) + " not found.");
 }
 
 void TemplateInfo::deserialize(const json &tmpl) {
@@ -77,7 +79,7 @@ void TemplateInfo::deserialize(const json &tmpl) {
     // ---- Zones ----------------------------------------------------------
     const auto &zoneList = getOrError<json>(tmpl, "zones");
     for (const auto &z : zoneList) {
-        TemplateZone zone;
+        ZoneTemplate zone;
         zone.deserialize(z);
         zones.push_back(zone);
     }
@@ -85,7 +87,7 @@ void TemplateInfo::deserialize(const json &tmpl) {
     // ---- Connections ----------------------------------------------------
     const auto &connList = getOrError<json>(tmpl, "connections");
     for (const auto &c : connList) {
-        TemplateConnection conn;
+        ConnectionTemplate conn;
         conn.deserialize(c);
         connections.push_back(conn);
     }

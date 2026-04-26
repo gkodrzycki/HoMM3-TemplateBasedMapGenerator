@@ -1,22 +1,23 @@
-#include "./TemplateConnection.hpp"
+#include "./ConnectionTemplate.hpp"
 
-TemplateConnection::TemplateConnection()
+ConnectionTemplate::ConnectionTemplate()
     : zone1(0), zone2(0), value(0), wide(false), border(false), guard(false), fictive(false),
       portalRepulsion(0) {}
 
-int TemplateConnection::getZone1() const { return zone1; }
-int TemplateConnection::getZone2() const { return zone2; }
-int TemplateConnection::getValue() const { return value; }
-bool TemplateConnection::isWide() const { return wide; }
-bool TemplateConnection::isBorder() const { return border; }
-bool TemplateConnection::isGuard() const { return guard; }
-bool TemplateConnection::isFictive() const { return fictive; }
-int TemplateConnection::getPortalRepulsion() const { return portalRepulsion; }
-const TemplateConnectionRestrictions &TemplateConnection::getRestrictions() const {
+int ConnectionTemplate::getZone1() const { return zone1; }
+int ConnectionTemplate::getZone2() const { return zone2; }
+int ConnectionTemplate::getValue() const { return value; }
+bool ConnectionTemplate::isWide() const { return wide; }
+bool ConnectionTemplate::isBorder() const { return border; }
+bool ConnectionTemplate::isGuard() const { return guard; }
+bool ConnectionTemplate::isFictive() const { return fictive; }
+int ConnectionTemplate::getPortalRepulsion() const { return portalRepulsion; }
+string ConnectionTemplate::getType() const { return type; }
+const ConnectionTemplateRestrictions &ConnectionTemplate::getRestrictions() const {
     return restrictions;
 }
 
-void TemplateConnection::deserialize(const json &connection) {
+void ConnectionTemplate::deserialize(const json &connection) {
     const auto &zones = getOrError<json>(connection, "Zones");
     zone1             = getOrError<int>(zones, "Zone 1");
     zone2             = getOrError<int>(zones, "Zone 2");
@@ -29,6 +30,7 @@ void TemplateConnection::deserialize(const json &connection) {
         guard            = getOrDefault<bool>(opts, "Guard", false);
         fictive          = getOrDefault<bool>(opts, "Fictive", false);
         portalRepulsion  = getOrDefault<int>(opts, "Portal repulsion", 0);
+        type             = getOrDefault<string>(opts, "Type", "");
     }
 
     if (connection.contains("Restrictions")) {
@@ -40,7 +42,7 @@ void TemplateConnection::deserialize(const json &connection) {
     }
 }
 
-void TemplateConnection::print() const {
+void ConnectionTemplate::print() const {
     cerr << "      Zone 1: " << zone1 << "\n";
     cerr << "      Zone 2: " << zone2 << "\n";
     cerr << "      Value: " << value << "\n";
@@ -54,6 +56,8 @@ void TemplateConnection::print() const {
         cerr << "      Fictive: true\n";
     if (portalRepulsion)
         cerr << "      Portal repulsion: " << portalRepulsion << "\n";
+    if (!type.empty())
+        cerr << "      Type: " << type << "\n";
     cerr << "      Restrictions: human " << restrictions.minHumanPositions << "-"
          << restrictions.maxHumanPositions << "  total " << restrictions.minTotalPositions << "-"
          << restrictions.maxTotalPositions << "\n";

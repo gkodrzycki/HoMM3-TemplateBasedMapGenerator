@@ -11,7 +11,6 @@ enum class Faction {
     DUNGEON,
     STRONGHOLD,
     FORTRESS,
-    CONFLUX,
     NEUTRAL,
     NONE,
     DEFAULT
