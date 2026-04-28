@@ -5,7 +5,6 @@
 #include "../global/Random.hpp"
 #include "../mapInfo/Creature.hpp"
 #include "../mapInfo/Object.hpp"
-#include "../mapInfo/Region.hpp"
 #include "../mapInfo/Resource.hpp"
 #include "../mapInfo/Tile.hpp"
 #include "../mapInfo/Zone.hpp"
@@ -19,7 +18,6 @@
 #include "./placers/ZonePlacer.hpp"
 
 using ZoneMap        = map<int, shared_ptr<Zone>>;
-using RegionMap      = map<int, shared_ptr<Region>>;
 using TileMap        = map<int, map<int, shared_ptr<Tile>>>;
 using ObjectVector   = vector<shared_ptr<Object>>;
 using CreatureVector = vector<shared_ptr<Creature>>;
@@ -47,7 +45,6 @@ class Map {
     void addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest);
     TemplateInfo getTemplateInfo();
     shared_ptr<Tile> getTile(int3 pos);
-    RegionMap getRegionMap();
     ZoneMap getZoneMap();
     const TileMap &getTileMap();
     ObjectVector getObjectVector();
@@ -74,7 +71,6 @@ class Map {
     int width, height;
     array<int, 4> basicResourceCount = {0, 0, 0, 0};
 
-    RegionMap regionMap;
     ZoneMap zoneMap;
     TileMap tileMap;
     ObjectVector objectVector;

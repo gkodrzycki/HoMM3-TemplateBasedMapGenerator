@@ -37,11 +37,11 @@ void generateLuaScript(Map map, string &saveLocation) {
 
     AddMonoliths(luaFile, map);
 
-    // AddMines(luaFile, map);
+    AddMines(luaFile, map);
 
-    // AddCreatures(luaFile, map);
+    AddCreatures(luaFile, map);
 
-    // AddTreasures(luaFile, map);
+    AddTreasures(luaFile, map);
 
     // Finishing luaScript
     string homeDir = getenv("HOME");

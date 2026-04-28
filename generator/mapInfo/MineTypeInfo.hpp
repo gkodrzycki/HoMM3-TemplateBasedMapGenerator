@@ -40,8 +40,6 @@ inline string getMineType(MineTypeInfo mineTypeInfo, RNG &rng, Faction faction) 
             return "CRYSTAL CAVERN";
         case Faction::FORTRESS:
             return "SULFUR DUNE";
-        case Faction::CONFLUX:
-            return "ALCHEMISTS LAB";
         default:
             return "GOLD MINE";
         }
