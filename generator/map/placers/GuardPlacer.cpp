@@ -41,34 +41,27 @@ void GuardPlacer::placeBorderGuards() {
             return out;
         };
 
-        vector<int3> candidates;
-        set<int3> pathSet(path.begin(), path.end());
-
-        for (int x = 0; x < W; x++) {
-            for (int y = 0; y < H; y++) {
-                int3 pos(x, y, 0);
-                auto tile = map.getTile(pos);
-                if (!tile || tile->isTileType("B"))
-                    continue;
-                int zid = tile->getZoneID();
-                if (zid != zoneA && zid != zoneB)
-                    continue;
-                bool nearBorder = false;
-                bool nearRoad   = false;
-
-                for (const auto &dir : directions8) {
-                    auto neighborTile = map.getTile(pos + dir);
-                    if (neighborTile && neighborTile->isTileType("B")) {
-                        nearBorder = true;
-                    }
-                    if (neighborTile && neighborTile->isTileType("r")) {
-                        nearRoad = true;
-                    }
+        vector<int3> tilesOnBorder;
+        for (const auto &pos : path) {
+            for (auto neighbour : neighbors8(pos)) {
+                if (map.getTile(neighbour)->getZoneID() != map.getTile(pos)->getZoneID()) {
+                    tilesOnBorder.push_back(pos);
                 }
-                if (nearBorder && nearRoad)
-                    candidates.push_back(pos);
             }
         }
+        auto passable = [&](const int3 &p) -> bool {
+            auto tile = map.getTile(p);
+            if (!tile)
+                return false;
+            if (tile->isTileType("BbOT"))
+                return false;
+            if (tile->getZoneID() != zoneA && tile->getZoneID() != zoneB)
+                return false;
+            return true;
+        };
+        vector<int3> candidates =
+            bfs_collect_depth_xy(W, H, tilesOnBorder, 2, neighbors8, passable);
+        set<int3> pathSet(path.begin(), path.end());
 
         stable_partition(candidates.begin(), candidates.end(),
                          [&](const int3 &p) { return pathSet.count(p) > 0; });
@@ -98,7 +91,6 @@ void GuardPlacer::placeBorderGuards() {
             };
 
             auto reachPath = bfs_path_xy(W, H, centerA, centerB, neighbors8, passable);
-
             if (reachPath.empty()) {
                 int borderTileCount = 0;
                 for (auto dir : directions8) {
