@@ -319,7 +319,7 @@ ArtifactTier ObjectPlacer::getTierOfTreasures(int zoneID) {
 }
 
 double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition,
-                                           std::map<int3, int> &tilesTreeCount,
+                                           vector<vector<int>> &tilesTreeCount,
                                            vector<int3> &freeTiles, int acceptableBlockedTiles) {
     double score = 0.0;
 
@@ -330,7 +330,7 @@ double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition,
         if (map.getTile(neighborPos)->isTileType("OBb")) {
             score += 1.0;
         } else {
-            score += tilesTreeCount[neighborPos];
+            score += tilesTreeCount[neighborPos.x][neighborPos.y];
         }
     }
 
@@ -411,17 +411,21 @@ void ObjectPlacer::placeTreasures() {
     auto passable = [&](const int3 &p) { return map.getTile(p)->isTileType("F"); };
 
     std::map<int, vector<int3>> tilesWithinTrees;
-    std::map<int3, int> tilesTreeCount;
+
+    vector<vector<bool>> isSource(mapWidth, vector<bool>(mapHeight, false));
+    vector<vector<int>> tilesTreeCount(mapWidth, vector<int>(mapHeight, 0));
     for (const auto &[zoneID, tiles] : zoneTiles) {
         for (const auto &tilePos : tiles) {
             bool alreadyPushed = false;
             for (const auto &n : neighbors4(tilePos)) {
                 if (map.getTile(n) && map.getTile(n)->isTileType("OBb")) {
-                    if (!alreadyPushed)
+                    if (!alreadyPushed) {
                         tilesWithinTrees[zoneID].push_back(tilePos);
+                        isSource[tilePos.x][tilePos.y] = true;
+                    }
                     alreadyPushed = true;
 
-                    tilesTreeCount[tilePos]++;
+                    tilesTreeCount[tilePos.x][tilePos.y]++;
                 }
             }
         }
@@ -447,9 +451,7 @@ void ObjectPlacer::placeTreasures() {
 
         vector<int3> candidates;
         for (const auto &candidate : possibleCandidates) {
-            // candidate should not be in sources BUT ITS SLOW METHOD, TODO: optimize by using a
-            // hash set or something
-            if (std::find(sources.begin(), sources.end(), candidate) == sources.end()) {
+            if (!isSource[candidate.x][candidate.y]) {
                 candidates.push_back(candidate);
             }
         }
