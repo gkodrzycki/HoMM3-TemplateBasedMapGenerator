@@ -11,6 +11,7 @@ class TownPlacer {
     TownPlacer(Map &map);
 
     void placeTowns();
+    void placeSpecificTowns(int numberOfTowns, int zoneID, bool neutral, bool upgraded);
 
   private:
     Map &map;

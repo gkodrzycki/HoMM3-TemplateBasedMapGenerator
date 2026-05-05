@@ -25,6 +25,8 @@ local homm3lua = require('homm3lua'))";
 // @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      string      playerId    player ID.
 void AddPlayer(ofstream &luaFile, int playerId) {
+    if (playerId < 0)
+        return;
     luaFile << "instance:player(homm3lua.PLAYER_" << playerId << ")\n";
 }
 
@@ -37,9 +39,11 @@ void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
     int ID              = town->getOwner();
     int X               = town->getPosition().x;
     int Y               = town->getPosition().y;
+    string is_main_str  = is_main ? "true" : "false";
 
     luaFile << "instance:town(homm3lua." << nameOfObject << ", {x=" << X << ", y=" << Y
-            << ", z=0}, homm3lua.PLAYER_" << ID << ", " << is_main << ")\n";
+            << ", z=0}, homm3lua.OWNER_" << (ID >= 0 ? std::to_string(ID) : "NEUTRAL") << ", "
+            << is_main_str << ")\n";
 }
 
 // @function    AddTowns
@@ -51,12 +55,14 @@ void AddTowns(ofstream &luaFile, Map &map) {
 
     for (auto object : objectVector) {
         if (auto town = std::dynamic_pointer_cast<Town>(object)) {
-            int playerID = town->getOwner();
-            if (addedPlayers.find(playerID) == addedPlayers.end()) {
+            int playerID  = town->getOwner();
+            bool mainTown = false;
+            if (playerID > 0 && addedPlayers.find(playerID) == addedPlayers.end()) {
+                mainTown = true;
                 addedPlayers.insert(playerID);
                 AddPlayer(luaFile, playerID);
             }
-            AddTown(luaFile, town, true);
+            AddTown(luaFile, town, mainTown);
         }
     }
 }
