@@ -12,9 +12,11 @@ class Town : public Object {
 
     void setFaction(Faction faction);
     void setOwner(const string &owner);
+    void setHasFort(bool hasFort);
 
     string getOwner();
     Faction getFaction();
+    bool getHasFort() const;
 
     void printObject() const override;
 
@@ -22,4 +24,5 @@ class Town : public Object {
     Faction faction;
 
     string owner;
+    bool hasFort;
 };

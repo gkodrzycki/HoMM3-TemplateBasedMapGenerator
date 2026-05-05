@@ -360,6 +360,8 @@ static int text(lua_State *L) {
 // z}.
 // @tparam      integer        owner           Owner. See OWNER_*
 // @tparam      boolean        is_main_town    Optional. Set town as player main one.
+// @tparam      boolean        has_fort        Optional. Whether the town starts with a fort built.
+//                                             Defaults to true. Pass false for an unfortified town.
 static int town(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
@@ -367,6 +369,7 @@ static int town(lua_State *L) {
     const h3mlua_xyz xyz   = h3mlua_check_xyz(L, 3);
     const int owner        = luaL_checkinteger(L, 4);
     const int is_main_town = lua_toboolean(L, 5);
+    const int has_fort     = lua_isnoneornil(L, 6) ? 1 : lua_toboolean(L, 6);
 
     int object = 0;
 
@@ -376,6 +379,8 @@ static int town(lua_State *L) {
         return luaL_argerror(L, 2, "it's not a town");
     if (owner != -1 && h3m_object_set_owner(*h3m, object, owner))
         return luaL_error(L, "h3m_object_set_owner");
+    if (h3m_object_set_has_fort(*h3m, object, has_fort))
+        return luaL_error(L, "h3m_object_set_has_fort");
     if (is_main_town) {
         if (owner == -1)
             return luaL_error(L, "Neutral town cannot be a main one.");

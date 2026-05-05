@@ -39,7 +39,8 @@ void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
     int Y               = town->getPosition().y;
 
     luaFile << "instance:town(homm3lua." << nameOfObject << ", {x=" << X << ", y=" << Y
-            << ", z=0}, homm3lua.PLAYER_" << ID << ", " << is_main << ")\n";
+            << ", z=0}, homm3lua.PLAYER_" << ID << ", " << (is_main ? "true" : "false") << ", "
+            << (town->getHasFort() ? "true" : "false") << ")\n";
 }
 
 // @function    AddTowns
