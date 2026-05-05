@@ -10,9 +10,8 @@ void TownPlacer::placeTowns() {
         string zoneType = zone->getType();
 
         if (zoneType == "starting_zone") {
-            Town town(zone->getFaction(), zone->getOwner(), zone->getCenter() + int3(2, 0, 0),
+            Town town(zone->getFaction(), zone->getOwner(), true, zone->getCenter() + int3(2, 0, 0),
                       "Town"); // offset from center
-            town.setHasFort(zoneID % 2 != 0);
             auto townPtr = make_shared<Town>(town);
             map.addObject(townPtr);
 

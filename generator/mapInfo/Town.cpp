@@ -2,19 +2,20 @@
 
 Town::Town() : Object(int3(1, 1, 1), "Town", int3(5, 3, 1)) {
     faction = Faction::NONE;
-    hasFort = true;
+    hasFort = false;
 }
 
 Town::Town(Faction faction) : Object(int3(1, 1, 1), "Town", int3(5, 3, 1)) {
     this->faction = faction;
-    this->hasFort = true;
+    this->hasFort = false;
 }
 
-Town::Town(Faction faction, const string &owner, const int3 &position, const string &name)
+Town::Town(Faction faction, const string &owner, bool hasFort, const int3 &position,
+           const string &name)
     : Object(position, name, int3(5, 3, 1)) {
     this->faction = faction;
     this->owner   = owner;
-    this->hasFort = true;
+    this->hasFort = hasFort;
 }
 
 void Town::setFaction(Faction faction) { this->faction = faction; }
