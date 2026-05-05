@@ -118,9 +118,9 @@ shared_ptr<Creature> GuardHandler::createGuard(GuardTypeHandler type, int3 posit
 
     string zoneStrength = zoneTemplate.getMonsters().strength;
 
-    int level         = getGuardLevel(type);
+    int level         = getGuardLevel(type, zoneStrength);
     string creatureId = getGuardCreatureId(type, level);
-    int targetPower   = getGuardPower(type);
+    int targetPower   = getGuardPower(type, zoneStrength);
 
     ifstream file("stats/CRTRAITS.json");
     if (!file.is_open()) {
