@@ -6,10 +6,12 @@ Town::Town(Faction faction) : Object(int3(1, 1, 1), "Town", int3(5, 3, 1)) {
     this->faction = faction;
 }
 
-Town::Town(Faction faction, const int &owner, const int3 &position, const string &name)
+Town::Town(Faction faction, const int &owner, const int3 &position, const string &name,
+           bool hasFort)
     : Object(position, name, int3(5, 3, 1)) {
     this->faction = faction;
     this->owner   = owner;
+    this->hasFort = hasFort;
 }
 
 void Town::setFaction(Faction faction) { this->faction = faction; }

@@ -11,7 +11,10 @@ class TownPlacer {
     TownPlacer(Map &map);
 
     void placeTowns();
-    void placeSpecificTowns(int numberOfTowns, int zoneID, bool neutral, bool upgraded);
+    bool hasSafeMargin(int3 pos, int zoneID, int margin);
+    void placeSpecificTowns(TownSettings townSettings, vector<string> &townTypes, int zoneID,
+                            bool neutral, bool upgraded, vector<int3> &freeTiles,
+                            vector<int3> &placedTowns);
 
   private:
     Map &map;

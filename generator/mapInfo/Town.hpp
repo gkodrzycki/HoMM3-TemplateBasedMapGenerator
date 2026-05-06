@@ -8,7 +8,7 @@ class Town : public Object {
   public:
     Town();
     Town(Faction faction);
-    Town(Faction faction, const int &owner, const int3 &position, const string &name);
+    Town(Faction faction, const int &owner, const int3 &position, const string &name, bool hasFort);
 
     void setFaction(Faction faction);
     void setOwner(const int &owner);
@@ -20,6 +20,6 @@ class Town : public Object {
 
   private:
     Faction faction;
-
+    bool hasFort;
     int owner;
 };
