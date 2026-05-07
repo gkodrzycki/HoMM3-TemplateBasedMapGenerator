@@ -1,5 +1,4 @@
 #include "./ObjectPlacer.hpp"
-#include "./GuardPlacer.hpp"
 
 ObjectPlacer::ObjectPlacer(Map &map) : map(map) {}
 
@@ -18,89 +17,80 @@ void ObjectPlacer::placeResource(ResourceType resourceType, int3 pos, int quanti
     map.addTreasure(resourcePtr);
 }
 
-void ObjectPlacer::placeCreature(CreatureType creatureType, int3 pos, int quantity) {
-    if (quantity <= 0)
-        return;
+// void ObjectPlacer::placeBasicMines() {
+//     auto objectVector = map.getObjectVector();
 
-    Creature creature(creatureType, pos, quantity, "COMPLIANT", true, true, "Creature");
-    auto creaturePtr = make_shared<Creature>(creature);
-    map.addCreature(creaturePtr);
-}
+//     int mapWidth  = map.getWidth();
+//     int mapHeight = map.getHeight();
 
-void ObjectPlacer::placeBasicMines() {
-    auto objectVector = map.getObjectVector();
+//     int3 sawmillSize = getMineSize(MineType::MINE_SAWMILL);
+//     int3 orePitSize  = getMineSize(MineType::MINE_ORE_PIT);
 
-    int mapWidth  = map.getWidth();
-    int mapHeight = map.getHeight();
+//     int3 mineOffset = int3(1, 1, 0);
 
-    int3 sawmillSize = getMineSize(MineType::MINE_SAWMILL);
-    int3 orePitSize  = getMineSize(MineType::MINE_ORE_PIT);
+//     for (const auto &object : objectVector) {
+//         if (auto town = dynamic_pointer_cast<Town>(object)) {
+//             auto townZoneID    = map.getTile(town->getPosition())->getZoneID();
+//             auto zoneMap       = map.getZoneMap();
+//             auto zoneType      = zoneMap[townZoneID]->getType();
+//             auto zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
+//             if (!zoneBlueprint.getPlaceBasicMines()) {
+//                 continue;
+//             }
 
-    int3 mineOffset = int3(1, 1, 0);
+//             int3 anchorPoint = object->getPosition();
+//             anchorPoint.x -= 2;
 
-    for (const auto &object : objectVector) {
-        if (auto town = dynamic_pointer_cast<Town>(object)) {
-            auto townZoneID    = map.getTile(town->getPosition())->getZoneID();
-            auto zoneMap       = map.getZoneMap();
-            auto zoneType      = zoneMap[townZoneID]->getType();
-            auto zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
-            if (!zoneBlueprint.getPlaceBasicMines()) {
-                continue;
-            }
+//             pair<int3, int3> BC;
+//             int maxIter = 10000;
+//             while (maxIter--) {
 
-            int3 anchorPoint = object->getPosition();
-            anchorPoint.x -= 2;
+//                 BC          = map.getRNG().getRandomTriangle(anchorPoint, 30);
+//                 auto [B, C] = BC;
 
-            pair<int3, int3> BC;
-            int maxIter = 10000;
-            while (maxIter--) {
+//                 if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, B))
+//                     continue;
+//                 if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, C))
+//                     continue;
 
-                BC          = map.getRNG().getRandomTriangle(anchorPoint, 30);
-                auto [B, C] = BC;
+//                 if (map.getTile(B)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
+//                     continue;
+//                 if (map.getTile(C)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
+//                     continue;
 
-                if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, B))
-                    continue;
-                if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, C))
-                    continue;
+//                 if (anchorPoint.distance2DSQ(B) <= 5)
+//                     continue;
+//                 if (anchorPoint.distance2DSQ(C) <= 5)
+//                     continue;
+//                 if (B.distance2DSQ(C) <= 3)
+//                     continue;
 
-                if (map.getTile(B)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
-                    continue;
-                if (map.getTile(C)->getZoneID() != map.getTile(anchorPoint)->getZoneID())
-                    continue;
+//                 if (map.checkPlacementConflict(B, sawmillSize, "BbOTRr", mineOffset))
+//                     continue;
 
-                if (anchorPoint.distance2DSQ(B) <= 5)
-                    continue;
-                if (anchorPoint.distance2DSQ(C) <= 5)
-                    continue;
-                if (B.distance2DSQ(C) <= 3)
-                    continue;
+//                 if (map.checkPlacementConflict(C, orePitSize, "BbOTRr", mineOffset))
+//                     continue;
+//                 // if (B and C inside and good)
+//                 break;
+//             }
 
-                if (map.checkPlacementConflict(B, sawmillSize, "BbOTRr", mineOffset))
-                    continue;
+//             if (maxIter <= 0)
+//                 throw runtime_error(
+//                     "Failed to place basic mines after maximum iterations using seed " +
+//                     to_string(map.getRNG().getOriginalSeed()));
 
-                if (map.checkPlacementConflict(C, orePitSize, "BbOTRr", mineOffset))
-                    continue;
-                // if (B and C inside and good)
-                break;
-            }
+//             auto [B, C] = BC;
 
-            if (maxIter <= 0)
-                throw runtime_error(
-                    "Failed to place basic mines after maximum iterations using seed " +
-                    to_string(map.getRNG().getOriginalSeed()));
+//             placeMine(B, zoneBlueprint.getMineGuards()[MineTypeInfo::SAWMILL][0],
+//                       MineType::MINE_SAWMILL,
+//                       zoneBlueprint.getMineResourcesCount()[MineTypeInfo::SAWMILL][0]);
 
-            auto [B, C] = BC;
-
-            placeMine(B, zoneBlueprint.getMineGuards()[MineTypeInfo::SAWMILL][0],
-                      MineType::MINE_SAWMILL,
-                      zoneBlueprint.getMineResourcesCount()[MineTypeInfo::SAWMILL][0]);
-
-            placeMine(C, zoneBlueprint.getMineGuards()[MineTypeInfo::ORE_PIT][0],
-                      MineType::MINE_ORE_PIT,
-                      zoneBlueprint.getMineResourcesCount()[MineTypeInfo::ORE_PIT][0]);
-        }
-    }
-}
+//             placeMine(C, zoneBlueprint.getMineGuards()[MineTypeInfo::ORE_PIT][0],
+//                       MineType::MINE_ORE_PIT,
+//                       zoneBlueprint.getMineResourcesCount()[MineTypeInfo::ORE_PIT][0]);
+//         }
+//     }
+// }
 
 int ObjectPlacer::evalMinePos(int3 minePos, int3 mineSize) {
     int score = 0;
@@ -158,28 +148,30 @@ void ObjectPlacer::placeMines() {
     for (const auto &[zoneID, zone] : zoneMap) {
         string zoneType = zone->getType();
 
-        ZoneBlueprint zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
-        auto mines                  = zoneBlueprint.getMines();
+        // ZoneBlueprint zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
+        // auto mines                  = zoneBlueprint.getMines();
 
-        for (const auto &[mineTypeInfo, count] : mines) {
-            string mineTypeStr = getMineType(mineTypeInfo, rng, zone->getFaction());
-            if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
-                mineTypeStr =
-                    getMineType(zoneBlueprint.getRandomMineTypes()[0], rng, zone->getFaction());
-            }
-            cerr << "Placing " << count << " mines of type " << mineTypeStr << " in zone " << zoneID
-                 << endl;
+        auto minimumMinesCount =
+            map.getTemplateInfo().getZoneById(zoneID).getMinimumMines().mineCounts;
 
-            MineType mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
-            int3 mineSize     = getMineSize(mineType);
+        for (const auto &[mineType, count] : minimumMinesCount) {
+            // if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
+            //     mineTypeStr =
+            //         getMineType(zoneBlueprint.getRandomMineTypes()[0], rng, zone->getFaction());
+            // }
+            cerr << "Placing " << count << " mines of type " << getEnumName<MineType>(mineType)
+                 << " in zone " << zoneID << endl;
+
+            int3 mineSize = getMineSize(mineType);
 
             for (int i = 0; i < count; i++) {
-                if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
-                    mineTypeStr =
-                        getMineType(zoneBlueprint.getRandomMineTypes()[i], rng, zone->getFaction());
-                    mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
-                    mineSize = getMineSize(mineType);
-                }
+                // if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
+                //     mineTypeStr =
+                //         getMineType(zoneBlueprint.getRandomMineTypes()[i], rng,
+                //         zone->getFaction());
+                //     mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
+                //     mineSize = getMineSize(mineType);
+                // }
                 int numberOfIterations = 100;
                 int3 bestPos           = int3(-1, -1, -1);
                 int bestEvalScore      = -1;
@@ -206,21 +198,16 @@ void ObjectPlacer::placeMines() {
                         "Failed to place mine after maximum iterations using seed " +
                         to_string(map.getRNG().getOriginalSeed()));
                 }
-                placeMine(bestPos, zoneBlueprint.getMineGuards()[mineTypeInfo][i], mineType,
-                          zoneBlueprint.getMineResourcesCount()[mineTypeInfo][i]);
+                pair<int, int> mineResourcesCount = {1, 0}; // TODO get from blueprint
+
+                placeMine(bestPos, mineType, mineResourcesCount);
             }
         }
     }
 }
 
-void ObjectPlacer::placeMine(int3 pos, Creature guard, MineType mineType,
-                             pair<int, int> mineResourcesCount) {
-    int3 down = int3(-1, 1, 0);
-
-    auto guardPtr = make_shared<Creature>(guard);
-    guardPtr->setPosition(pos + down);
-
-    Mine mine(mineType, -1, pos, "Mine", mineResourcesCount, guardPtr);
+void ObjectPlacer::placeMine(int3 pos, MineType mineType, pair<int, int> mineResourcesCount) {
+    Mine mine(mineType, -1, pos, "Mine", mineResourcesCount);
     auto minePtr = make_shared<Mine>(mine);
 
     map.addObject(minePtr);
@@ -247,34 +234,38 @@ void ObjectPlacer::placeMineResources() {
 }
 
 int ObjectPlacer::getNumberOfTreasures(int zoneID) {
-    auto &rng = map.getRNG();
-
     int numberOfTreasures;
 
-    BlueprintInfo blueprintInfo = map.getBlueprintInfo();
-    auto zoneMap                = map.getZoneMap();
-    auto it                     = zoneMap.find(zoneID);
+    TemplateInfo templateInfo = map.getTemplateInfo();
+    auto zoneMap              = map.getZoneMap();
+    auto it                   = zoneMap.find(zoneID);
     if (it == zoneMap.end()) {
         throw runtime_error("Zone not found: " + to_string(zoneID));
     }
 
     string type = it->second->getType();
     try {
-        ZoneBlueprint zoneBlueprint = blueprintInfo.getTypeBlueprint(type);
-        switch (decodeRichnessLevel(zoneBlueprint.getRichness())) {
-        case RichnessLevel::LOW:
-            numberOfTreasures = rng.nextInt(3, 5);
-            break;
-        case RichnessLevel::MEDIUM:
-            numberOfTreasures = rng.nextInt(6, 9);
-            break;
-        case RichnessLevel::HIGH:
-            numberOfTreasures = rng.nextInt(10, 15);
-            break;
-        case RichnessLevel::UNKNOWN:
-        default:
-            break;
-        }
+        auto treasureSettings = templateInfo.getZoneById(zoneID).getTreasure();
+        auto treasureSetting  = treasureSettings[1]; // TODO: utilize low/medium/high tiers instead
+                                                     // of just taking the medium one
+
+        numberOfTreasures =
+            treasureSetting
+                .density; // default to density if we don't want to use low/medium/high tiers
+        // switch (decodeRichnessLevel(zoneBlueprint.getRichness())) {
+        // case RichnessLevel::LOW:
+        //     numberOfTreasures = rng.nextInt(3, 5);
+        //     break;
+        // case RichnessLevel::MEDIUM:
+        //     numberOfTreasures = rng.nextInt(6, 9);
+        //     break;
+        // case RichnessLevel::HIGH:
+        //     numberOfTreasures = rng.nextInt(10, 15);
+        //     break;
+        // case RichnessLevel::UNKNOWN:
+        // default:
+        //     break;
+        // }
     } catch (const out_of_range &e) {
         throw runtime_error("Blueprint not found for zone type: " + type);
     }
@@ -298,30 +289,28 @@ double ObjectPlacer::getPercentageOfMaxTreasures(ArtifactTier tierOfTreasures) {
 ArtifactTier ObjectPlacer::getTierOfTreasures(int zoneID) {
     int tier;
 
-    BlueprintInfo blueprintInfo = map.getBlueprintInfo();
-    auto zoneMap                = map.getZoneMap();
-    auto it                     = zoneMap.find(zoneID);
+    TemplateInfo templateInfo = map.getTemplateInfo();
+    auto zoneMap              = map.getZoneMap();
+    auto it                   = zoneMap.find(zoneID);
     if (it == zoneMap.end()) {
         throw runtime_error("Zone not found: " + to_string(zoneID));
     }
 
     string type = it->second->getType();
     try {
-        ZoneBlueprint zoneBlueprint = blueprintInfo.getTypeBlueprint(type);
-        switch (decodeRichnessLevel(zoneBlueprint.getRichness())) {
-        case RichnessLevel::LOW:
+
+        auto treasureSettings = templateInfo.getZoneById(zoneID).getTreasure();
+        auto treasureSetting  = treasureSettings[1]; // TODO: utilize low/medium/high tiers instead
+                                                     // of just taking the medium one
+
+        if (treasureSetting.low < 5000) {
             tier = 1;
-            break;
-        case RichnessLevel::MEDIUM:
+        } else if (treasureSetting.low < 10000) {
             tier = 2;
-            break;
-        case RichnessLevel::HIGH:
+        } else {
             tier = 3;
-            break;
-        case RichnessLevel::UNKNOWN:
-        default:
-            break;
         }
+
     } catch (const out_of_range &e) {
         throw runtime_error("Blueprint not found for zone type: " + type);
     }
@@ -615,8 +604,8 @@ void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition,
 
     // int blockedTiles = 0;
     // for (auto &tilePos : tiles) {
-    //     if (abs(tilePos.x - candidatePosition.x) <= 1 && abs(tilePos.y - candidatePosition.y) <=
-    //     1) {
+    //     if (abs(tilePos.x - candidatePosition.x) <= 1 &&
+    //         abs(tilePos.y - candidatePosition.y) <= 1) {
     //         continue;
     //     }
     //     if (claimedTiles[tilePos.x][tilePos.y] == 0) {

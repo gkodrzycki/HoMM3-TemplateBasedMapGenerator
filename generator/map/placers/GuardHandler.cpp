@@ -1,28 +1,63 @@
 #include "./GuardHandler.hpp"
 
-GuardHandler::GuardHandler(RNG &rng) : rng(rng) {}
+GuardHandler::GuardHandler(Map &map) : map(map), rng(map.getRNG()) {}
 
-int GuardHandler::getGuardLevel(GuardTypeHandler type) {
+int GuardHandler::getGuardLevel(GuardTypeHandler type, string zoneStrength) {
     auto &rng = this->rng;
-    if (type == GuardTypeHandler::MINE) {
-        return rng.nextInt(1, 2);
-    } else if (type == GuardTypeHandler::BORDER) {
+
+    switch (type) {
+    case GuardTypeHandler::MINE:
+        if (zoneStrength == "weak") {
+            return rng.nextInt(1, 2);
+        } else if (zoneStrength == "normal") {
+            return rng.nextInt(2, 3);
+        } else if (zoneStrength == "strong") {
+            return rng.nextInt(3, 4);
+        } else {
+            return rng.nextInt(1, 4);
+        }
+    case GuardTypeHandler::TREASURE:
+        if (zoneStrength == "weak") {
+            return rng.nextInt(2, 3);
+        } else if (zoneStrength == "normal") {
+            return rng.nextInt(3, 4);
+        } else if (zoneStrength == "strong") {
+            return rng.nextInt(4, 5);
+        } else {
+            return rng.nextInt(1, 5);
+        }
+    case GuardTypeHandler::BORDER:
         return rng.nextInt(6, 7);
-    } else if (type == GuardTypeHandler::TREASURE) {
-        return rng.nextInt(1, 5);
-    } else {
+    default:
         return 1;
     }
 }
 
-int GuardHandler::getGuardPower(GuardTypeHandler type) {
-    if (type == GuardTypeHandler::MINE) {
-        return 4000;
-    } else if (type == GuardTypeHandler::BORDER) {
-        return 40000;
-    } else if (type == GuardTypeHandler::TREASURE) {
-        return 10000;
-    } else {
+int GuardHandler::getGuardPower(GuardTypeHandler type, string zoneStrength) {
+    switch (type) {
+    case GuardTypeHandler::MINE:
+        if (zoneStrength == "weak") {
+            return rng.nextInt(1000, 2000);
+        } else if (zoneStrength == "normal") {
+            return rng.nextInt(2000, 3000);
+        } else if (zoneStrength == "strong") {
+            return rng.nextInt(3000, 4000);
+        } else {
+            return rng.nextInt(1000, 4000);
+        }
+    case GuardTypeHandler::TREASURE:
+        if (zoneStrength == "weak") {
+            return rng.nextInt(2000, 3000);
+        } else if (zoneStrength == "normal") {
+            return rng.nextInt(3000, 4000);
+        } else if (zoneStrength == "strong") {
+            return rng.nextInt(4000, 5000);
+        } else {
+            return rng.nextInt(1000, 5000);
+        }
+    case GuardTypeHandler::BORDER:
+        return 45000;
+    default:
         return 1;
     }
 }
@@ -77,9 +112,15 @@ string GuardHandler::getGuardCreatureId(GuardTypeHandler type, int level) {
 }
 
 shared_ptr<Creature> GuardHandler::createGuard(GuardTypeHandler type, int3 position) {
-    int level         = getGuardLevel(type);
+    int zoneID        = map.getTile(position)->getZoneID();
+    auto templateInfo = map.getTemplateInfo();
+    auto zoneTemplate = templateInfo.getZoneById(zoneID);
+
+    string zoneStrength = zoneTemplate.getMonsters().strength;
+
+    int level         = getGuardLevel(type, zoneStrength);
     string creatureId = getGuardCreatureId(type, level);
-    int targetPower   = getGuardPower(type);
+    int targetPower   = getGuardPower(type, zoneStrength);
 
     ifstream file("stats/CRTRAITS.json");
     if (!file.is_open()) {

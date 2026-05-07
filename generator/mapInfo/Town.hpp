@@ -15,7 +15,7 @@ class Town : public Object {
     void setOwner(const string &owner);
     void setHasFort(bool hasFort);
 
-    string getOwner();
+    int getOwner();
     Faction getFaction();
     bool getHasFort() const;
 

@@ -2,6 +2,8 @@
 #include "../map/Map.hpp"
 #include "./Global.hpp"
 
+class Map;
+
 struct AutomataConfig {
     int width;
     int height;

@@ -116,7 +116,7 @@ void GuardPlacer::placeBorderGuards() {
         }
 
         if (mostBorderTiles != -1) {
-            GuardHandler guardHandler(map.getRNG());
+            GuardHandler guardHandler(map);
             auto guardPtr = guardHandler.createGuard(GuardTypeHandler::BORDER, bestGuardPos);
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);
@@ -131,11 +131,14 @@ void GuardPlacer::placeBorderGuards() {
 
 void GuardPlacer::placeMineGuards() {
     ObjectVector objectVector = map.getObjectVector();
+    int3 down                 = int3(-1, 1, 0);
 
     for (const auto &object : objectVector) {
         if (auto mine = dynamic_pointer_cast<Mine>(object)) {
 
-            auto guardPtr = mine->getGuardPtr();
+            GuardHandler guardHandlerFrom(map);
+            auto guardPtr =
+                guardHandlerFrom.createGuard(GuardTypeHandler::MINE, mine->getPosition() + down);
 
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);
@@ -154,13 +157,13 @@ void GuardPlacer::placeMonolithGuards() {
         int3 belowFromPos = monolithFromPos + int3(0, 1, 0);
         int3 belowDestPos = monolithDestPos + int3(0, 1, 0);
 
-        GuardHandler guardHandlerFrom(map.getRNG());
+        GuardHandler guardHandlerFrom(map);
         auto guardPtrFrom = guardHandlerFrom.createGuard(GuardTypeHandler::BORDER, belowFromPos);
         if (guardPtrFrom != nullptr) {
             map.addCreature(guardPtrFrom);
         }
 
-        GuardHandler guardHandlerDest(map.getRNG());
+        GuardHandler guardHandlerDest(map);
         auto guardPtrDest = guardHandlerDest.createGuard(GuardTypeHandler::BORDER, belowDestPos);
         if (guardPtrDest != nullptr) {
             map.addCreature(guardPtrDest);
@@ -177,7 +180,7 @@ void GuardPlacer::placeTreasureGuards() {
             if (!tile || !tile->isTileType("G"))
                 continue;
 
-            GuardHandler guardHandler(map.getRNG());
+            GuardHandler guardHandler(map);
             auto guardPtr = guardHandler.createGuard(GuardTypeHandler::TREASURE, tilePos);
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);

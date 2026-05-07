@@ -22,9 +22,9 @@ void Town::setFaction(Faction faction) { this->faction = faction; }
 
 Faction Town::getFaction() { return faction; }
 
-void Town::setOwner(const string &owner) { this->owner = owner; }
+void Town::setOwner(const int &owner) { this->owner = owner; }
 
-string Town::getOwner() { return owner; }
+int Town::getOwner() { return owner; }
 
 void Town::setHasFort(bool hasFort) { this->hasFort = hasFort; }
 

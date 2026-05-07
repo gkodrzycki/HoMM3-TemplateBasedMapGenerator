@@ -1,22 +1,68 @@
 #include "./Zone.hpp"
 
-int decodeZoneSize(string size) {
-    if (size == "S")
-        return 1;
-    if (size == "M")
-        return 2;
-    if (size == "L")
-        return 3;
-    return 0;
+string matchTerrainToTown(const string &townType) {
+    if (townType == "Castle")
+        return "GRASS";
+    if (townType == "Rampart")
+        return "GRASS";
+    if (townType == "Tower")
+        return "SNOW";
+    if (townType == "Inferno")
+        return "LAVA";
+    if (townType == "Necropolis")
+        return "DIRT";
+    if (townType == "Dungeon")
+        return "SUBTERRANEAN";
+    if (townType == "Stronghold")
+        return "ROUGH";
+    if (townType == "Fortress")
+        return "SWAMP";
+
+    throw runtime_error("Unknown town type for terrain matching: " + townType);
 }
 
-Zone::Zone(ZoneLayout zoneLayout) {
-    this->setFaction(getEnumFromNameOrThrow<Faction>(zoneLayout.getFaction()));
-    this->setOwner(zoneLayout.getOwner());
-    this->setSize(decodeZoneSize(zoneLayout.getSize()));
-    this->setTerrain(zoneLayout.getTerrain());
-    this->setType(zoneLayout.getType());
-    this->setZoneID(zoneLayout.getID());
+Zone::Zone(ZoneTemplate zoneTemplate, RNG &rng) {
+    vector<string> allowedFactions = zoneTemplate.getTownTypes();
+
+    // Remove factions that are not playable in the base game (Cove, Factory, Bulwark)
+    allowedFactions.erase(remove_if(allowedFactions.begin(), allowedFactions.end(),
+                                    [](const string &f) {
+                                        return f == "Cove" || f == "Factory" || f == "Bulwark" ||
+                                               f == "Conflux";
+                                    }),
+                          allowedFactions.end());
+
+    string chosenFaction = rng.getRandomFromVector(allowedFactions);
+    this->setFaction(getEnumFromNameOrThrow<Faction>(chosenFaction));
+
+    int owner = 0;
+    if (zoneTemplate.getType() == "human_start" || zoneTemplate.getType() == "computer_start") {
+        owner = zoneTemplate.getPlayerTowns().ownership;
+    }
+
+    this->setOwner(owner);
+    this->setSize(zoneTemplate.getBaseSize());
+
+    if (zoneTemplate.getMatchTerrainToTown()) {
+        string terrain = matchTerrainToTown(chosenFaction);
+        this->setTerrain(terrain);
+    } else if (!zoneTemplate.getTerrain().empty()) {
+        vector<string> terrainOptions = zoneTemplate.getTerrain();
+        this->setTerrain(rng.getRandomFromVector(terrainOptions));
+    } else {
+        throw runtime_error("Zone template " + to_string(zoneTemplate.getId()) +
+                            " has no terrain specified and does not match terrain to town");
+    }
+
+    this->setType(zoneTemplate.getType());
+    this->setZoneID(zoneTemplate.getId());
+
+    // this->setFaction(getEnumFromNameOrThrow<Faction>(zoneLayout.getFaction()));
+    // this->setOwner(zoneLayout.getOwner());
+    // this->setSize(decodeZoneSize(zoneLayout.getSize()));
+    // this->setTerrain(zoneLayout.getTerrain());
+    // this->setType(zoneLayout.getType());
+    // this->setZoneID(zoneLayout.getID());
 }
 
 void Zone::setCenter(int3 center) { this->center = center; }
@@ -29,7 +75,7 @@ void Zone::setTerrain(string terrain) { this->terrain = terrain; }
 
 void Zone::setFaction(Faction faction) { this->faction = faction; }
 
-void Zone::setOwner(string owner) { this->owner = owner; }
+void Zone::setOwner(int owner) { this->owner = owner; }
 
 void Zone::setType(string type) { this->type = type; }
 
@@ -37,13 +83,13 @@ int3 Zone::getCenter() { return center; }
 
 int Zone::getZoneID() { return zoneID; }
 
-int Zone::getSize() { return size; }
+int Zone::getSize() { return size / 10; }
 
 string Zone::getTerrain() { return terrain; }
 
 Faction Zone::getFaction() { return faction; }
 
-string Zone::getOwner() { return owner; }
+int Zone::getOwner() { return owner; }
 
 string Zone::getType() { return type; }
 

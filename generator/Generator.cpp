@@ -1,27 +1,12 @@
 #include "./luaUtils/luaHelpers.hpp"
 
-#include "./blueprintInfo/BlueprintInfo.hpp"
 #include "./global/Global.hpp"
 #include "./global/Random.hpp"
-#include "./layoutInfo/LayoutInfo.hpp"
 #include "./map/Map.hpp"
-
-LayoutInfo parseLayout(const json &layout) {
-    LayoutInfo layoutInfo;
-    layoutInfo.deserialize(layout);
-
-    return layoutInfo;
-}
-
-BlueprintInfo parseBlueprint(const json &blueprint, RNG &rng) {
-    BlueprintInfo blueprintInfo(rng);
-    blueprintInfo.deserialize(blueprint);
-
-    return blueprintInfo;
-}
+#include "./templateInfo/TemplateInfo.hpp"
 
 void generateLuaScript(Map map, string &saveLocation) {
-    LayoutInfo layoutInfo = map.getLayoutInfo();
+    TemplateInfo templateInfo = map.getTemplateInfo();
 
     ofstream luaFile("generated_script.lua");
     if (!luaFile.is_open()) {
@@ -31,11 +16,13 @@ void generateLuaScript(Map map, string &saveLocation) {
     AddHeader(luaFile);
 
     luaFile << "local instance = homm3lua.new(homm3lua.FORMAT_ROE,homm3lua.SIZE_"
-            << encodeMapSize(layoutInfo.getMapSize()) << ")\n";
+            << encodeMapSize(map.getWidth(), map.getHeight()) << ")\n";
 
-    luaFile << "instance:name('" << layoutInfo.getName() << "')\n";
-    luaFile << "instance:description('" << layoutInfo.getDescription() << "')\n";
-    string difficulty = layoutInfo.getDifficulty();
+    luaFile << "instance:name('" << templateInfo.getName() << "')\n";
+    luaFile << "instance:description('" << templateInfo.getDescription() << "')\n";
+
+    // TODO: think about better handling difficulty
+    string difficulty = "easy";
     transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::toupper);
     luaFile << "instance:difficulty(homm3lua.DIFFICULTY_" << difficulty << ")\n\n";
 
@@ -103,11 +90,10 @@ json readFile(string filename) {
 }
 
 int main(int argc, char *argv[]) {
-    json layout    = readFile("layout.json");
-    json blueprint = readFile("blueprint.json");
-
     RNG rng;
+    int debug           = 0;
     string saveLocation = "";
+    string templateName = "JebusCross.json";
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--seed") == 0) {
@@ -117,21 +103,34 @@ int main(int argc, char *argv[]) {
         if (strcmp(argv[i], "--location") == 0) {
             saveLocation = argv[i + 1];
         }
+        if (strcmp(argv[i], "--debug") == 0) {
+            debug = atoi(argv[i + 1]);
+        }
+        if (strcmp(argv[i], "--template") == 0) {
+            templateName = argv[i + 1];
+        }
     }
 
-    LayoutInfo layoutInfo = parseLayout(layout);
-    if (layoutInfo.getDebug() > 1)
-        layoutInfo.printLayout();
+    json _template = readFile(templateName);
 
-    BlueprintInfo blueprintInfo = parseBlueprint(blueprint, rng);
-    if (layoutInfo.getDebug() > 1)
-        blueprintInfo.printBlueprint();
+    // LayoutInfo layoutInfo = parseLayout(_template);
+    // if (layoutInfo.getDebug() > 1)
+    //     layoutInfo.printLayout();
 
-    Map map(rng, layoutInfo, blueprintInfo);
+    // BlueprintInfo blueprintInfo = parseBlueprint(_template, rng);
+    // if (layoutInfo.getDebug() > 1)
+    //     blueprintInfo.printBlueprint();
+    TemplateInfo templateInfo(debug);
+    templateInfo.deserialize(_template);
+    if (templateInfo.getDebug() > 2)
+        templateInfo.print();
+
+    Map map(rng, templateInfo);
     map.generateMap();
-    if (layoutInfo.getDebug() > 0) {
+
+    if (templateInfo.getDebug() > 0) {
         cerr << "========== MAP ==========\n";
-        map.printMap(layoutInfo.getDebug());
+        map.printMap(templateInfo.getDebug());
         cerr << "Map printed!\n";
     }
 
