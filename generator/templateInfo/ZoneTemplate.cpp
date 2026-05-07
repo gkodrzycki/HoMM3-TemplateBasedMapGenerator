@@ -48,13 +48,13 @@ string ZoneTemplate::getFactionHint() const { return factionHint; }
 
 MineSettings ZoneTemplate::deserializeMines(const json &j) {
     MineSettings m;
-    m.wood    = getOrDefault<int>(j, "Wood", 0);
-    m.mercury = getOrDefault<int>(j, "Mercury", 0);
-    m.ore     = getOrDefault<int>(j, "Ore", 0);
-    m.sulfur  = getOrDefault<int>(j, "Sulfur", 0);
-    m.crystal = getOrDefault<int>(j, "Crystal", 0);
-    m.gems    = getOrDefault<int>(j, "Gems", 0);
-    m.gold    = getOrDefault<int>(j, "Gold", 0);
+    m.mineCounts[MineType::MINE_SAWMILL]        = getOrDefault<int>(j, "Wood", 0);
+    m.mineCounts[MineType::MINE_ALCHEMISTS_LAB] = getOrDefault<int>(j, "Mercury", 0);
+    m.mineCounts[MineType::MINE_ORE_PIT]        = getOrDefault<int>(j, "Ore", 0);
+    m.mineCounts[MineType::MINE_SULFUR_DUNE]    = getOrDefault<int>(j, "Sulfur", 0);
+    m.mineCounts[MineType::MINE_CRYSTAL_CAVERN] = getOrDefault<int>(j, "Crystal", 0);
+    m.mineCounts[MineType::MINE_GEM_POND]       = getOrDefault<int>(j, "Gems", 0);
+    m.mineCounts[MineType::MINE_GOLD_MINE]      = getOrDefault<int>(j, "Gold", 0);
     return m;
 }
 
@@ -217,21 +217,32 @@ void ZoneTemplate::print() const {
     }
 
     // Print only non-zero mine settings using shared helper.
-    printNonZeroFields("Minimum mines", {{"Wood", minimumMines.wood},
-                                         {"Mercury", minimumMines.mercury},
-                                         {"Ore", minimumMines.ore},
-                                         {"Sulfur", minimumMines.sulfur},
-                                         {"Crystal", minimumMines.crystal},
-                                         {"Gems", minimumMines.gems},
-                                         {"Gold", minimumMines.gold}});
+    // TODO NA DZIŚ
+    // printNonZeroFields("Minimum mines", {{"Wood",
+    // minimumMines.mineCounts[MineTypeInfo::SAWMILL]},
+    //                                      {"Mercury",
+    //                                      minimumMines.mineCounts[MineTypeInfo::ALCHEMISTS_LAB]},
+    //                                      {"Ore", minimumMines.mineCounts[MineTypeInfo::ORE_PIT]},
+    //                                      {"Sulfur",
+    //                                      minimumMines.mineCounts[MineTypeInfo::SULFUR_DUNE]},
+    //                                      {"Crystal",
+    //                                      minimumMines.mineCounts[MineTypeInfo::CRYSTAL_CAVERN]},
+    //                                      {"Gems",
+    //                                      minimumMines.mineCounts[MineTypeInfo::GEM_POND]},
+    //                                      {"Gold",
+    //                                      minimumMines.mineCounts[MineTypeInfo::GOLD_MINE]}});
 
-    printNonZeroFields("Mine density", {{"Wood", mineDensity.wood},
-                                        {"Mercury", mineDensity.mercury},
-                                        {"Ore", mineDensity.ore},
-                                        {"Sulfur", mineDensity.sulfur},
-                                        {"Crystal", mineDensity.crystal},
-                                        {"Gems", mineDensity.gems},
-                                        {"Gold", mineDensity.gold}});
+    // printNonZeroFields("Mine density", {{"Wood", mineDensity.mineCounts[MineTypeInfo::SAWMILL]},
+    //                                     {"Mercury",
+    //                                     mineDensity.mineCounts[MineTypeInfo::ALCHEMISTS_LAB]},
+    //                                     {"Ore", mineDensity.mineCounts[MineTypeInfo::ORE_PIT]},
+    //                                     {"Sulfur",
+    //                                     mineDensity.mineCounts[MineTypeInfo::SULFUR_DUNE]},
+    //                                     {"Crystal",
+    //                                     mineDensity.mineCounts[MineTypeInfo::CRYSTAL_CAVERN]},
+    //                                     {"Gems", mineDensity.mineCounts[MineTypeInfo::GEM_POND]},
+    //                                     {"Gold",
+    //                                     mineDensity.mineCounts[MineTypeInfo::GOLD_MINE]}});
 
     if (!terrain.empty()) {
         cerr << "      Terrain:";

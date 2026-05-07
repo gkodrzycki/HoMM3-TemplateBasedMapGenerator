@@ -39,7 +39,8 @@ void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
     int Y               = town->getPosition().y;
 
     luaFile << "instance:town(homm3lua." << nameOfObject << ", {x=" << X << ", y=" << Y
-            << ", z=0}, homm3lua.PLAYER_" << ID << ", " << is_main << ")\n";
+            << ", z=0}, homm3lua.OWNER_" << (ID >= 0 ? std::to_string(ID) : "NEUTRAL") << ", " << (is_main ? "true" : "false") << ", "
+            << (town->getHasFort() ? "true" : "false") << ")\n";
 }
 
 // @function    AddTowns
@@ -51,12 +52,14 @@ void AddTowns(ofstream &luaFile, Map &map) {
 
     for (auto object : objectVector) {
         if (auto town = std::dynamic_pointer_cast<Town>(object)) {
-            int playerID = town->getOwner();
-            if (addedPlayers.find(playerID) == addedPlayers.end()) {
+            int playerID  = town->getOwner();
+            bool mainTown = false;
+            if (playerID > 0 && addedPlayers.find(playerID) == addedPlayers.end()) {
+                mainTown = true;
                 addedPlayers.insert(playerID);
                 AddPlayer(luaFile, playerID);
             }
-            AddTown(luaFile, town, true);
+            AddTown(luaFile, town, mainTown);
         }
     }
 }
@@ -179,133 +182,98 @@ void AddMonoliths(ofstream &luaFile, Map &map) {
     }
 }
 
-// // @function    AddCreature
-// // @tparam      ofstream                luaFile          file where we save lua script.
-// // @tparam      shared_ptr<Creature>    creature         pointer to creature.
-// void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature) {
-//     string disp = creature->getDisposition();
-//     transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
+// @function    AddCreature
+// @tparam      ofstream                luaFile          file where we save lua script.
+// @tparam      shared_ptr<Creature>    creature         pointer to creature.
+void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature) {
+    string disp = creature->getDisposition();
+    transform(disp.begin(), disp.end(), disp.begin(), ::toupper);
 
-//     string creatureType = getEnumName<CreatureType>(creature->getCreatureType());
+    string creatureType = getEnumName<CreatureType>(creature->getCreatureType());
 
-//     transform(creatureType.begin(), creatureType.end(), creatureType.begin(), ::tolower);
+    transform(creatureType.begin(), creatureType.end(), creatureType.begin(), ::tolower);
 
-//     replace(creatureType.begin(), creatureType.end(), '_', ' ');
-//     creatureType[0] = toupper(creatureType[0]);
-//     for (size_t i = 1; i < creatureType.length(); i++) {
-//         if (creatureType[i - 1] == ' ') {
-//             creatureType[i] = toupper(creatureType[i]);
-//         }
-//     }
+    replace(creatureType.begin(), creatureType.end(), '_', ' ');
+    creatureType[0] = toupper(creatureType[0]);
+    for (size_t i = 1; i < creatureType.length(); i++) {
+        if (creatureType[i - 1] == ' ') {
+            creatureType[i] = toupper(creatureType[i]);
+        }
+    }
 
-//     luaFile << "instance:creature('" << creatureType << "', {x=" << creature->getPosition().x
-//             << ", y=" << creature->getPosition().y << ", z=" << creature->getPosition().z << "},
-//             "
-//             << creature->getQuantity() << ", homm3lua.DISPOSITION_" << disp << ", "
-//             << (creature->getNeverFlees() ? "true" : "false") << ", "
-//             << (creature->getDoesNotGrow() ? "true" : "false") << ")\n";
-// }
+    luaFile << "instance:creature('" << creatureType << "', {x=" << creature->getPosition().x
+            << ", y=" << creature->getPosition().y << ", z=" << creature->getPosition().z << "},"
+            << creature->getQuantity() << ", homm3lua.DISPOSITION_" << disp << ", "
+            << (creature->getNeverFlees() ? "true" : "false") << ", "
+            << (creature->getDoesNotGrow() ? "true" : "false") << ")\n";
+}
 
-// // @function    AddCreatures
-// // @tparam      ofstream    luaFile         file where we save lua script.
-// // @tparam      Map         map             object of map class with finished setup.
-// void AddCreatures(ofstream &luaFile, Map &map) {
-//     CreatureVector creatureVector = map.getCreatureVector();
-//     for (const auto &creature : creatureVector) {
-//         AddCreature(luaFile, creature);
-//     }
-// }
+// @function    AddCreatures
+// @tparam      ofstream    luaFile         file where we save lua script.
+// @tparam      Map         map             object of map class with finished setup.
+void AddCreatures(ofstream &luaFile, Map &map) {
+    CreatureVector creatureVector = map.getCreatureVector();
+    for (const auto &creature : creatureVector) {
+        AddCreature(luaFile, creature);
+    }
+}
 
-// // @function    AddMine
-// // @tparam      ofstream                luaFile     file where we save lua script.
-// // @tparam      shared_ptr<Mine>        mine        completed mine object.
-// void AddMine(ofstream &luaFile, shared_ptr<Mine> mine) {
-//     int owner_id = mine->getOwner();
-//     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" + to_string(owner_id);
-//     luaFile << "instance:mine(homm3lua." << getEnumName<MineType>(mine->getMineType())
-//             << ", {x=" << mine->getPosition().x << ", y=" << mine->getPosition().y
-//             << ", z=" << mine->getPosition().z << "}, homm3lua." << owner << ")\n";
-// }
+// @function    AddMine
+// @tparam      ofstream                luaFile     file where we save lua script.
+// @tparam      shared_ptr<Mine>        mine        completed mine object.
+void AddMine(ofstream &luaFile, shared_ptr<Mine> mine) {
+    int owner_id = mine->getOwner();
+    string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" + to_string(owner_id);
+    luaFile << "instance:mine(homm3lua." << getEnumName<MineType>(mine->getMineType())
+            << ", {x=" << mine->getPosition().x << ", y=" << mine->getPosition().y
+            << ", z=" << mine->getPosition().z << "}, homm3lua." << owner << ")\n";
+}
 
-// // @function    AddMines
-// // @tparam      ofstream    luaFile     file where we save lua script.
-// // @tparam      Map         map         object of map class with finished setup
-// void AddMines(ofstream &luaFile, Map &map) {
-//     ObjectVector objectVector = map.getObjectVector();
-//     for (auto object : objectVector) {
-//         if (auto mine = std::dynamic_pointer_cast<Mine>(object)) {
-//             AddMine(luaFile, mine);
-//         }
-//     }
-// }
+// @function    AddMines
+// @tparam      ofstream    luaFile     file where we save lua script.
+// @tparam      Map         map         object of map class with finished setup
+void AddMines(ofstream &luaFile, Map &map) {
+    ObjectVector objectVector = map.getObjectVector();
+    for (auto object : objectVector) {
+        if (auto mine = std::dynamic_pointer_cast<Mine>(object)) {
+            AddMine(luaFile, mine);
+        }
+    }
+}
 
-// // @function    AddResource
-// // @tparam      ofstream                luaFile         file where we save lua script.
-// // @tparam      shared_ptr<Resource>    resource        completed resource object.
-// void AddResource(ofstream &luaFile, shared_ptr<Resource> resource) {
-//     luaFile << "instance:resource(homm3lua."
-//             << getEnumName<ResourceType>(resource->getResourceType())
-//             << ", {x=" << resource->getPosition().x << ", y=" << resource->getPosition().y
-//             << ", z=" << resource->getPosition().z << "}, " << resource->getQuantity() << ")\n";
-// }
+// @function    AddResource
+// @tparam      ofstream                luaFile         file where we save lua script.
+// @tparam      shared_ptr<Resource>    resource        completed resource object.
+void AddResource(ofstream &luaFile, shared_ptr<Resource> resource) {
+    luaFile << "instance:resource(homm3lua."
+            << getEnumName<ResourceType>(resource->getResourceType())
+            << ", {x=" << resource->getPosition().x << ", y=" << resource->getPosition().y
+            << ", z=" << resource->getPosition().z << "}, " << resource->getQuantity() << ")\n";
+}
 
-// // @function    AddArtifact
-// // @tparam      ofstream                luaFile          file where we save lua script.
-// // @tparam      shared_ptr<Artifact>    artifact         completed artifact object.
-// void AddArtifact(ofstream &luaFile, shared_ptr<Artifact> artifact) {
-//     luaFile << "instance:artifact(homm3lua."
-//             << getEnumName<ArtifactType>(artifact->getArtifactType())
-//             << ", {x=" << artifact->getPosition().x << ", y=" << artifact->getPosition().y
-//             << ", z=" << artifact->getPosition().z << "})\n";
-// }
+// @function    AddArtifact
+// @tparam      ofstream                luaFile          file where we save lua script.
+// @tparam      shared_ptr<Artifact>    artifact         completed artifact object.
+void AddArtifact(ofstream &luaFile, shared_ptr<Artifact> artifact) {
+    luaFile << "instance:artifact(homm3lua."
+            << getEnumName<ArtifactType>(artifact->getArtifactType())
+            << ", {x=" << artifact->getPosition().x << ", y=" << artifact->getPosition().y
+            << ", z=" << artifact->getPosition().z << "})\n";
+}
 
-// // @function    AddTreasures
-// // @tparam      ofstream    luaFile     file where we save lua script.
-// // @tparam      Map         map         object of map class with finished setup.
-// void AddTreasures(ofstream &luaFile, Map &map) {
-//     TreasureVector treasureVector = map.getTreasureVector();
-//     for (auto treasure : treasureVector) {
-//         if (auto artifact = dynamic_pointer_cast<Artifact>(treasure)) {
-//             AddArtifact(luaFile, artifact);
-//         } else if (auto resource = dynamic_pointer_cast<Resource>(treasure)) {
-//             AddResource(luaFile, resource);
-//         }
-//     }
-// }
-
-// // @function    AddMine
-// // @tparam      ofstream    luaFile     file where we save lua script.
-// // @tparam      Mine        mine        completed mine object.
-// // @tparam      Map         map        object of map class with finished
-// setup. void AddMine(ofstream& luaFile, Mine mine, Map &map){
-//     i32 x = mine.getPosition().x;
-//     i32 y = mine.getPosition().y;
-//     i32 z = mine.getPosition().z;
-
-//     i32 owner_id = mine.getOwner();
-
-//     string mineType = mineTypeToString(mine.getMineType());
-
-//     string owner = owner_id <= 0 ? "OWNER_NEUTRAL" : "PLAYER_" +
-//     to_string(owner_id); luaFile << "instance:mine(homm3lua." << mineType <<
-//     ", {x=" << x << ", y=" << y << ", z=" << z << "}, homm3lua." << owner <<
-//     ")\n";
-
-// }
-
-// // @function    AddArtifact
-// // @tparam      ofstream    luaFile          file where we save lua script.
-// // @tparam      Treasure    treasure         Treasure object to place.
-// void AddArtifact(ofstream& luaFile, Treasure treasure){
-//     string treasureType = treasureTypeToString(treasure.getTreasureType());
-
-//     int x = treasure.getPosition().x;
-//     int y = treasure.getPosition().y;
-//     int z = treasure.getPosition().z;
-
-//     luaFile << "instance:artifact(homm3lua." << treasureType << ", {x=" << x
-//     << ", y=" << y << ", z=" << z << "})\n";
-// }
+// @function    AddTreasures
+// @tparam      ofstream    luaFile     file where we save lua script.
+// @tparam      Map         map         object of map class with finished setup.
+void AddTreasures(ofstream &luaFile, Map &map) {
+    TreasureVector treasureVector = map.getTreasureVector();
+    for (auto treasure : treasureVector) {
+        if (auto artifact = dynamic_pointer_cast<Artifact>(treasure)) {
+            AddArtifact(luaFile, artifact);
+        } else if (auto resource = dynamic_pointer_cast<Resource>(treasure)) {
+            AddResource(luaFile, resource);
+        }
+    }
+}
 
 // // @function    AddBuildingTreasure
 // // @tparam      ofstream    luaFile          file where we save lua script.

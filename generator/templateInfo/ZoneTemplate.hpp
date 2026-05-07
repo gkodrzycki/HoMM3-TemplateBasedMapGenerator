@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global/Global.hpp"
+#include "../mapInfo/MineType.hpp"
 
 struct ZoneRestrictions {
     int minHumanPositions = 0;
@@ -27,13 +28,7 @@ struct TreasureTier {
 
 // Per-resource mine counts or density weights.
 struct MineSettings {
-    int wood    = 0;
-    int mercury = 0;
-    int ore     = 0;
-    int sulfur  = 0;
-    int crystal = 0;
-    int gems    = 0;
-    int gold    = 0;
+    map<MineType, int> mineCounts;
 };
 
 struct ZoneMonsters {

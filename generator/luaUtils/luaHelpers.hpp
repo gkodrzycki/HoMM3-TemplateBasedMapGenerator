@@ -20,18 +20,14 @@ void AddRoad(ofstream &luaFile, const int &tier, int3 pos);
 void AddRoads(ofstream &luaFile, Map &map);
 void AddMonolith(ofstream &luaFile, int3 pos, int connectionNumber);
 void AddMonoliths(ofstream &luaFile, Map &map);
-// void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature);
-// void AddCreatures(ofstream &luaFile, Map &map);
-// void AddMine(ofstream &luaFile, shared_ptr<Mine> mine);
-// void AddMines(ofstream &luaFile, Map &map);
-// void AddResource(ofstream &luaFile, shared_ptr<Resource> resource);
-// void AddArtifact(ofstream &luaFile, shared_ptr<Artifact> artifact);
-// void AddTreasures(ofstream &luaFile, Map &map);
-// void AddMine(ofstream& luaFile, Mine mine, Map &map);
-// void AddResource(ofstream& luaFile, Treasure treasure);
+void AddCreature(ofstream &luaFile, shared_ptr<Creature> creature);
+void AddCreatures(ofstream &luaFile, Map &map);
+void AddMine(ofstream &luaFile, shared_ptr<Mine> mine);
+void AddMines(ofstream &luaFile, Map &map);
+void AddResource(ofstream &luaFile, shared_ptr<Resource> resource);
+void AddArtifact(ofstream &luaFile, shared_ptr<Artifact> artifact);
+void AddTreasures(ofstream &luaFile, Map &map);
 // void AddBuildingTreasure(ofstream& luaFile, Treasure treasure);
-// void AddObstacle(ofstream& luaFile, string obstacle, int3 pos);
 // void AddSign(ofstream& luaFile, string text, int x, int y, int z);
-// void AddMapObjects(ofstream &luaFile, Map& map);
 
 #endif

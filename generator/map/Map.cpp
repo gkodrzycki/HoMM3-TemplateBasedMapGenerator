@@ -43,7 +43,6 @@ shared_ptr<Tile> Map::getTile(int3 pos) {
 
 TemplateInfo Map::getTemplateInfo() { return templateInfo; }
 RNG &Map::getRNG() { return rng; }
-RegionMap Map::getRegionMap() { return regionMap; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
 const TileMap &Map::getTileMap() { return tileMap; }
 ObjectVector Map::getObjectVector() { return objectVector; }
@@ -107,25 +106,26 @@ void Map::generateMap() {
     TownPlacer townPlacer(*this);
     townPlacer.placeTowns();
 
-    // ConnectionPlacer connectionPlacer(*this);
-    // connectionPlacer.placeRoads();
-    // connectionPlacer.createMonoliths();
+    ConnectionPlacer connectionPlacer(*this);
+    connectionPlacer.placeRoads();
+    connectionPlacer.createMonoliths();
 
-    // ObjectPlacer objectPlacer(*this);
-    // objectPlacer.placeBasicMines();
-    // objectPlacer.placeMines();
-    // objectPlacer.placeMineResources();
-    // objectPlacer.placeTreasures();
+    ObjectPlacer objectPlacer(*this);
+    // objectPlacer.placeBasicMines(); TODO: decide if we want to place basic mines standalone or
+    // not
+    objectPlacer.placeMines();
+    objectPlacer.placeMineResources();
+    objectPlacer.placeTreasures();
 
-    // GuardPlacer guardPlacer(*this);
-    // guardPlacer.placeGuards();
+    GuardPlacer guardPlacer(*this);
+    guardPlacer.placeGuards();
 
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
 
-    // if (templateInfo.getDebug() > 0) {
-    //     placeDebugObjects();
-    // }
+    if (templateInfo.getDebug() > 0) {
+        placeDebugObjects();
+    }
 }
 
 void Map::placeDebugObjects() {
@@ -196,12 +196,6 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
 }
 
 void Map::printMap(int debugLevel) {
-    if (debugLevel > 1) {
-        cerr << "==== Regions ====\n";
-        for (auto &[regionID, region] : regionMap) {
-            region->printRegion();
-        }
-    }
 
     if (debugLevel > 2) {
         cerr << "==== Objects ====\n";

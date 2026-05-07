@@ -25,19 +25,11 @@ SRC_DIR = $(GENERATOR_DIR)/.
 UTILS_DIR = $(GENERATOR_DIR)/luaUtils
 MAP_INFO_DIR = $(GENERATOR_DIR)/mapInfo
 GLOBAL_DIR = $(GENERATOR_DIR)/global
-LAYOUT_INFO_DIR = $(GENERATOR_DIR)/layoutInfo
-BLUEPRINT_INFO_DIR = $(GENERATOR_DIR)/blueprintInfo
 TEMPLATE_INFO_DIR = $(GENERATOR_DIR)/templateInfo
 MAP_DIR = $(GENERATOR_DIR)/map
 PLACERS_DIR = $(MAP_DIR)/placers
 
 COMMON_SOURCES = \
-              $(LAYOUT_INFO_DIR)/LayoutInfo.cpp \
-              $(LAYOUT_INFO_DIR)/ZoneLayout.cpp \
-              $(LAYOUT_INFO_DIR)/RegionInfo.cpp \
-              $(LAYOUT_INFO_DIR)/ConnectionInfo.cpp \
-              $(BLUEPRINT_INFO_DIR)/BlueprintInfo.cpp \
-              $(BLUEPRINT_INFO_DIR)/ZoneBlueprint.cpp \
 			  $(TEMPLATE_INFO_DIR)/TemplateInfo.cpp \
 			  $(TEMPLATE_INFO_DIR)/ZoneTemplate.cpp \
 			  $(TEMPLATE_INFO_DIR)/ConnectionTemplate.cpp \
@@ -63,8 +55,7 @@ COMMON_SOURCES = \
 			  $(MAP_INFO_DIR)/Resource.cpp \
 			  $(MAP_INFO_DIR)/Artifact.cpp \
 			  $(MAP_INFO_DIR)/Mine.cpp \
-			  $(MAP_INFO_DIR)/Road.cpp \
-			  $(MAP_INFO_DIR)/Region.cpp
+			  $(MAP_INFO_DIR)/Road.cpp
 
 # Source files for Generator
 GEN_SOURCES = $(SRC_DIR)/Generator.cpp $(COMMON_SOURCES)
