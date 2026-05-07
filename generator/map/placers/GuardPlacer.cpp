@@ -181,7 +181,7 @@ void GuardPlacer::placeTreasureGuards() {
     }
 }
 void GuardPlacer::placeGuards() {
-    placeBorderGuards();
+    // placeBorderGuards();
     placeMineGuards();
     placeMonolithGuards();
     placeTreasureGuards();

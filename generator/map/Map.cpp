@@ -183,6 +183,10 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
             if (tilePtr == nullptr)
                 continue;
 
+            if (tilePos == getZoneMap()[tilePtr->getZoneID()]->getCenter()) {
+                return true;
+            }
+
             if (debug) {
                 cerr << tilePos.toString() << "\n";
             }

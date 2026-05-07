@@ -29,7 +29,7 @@ class ObjectPlacer {
     void placeArtifact(ArtifactType artifactType, int3 pos);
     double evalTreasureCandidate(int3 candidatePosition, vector<vector<int>> &tilesTreeCount,
                                  vector<int3> &freeTiles, int acceptableBlockedTiles);
-    void placeTreasuresNearCandidate(int3 candidatePosition, ArtifactTier tierOfTreasures);
+    int placeTreasuresNearCandidate(int3 candidatePosition, ArtifactTier tierOfTreasures);
     int getNumberOfTreasures(int zoneID);
     double getPercentageOfMaxTreasures(ArtifactTier tierOfTreasures);
     ArtifactTier getTierOfTreasures(int zoneID);
