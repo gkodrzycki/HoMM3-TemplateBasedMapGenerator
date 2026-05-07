@@ -360,6 +360,30 @@ static int text(lua_State *L) {
 // z}.
 // @tparam      integer        owner           Owner. See OWNER_*
 // @tparam      boolean        is_main_town    Optional. Set town as player main one.
+// @tparam      boolean        has_fort        Optional. Whether the town starts with a fort built.
+//                                             Defaults to true. Pass false for an unfortified town.
+static const char *get_town_def(const char *town_name, int has_fort) {
+    if (strcmp(town_name, "Castle") == 0)
+        return has_fort ? "avccasx0.def" : "avccast0.def";
+    if (strcmp(town_name, "Rampart") == 0)
+        return has_fort ? "avcramx0.def" : "avcramp0.def";
+    if (strcmp(town_name, "Tower") == 0)
+        return has_fort ? "avctowx0.def" : "avctowr0.def";
+    if (strcmp(town_name, "Inferno") == 0)
+        return has_fort ? "avcinfx0.def" : "avcinft0.def";
+    if (strcmp(town_name, "Necropolis") == 0)
+        return has_fort ? "avcnecx0.def" : "avcnecr0.def";
+    if (strcmp(town_name, "Dungeon") == 0)
+        return has_fort ? "avcdunx0.def" : "avcdung0.def";
+    if (strcmp(town_name, "Fortress") == 0)
+        return has_fort ? "avcftrx0.def" : "avcftrt0.def";
+    if (strcmp(town_name, "Stronghold") == 0)
+        return has_fort ? "avcstrx0.def" : "avcstro0.def";
+    if (strcmp(town_name, "Random Town") == 0)
+        return has_fort ? "avcranx0.def" : "avcrand0.def";
+    return NULL;
+}
+
 static int town(lua_State *L) {
     h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
 
@@ -367,15 +391,22 @@ static int town(lua_State *L) {
     const h3mlua_xyz xyz   = h3mlua_check_xyz(L, 3);
     const int owner        = luaL_checkinteger(L, 4);
     const int is_main_town = lua_toboolean(L, 5);
+    const int has_fort     = lua_isnoneornil(L, 6) ? 1 : lua_toboolean(L, 6);
+
+    const char *def = get_town_def(town, has_fort);
+    if (!def)
+        return luaL_argerror(L, 2, "unknown town type");
 
     int object = 0;
 
-    if (h3m_object_add(*h3m, town, xyz.x, xyz.y, xyz.z, &object))
-        return luaL_error(L, "h3m_object_add");
+    if (h3m_object_add_by_def(*h3m, def, xyz.x, xyz.y, xyz.z, &object))
+        return luaL_error(L, "h3m_object_add_by_def");
     if ((*h3m)->meta.od_entries[object].oa_type != META_OBJECT_TOWN)
         return luaL_argerror(L, 2, "it's not a town");
     if (owner != -1 && h3m_object_set_owner(*h3m, object, owner))
         return luaL_error(L, "h3m_object_set_owner");
+    if (h3m_object_set_has_fort(*h3m, object, has_fort))
+        return luaL_error(L, "h3m_object_set_has_fort");
     if (is_main_town) {
         if (owner == -1)
             return luaL_error(L, "Neutral town cannot be a main one.");

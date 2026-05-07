@@ -39,11 +39,10 @@ void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
     int ID              = town->getOwner();
     int X               = town->getPosition().x;
     int Y               = town->getPosition().y;
-    string is_main_str  = is_main ? "true" : "false";
 
     luaFile << "instance:town(homm3lua." << nameOfObject << ", {x=" << X << ", y=" << Y
-            << ", z=0}, homm3lua.OWNER_" << (ID >= 0 ? std::to_string(ID) : "NEUTRAL") << ", "
-            << is_main_str << ")\n";
+            << ", z=0}, homm3lua.OWNER_" << (ID >= 0 ? std::to_string(ID) : "NEUTRAL") << ", " << (is_main ? "true" : "false") << ", "
+            << (town->getHasFort() ? "true" : "false") << ")\n";
 }
 
 // @function    AddTowns
