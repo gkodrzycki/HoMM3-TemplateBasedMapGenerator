@@ -31,6 +31,7 @@ int3 findBestDistributedPosition(const vector<int3> &freeTiles, const vector<int
         vector<pair<int3, int>> tileDistances;
         tileDistances.reserve(freeTiles.size());
 
+        // TODO - OPTIMIZE
         for (const auto &pos : freeTiles) {
             int dx     = pos.x - zoneCenter.x;
             int dy     = pos.y - zoneCenter.y;
