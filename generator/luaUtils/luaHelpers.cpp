@@ -25,8 +25,6 @@ local homm3lua = require('homm3lua'))";
 // @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      string      playerId    player ID.
 void AddPlayer(ofstream &luaFile, int playerId) {
-    if (playerId < 0)
-        return;
     luaFile << "instance:player(homm3lua.PLAYER_" << playerId << ")\n";
 }
 
