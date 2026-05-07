@@ -8,16 +8,16 @@ class Map;
 
 using DistanceMap = std::map<int, unordered_map<int, int>>;
 
-class RegionPlacer {
+class ZonePlacer {
   public:
-    RegionPlacer(Map &map);
+    ZonePlacer(Map &map);
 
-    void initRegions();
-    void generateRegions();
+    void initZones();
+    void generateZones();
 
     int calculateTotalSize();
 
-    void placeRegions();
+    void placeZones();
 
     void calculateZoneCenters();
 
@@ -25,12 +25,12 @@ class RegionPlacer {
 
     void initGrid();
 
-    void claimTiles(vector<pair<int, int3>> &zoneTiles);
-    void claimFreeTiles();
+    bool claimTiles(vector<pair<int, int3>> &zoneTiles, bool fullClaim);
+    bool claimFreeTiles(bool fullClaim = false);
 
     void calculateDistances();
 
-    int getPercentageSize(int zoneSize, int totalSize);
+    int getPercentageSize(int zoneSize, int gridN, int totalSize);
 
     void generateAbstractGrid();
     bool validateAbstractGrid();

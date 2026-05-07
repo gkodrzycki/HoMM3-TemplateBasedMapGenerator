@@ -48,6 +48,24 @@ template <typename T> T getEnumFromNameOrThrow(const string &name) {
     throw runtime_error("Unknown enum name: " + name);
 }
 
+inline void printNonZeroFields(const string &label,
+                               std::initializer_list<std::pair<const char *, int>> items) {
+    bool any = false;
+    for (const auto &p : items) {
+        if (p.second) {
+            any = true;
+            break;
+        }
+    }
+    if (!any)
+        return;
+    cerr << "      " << label << ":\n";
+    for (const auto &p : items) {
+        if (p.second)
+            cerr << "       " << p.first << "=" << p.second << "\n";
+    }
+}
+
 const string RED            = "\033[31m";
 const string GREEN          = "\033[32m";
 const string YELLOW         = "\033[33m";

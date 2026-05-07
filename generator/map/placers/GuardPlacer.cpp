@@ -41,34 +41,27 @@ void GuardPlacer::placeBorderGuards() {
             return out;
         };
 
-        vector<int3> candidates;
-        set<int3> pathSet(path.begin(), path.end());
-
-        for (int x = 0; x < W; x++) {
-            for (int y = 0; y < H; y++) {
-                int3 pos(x, y, 0);
-                auto tile = map.getTile(pos);
-                if (!tile || tile->isTileType("B"))
-                    continue;
-                int zid = tile->getZoneID();
-                if (zid != zoneA && zid != zoneB)
-                    continue;
-                bool nearBorder = false;
-                bool nearRoad   = false;
-
-                for (const auto &dir : directions8) {
-                    auto neighborTile = map.getTile(pos + dir);
-                    if (neighborTile && neighborTile->isTileType("B")) {
-                        nearBorder = true;
-                    }
-                    if (neighborTile && neighborTile->isTileType("r")) {
-                        nearRoad = true;
-                    }
+        vector<int3> tilesOnBorder;
+        for (const auto &pos : path) {
+            for (auto neighbour : neighbors8(pos)) {
+                if (map.getTile(neighbour)->getZoneID() != map.getTile(pos)->getZoneID()) {
+                    tilesOnBorder.push_back(pos);
                 }
-                if (nearBorder && nearRoad)
-                    candidates.push_back(pos);
             }
         }
+        auto passable = [&](const int3 &p) -> bool {
+            auto tile = map.getTile(p);
+            if (!tile)
+                return false;
+            if (tile->isTileType("BbOT"))
+                return false;
+            if (tile->getZoneID() != zoneA && tile->getZoneID() != zoneB)
+                return false;
+            return true;
+        };
+        vector<int3> candidates =
+            bfs_collect_depth_xy(W, H, tilesOnBorder, 2, neighbors8, passable);
+        set<int3> pathSet(path.begin(), path.end());
 
         stable_partition(candidates.begin(), candidates.end(),
                          [&](const int3 &p) { return pathSet.count(p) > 0; });
@@ -98,7 +91,6 @@ void GuardPlacer::placeBorderGuards() {
             };
 
             auto reachPath = bfs_path_xy(W, H, centerA, centerB, neighbors8, passable);
-
             if (reachPath.empty()) {
                 int borderTileCount = 0;
                 for (auto dir : directions8) {
@@ -116,7 +108,7 @@ void GuardPlacer::placeBorderGuards() {
         }
 
         if (mostBorderTiles != -1) {
-            GuardHandler guardHandler(map.getRNG());
+            GuardHandler guardHandler(map);
             auto guardPtr = guardHandler.createGuard(GuardTypeHandler::BORDER, bestGuardPos);
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);
@@ -131,11 +123,14 @@ void GuardPlacer::placeBorderGuards() {
 
 void GuardPlacer::placeMineGuards() {
     ObjectVector objectVector = map.getObjectVector();
+    int3 down                 = int3(-1, 1, 0);
 
     for (const auto &object : objectVector) {
         if (auto mine = dynamic_pointer_cast<Mine>(object)) {
 
-            auto guardPtr = mine->getGuardPtr();
+            GuardHandler guardHandlerFrom(map);
+            auto guardPtr =
+                guardHandlerFrom.createGuard(GuardTypeHandler::MINE, mine->getPosition() + down);
 
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);
@@ -154,13 +149,13 @@ void GuardPlacer::placeMonolithGuards() {
         int3 belowFromPos = monolithFromPos + int3(0, 1, 0);
         int3 belowDestPos = monolithDestPos + int3(0, 1, 0);
 
-        GuardHandler guardHandlerFrom(map.getRNG());
+        GuardHandler guardHandlerFrom(map);
         auto guardPtrFrom = guardHandlerFrom.createGuard(GuardTypeHandler::BORDER, belowFromPos);
         if (guardPtrFrom != nullptr) {
             map.addCreature(guardPtrFrom);
         }
 
-        GuardHandler guardHandlerDest(map.getRNG());
+        GuardHandler guardHandlerDest(map);
         auto guardPtrDest = guardHandlerDest.createGuard(GuardTypeHandler::BORDER, belowDestPos);
         if (guardPtrDest != nullptr) {
             map.addCreature(guardPtrDest);
@@ -177,7 +172,7 @@ void GuardPlacer::placeTreasureGuards() {
             if (!tile || !tile->isTileType("G"))
                 continue;
 
-            GuardHandler guardHandler(map.getRNG());
+            GuardHandler guardHandler(map);
             auto guardPtr = guardHandler.createGuard(GuardTypeHandler::TREASURE, tilePos);
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);

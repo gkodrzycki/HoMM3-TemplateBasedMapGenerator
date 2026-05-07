@@ -18,17 +18,16 @@ class ObjectPlacer {
 
     void placeBasicMines();
     void placeMines();
-    void placeMine(int3 pos, Creature guard, MineType mineType, pair<int, int> mineResourcesCount);
+    void placeMine(int3 pos, MineType mineType, pair<int, int> mineResourcesCount);
     void placeMineResources();
     void placeTreasures();
 
   private:
     Map &map;
     int evalMinePos(int3 minePos, int3 mineSize);
-    void placeCreature(CreatureType creatureType, int3 pos, int quantity);
     void placeResource(ResourceType resourceType, int3 pos, int quantity);
     void placeArtifact(ArtifactType artifactType, int3 pos);
-    double evalTreasureCandidate(int3 candidatePosition, std::map<int3, int> &tilesTreeCount,
+    double evalTreasureCandidate(int3 candidatePosition, vector<vector<int>> &tilesTreeCount,
                                  vector<int3> &freeTiles, int acceptableBlockedTiles);
     void placeTreasuresNearCandidate(int3 candidatePosition, ArtifactTier tierOfTreasures);
     int getNumberOfTreasures(int zoneID);

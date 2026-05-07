@@ -5,20 +5,20 @@ ConnectionPlacer::ConnectionPlacer(Map &map) : map(map) {}
 void ConnectionPlacer::placeRoads() {
     std::map<int, int3> connectionsPoints = getConnectionsPoints();
 
-    auto connections = map.getLayoutInfo().getConnectionInfoList();
+    auto connections = map.getTemplateInfo().getConnections();
     for (auto connection : connections) {
-        if (connection.getType() != "road")
+        if (connection.getType() == "teleport" || connection.getType() == "underground")
             continue;
 
-        int3 fromPos = connectionsPoints[connection.getZoneFrom()];
-        int3 destPos = connectionsPoints[connection.getZoneDest()];
+        int3 fromPos = connectionsPoints[connection.getZone1()];
+        int3 destPos = connectionsPoints[connection.getZone2()];
 
         vector<int3> path = createPath(fromPos, destPos);
 
         if (path.empty()) {
             throw runtime_error("Failed to create a path between zones " +
-                                to_string(connection.getZoneFrom()) + " and " +
-                                to_string(connection.getZoneDest()) + " on seed " +
+                                to_string(connection.getZone1()) + " and " +
+                                to_string(connection.getZone2()) + " on seed " +
                                 to_string(map.getRNG().getOriginalSeed()) + "\n");
         }
 
@@ -57,16 +57,16 @@ void ConnectionPlacer::createMonoliths() {
 
     int connectionCount    = 0;
     int distanceFromCenter = 20; // Distance of monoliths from zone centers to avoid blocking them
-    auto connections       = map.getLayoutInfo().getConnectionInfoList();
+    auto connections       = map.getTemplateInfo().getConnections();
     for (auto connection : connections) {
-        if (connection.getType() != "monolith")
+        if (connection.getType() != "teleport")
             continue;
 
-        int3 centerFromPos = connectionsPoints[connection.getZoneFrom()];
-        int3 centerDestPos = connectionsPoints[connection.getZoneDest()];
+        int3 centerFromPos = connectionsPoints[connection.getZone1()];
+        int3 centerDestPos = connectionsPoints[connection.getZone2()];
 
-        vector<int3> fromZoneTiles = zoneTiles[connection.getZoneFrom()];
-        vector<int3> destZoneTiles = zoneTiles[connection.getZoneDest()];
+        vector<int3> fromZoneTiles = zoneTiles[connection.getZone1()];
+        vector<int3> destZoneTiles = zoneTiles[connection.getZone2()];
 
         // filter tiles which are exactly distanceFromCenter away from the center of their zone
         fromZoneTiles.erase(remove_if(fromZoneTiles.begin(), fromZoneTiles.end(),
@@ -84,8 +84,8 @@ void ConnectionPlacer::createMonoliths() {
 
         if (fromZoneTiles.empty() || destZoneTiles.empty()) {
             throw runtime_error("Failed to find suitable tiles for monoliths in zones " +
-                                to_string(connection.getZoneFrom()) + " and " +
-                                to_string(connection.getZoneDest()) + " on seed " +
+                                to_string(connection.getZone1()) + " and " +
+                                to_string(connection.getZone2()) + " on seed " +
                                 to_string(map.getRNG().getOriginalSeed()) + "\n");
         }
 
@@ -148,9 +148,11 @@ vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
     // Zone-monotone BFS: once the path crosses into destZoneID it may not return to fromZoneID.
     // Phase 0 = still in fromZone, Phase 1 = crossed into destZone (stays there).
     struct BFSState {
-        int type, x, y, phase;
+        int type, distance, x, y, phase;
         bool operator<(const BFSState &o) const {
-            return type < o.type; // max-heap: prefer type 2 (FORCED) over 0 (OPEN)
+            if (type != o.type)
+                return type < o.type;     // prefer lower type (OPEN < BLOCKED < FORCED)
+            return distance > o.distance; // prefer shorter distance
         }
     };
 
@@ -171,46 +173,47 @@ vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
         bfsVis[start.x][start.y][startPhase] = true;
 
         priority_queue<BFSState> q;
-        q.push({0, start.x, start.y, startPhase});
+        q.push({0, 0, start.x, start.y, startPhase});
 
         while (!q.empty()) {
-            auto [ct, cx, cy, cp] = q.top();
+            auto [currentType, currentDistance, currentX, currentY, currentPhase] = q.top();
             q.pop();
 
-            if (cx == goal.x && cy == goal.y && cp == 1) {
+            if (currentX == goal.x && currentY == goal.y && currentPhase == 1) {
                 vector<int3> path;
-                BFSState s{ct, cx, cy, cp};
-                while (s.x != -1) {
-                    path.push_back(int3(s.x, s.y, 0));
-                    BFSState p = bfsPar[s.x][s.y][s.phase];
-                    s          = p;
+                BFSState state{currentType, currentDistance, currentX, currentY, currentPhase};
+                while (state.x != -1) {
+                    path.push_back(int3(state.x, state.y, 0));
+                    BFSState parentState = bfsPar[state.x][state.y][state.phase];
+                    state                = parentState;
                 }
                 reverse(path.begin(), path.end());
                 return path;
             }
 
             for (int i = 0; i < 4; i++) {
-                int3 nb = int3(cx, cy, 0) + directions4[i];
-                if (!isInside(0, 0, mapWidth, mapHeight, nb))
+                int3 neighbour = int3(currentX, currentY, 0) + directions4[i];
+                if (!isInside(0, 0, mapWidth, mapHeight, neighbour))
                     continue;
-                if (state[nb.x][nb.y] == 1)
+                if (state[neighbour.x][neighbour.y] == 1)
                     continue;
-                int nbZone = map.getTile(nb)->getZoneID();
-                int np;
-                if (nbZone != destZoneID && nbZone != fromZoneID)
-                    continue;
-                if (cp == 1) {
+                int nbZone = map.getTile(neighbour)->getZoneID();
+                int neighbourPhase;
+                if (currentPhase == 1) {
                     if (nbZone != destZoneID)
                         continue;
-                    np = 1;
+                    neighbourPhase = 1;
                 } else {
-                    np = (nbZone == destZoneID) ? 1 : 0;
+                    neighbourPhase = (nbZone == destZoneID) ? 1 : 0;
                 }
-                if (!bfsVis[nb.x][nb.y][np]) {
-                    bfsVis[nb.x][nb.y][np] = true;
-                    bfsPar[nb.x][nb.y][np] = {ct, cx, cy, cp};
-                    int nt                 = state[nb.x][nb.y];
-                    q.push({nt, nb.x, nb.y, np});
+                if (!bfsVis[neighbour.x][neighbour.y][neighbourPhase]) {
+                    bfsVis[neighbour.x][neighbour.y][neighbourPhase] = true;
+                    bfsPar[neighbour.x][neighbour.y][neighbourPhase] = {
+                        currentType, currentDistance, currentX, currentY, currentPhase};
+                    int neighbourDistance = currentDistance + 1;
+                    int neighbourType     = state[neighbour.x][neighbour.y];
+                    q.push({neighbourType, neighbourDistance, neighbour.x, neighbour.y,
+                            neighbourPhase});
                 }
             }
         }
@@ -228,10 +231,15 @@ vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
     vector<int3> openCells;
     for (int x = 0; x < mapWidth; x++)
         for (int y = 0; y < mapHeight; y++)
-            if (state[x][y] == 0)
+            if (state[x][y] == 0 && (map.getTile(int3(x, y, 0))->getZoneID() == fromZoneID ||
+                                     map.getTile(int3(x, y, 0))->getZoneID() == destZoneID))
                 openCells.push_back(int3(x, y, 0));
 
+    int maxNumberOfNoice = openCells.size() * 0.3;
     while (!openCells.empty()) {
+        maxNumberOfNoice--;
+        if (maxNumberOfNoice <= 0)
+            break;
         int idx        = rng.nextInt(0, (int)openCells.size() - 1);
         int3 c         = openCells[idx];
         openCells[idx] = openCells.back();
@@ -268,6 +276,10 @@ std::map<int, int3> ConnectionPlacer::getConnectionsPoints() {
 
     for (const auto &object : objectVector) {
         if (auto townPtr = dynamic_pointer_cast<Town>(object)) {
+
+            if (townPtr->getOwner() <= 0)
+                continue;
+
             int3 townPos  = townPtr->getPosition();
             int3 townSize = townPtr->getSize();
             int3 connectionPointPos(townPos.x - townSize.x / 2, townPos.y,
