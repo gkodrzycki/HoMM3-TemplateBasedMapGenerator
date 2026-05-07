@@ -153,7 +153,7 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
         auto townTypeEnum = neutral ? getEnumFromNameOrThrow<Faction>(townType)
                                     : map.getZoneMap()[zoneID]->getFaction();
 
-        Town town(townTypeEnum, ownership, townPos + offset, townName, upgraded);
+        Town town(townTypeEnum, ownership, upgraded, townPos + offset, townName);
         auto townPtr = make_shared<Town>(town);
         map.addObject(townPtr);
 
