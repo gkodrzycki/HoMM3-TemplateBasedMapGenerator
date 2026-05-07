@@ -39,7 +39,8 @@ void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
     int Y               = town->getPosition().y;
 
     luaFile << "instance:town(homm3lua." << nameOfObject << ", {x=" << X << ", y=" << Y
-            << ", z=0}, homm3lua.PLAYER_" << ID << ", " << is_main << ")\n";
+            << ", z=0}, homm3lua.OWNER_" << (ID >= 0 ? std::to_string(ID) : "NEUTRAL") << ", " << (is_main ? "true" : "false") << ", "
+            << (town->getHasFort() ? "true" : "false") << ")\n";
 }
 
 // @function    AddTowns
@@ -51,12 +52,14 @@ void AddTowns(ofstream &luaFile, Map &map) {
 
     for (auto object : objectVector) {
         if (auto town = std::dynamic_pointer_cast<Town>(object)) {
-            int playerID = town->getOwner();
-            if (addedPlayers.find(playerID) == addedPlayers.end()) {
+            int playerID  = town->getOwner();
+            bool mainTown = false;
+            if (playerID > 0 && addedPlayers.find(playerID) == addedPlayers.end()) {
+                mainTown = true;
                 addedPlayers.insert(playerID);
                 AddPlayer(luaFile, playerID);
             }
-            AddTown(luaFile, town, true);
+            AddTown(luaFile, town, mainTown);
         }
     }
 }

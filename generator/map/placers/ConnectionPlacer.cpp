@@ -276,6 +276,10 @@ std::map<int, int3> ConnectionPlacer::getConnectionsPoints() {
 
     for (const auto &object : objectVector) {
         if (auto townPtr = dynamic_pointer_cast<Town>(object)) {
+
+            if (townPtr->getOwner() <= 0)
+                continue;
+
             int3 townPos  = townPtr->getPosition();
             int3 townSize = townPtr->getSize();
             int3 connectionPointPos(townPos.x - townSize.x / 2, townPos.y,
