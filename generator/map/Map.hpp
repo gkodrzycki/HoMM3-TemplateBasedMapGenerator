@@ -43,6 +43,7 @@ class Map {
     void addCreature(shared_ptr<Creature> creature);
     void addTreasure(shared_ptr<Treasure> treasure);
     void addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest);
+    void fixReachability();
     TemplateInfo getTemplateInfo();
     shared_ptr<Tile> getTile(int3 pos);
     ZoneMap getZoneMap();

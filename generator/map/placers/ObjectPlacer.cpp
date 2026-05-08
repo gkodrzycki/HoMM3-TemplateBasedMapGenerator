@@ -583,12 +583,29 @@ int ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition,
         }
     }
 
+    if (candidatePosition == int3(106, 26, 0)) {
+        for (int y = 0; y < map.getHeight(); y++) {
+            for (int x = 0; x < map.getWidth(); x++) {
+                if (claimedTiles[x][y] == 0) {
+                    printColor(RED, "0");
+                } else if (claimedTiles[x][y] == 1) {
+                    printColor(YELLOW, "1");
+                } else if (claimedTiles[x][y] == 2) {
+                    printColor(GREEN, "2");
+                }
+            }
+            cerr << endl;
+        }
+
+        cerr << "\n\n";
+    }
+
     sort(
         possiblePlacementWithScore.begin(), possiblePlacementWithScore.end(),
         [](const pair<double, int3> &a, const pair<double, int3> &b) { return a.first > b.first; });
 
-    int maxTreasuresToPlace = 1000;
-    // getPercentageOfMaxTreasures(tierOfTreasures) * possiblePlacementWithScore.size();
+    int maxTreasuresToPlace =
+        getPercentageOfMaxTreasures(tierOfTreasures) * possiblePlacementWithScore.size();
 
     set<int3> alreadyTaken;
     int placedTreasures = 0;
