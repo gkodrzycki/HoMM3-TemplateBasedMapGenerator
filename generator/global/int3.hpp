@@ -68,7 +68,7 @@ class int3 {
         return std::sqrt((x - other.x) * (x - other.x) + (y - other.y) * (y - other.y) +
                          (z - other.z) * (z - other.z));
     }
-    float distance2DMH(const int3 &other) const {
+    int distance2DMH(const int3 &other) const {
         return std::abs(x - other.x) + std::abs(y - other.y) + std::abs(z - other.z);
     }
 
@@ -76,3 +76,18 @@ class int3 {
         return std::to_string(x) + " " + std::to_string(y) + " " + std::to_string(z);
     }
 };
+
+namespace std {
+template <> struct hash<int3> {
+    size_t operator()(const int3 &v) const noexcept {
+        size_t h1 = std::hash<int>{}(v.x);
+        size_t h2 = std::hash<int>{}(v.y);
+        size_t h3 = std::hash<int>{}(v.z);
+
+        size_t seed = h1;
+        seed ^= h2 + 0x9e3779b97f4a7c15ULL + (seed << 6) + (seed >> 2);
+        seed ^= h3 + 0x9e3779b97f4a7c15ULL + (seed << 6) + (seed >> 2);
+        return seed;
+    }
+};
+} // namespace std

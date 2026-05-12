@@ -64,6 +64,124 @@ void Map::addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monol
     this->monolithVector.push_back({monolithFrom, monolithDest});
 }
 
+void Map::fixReachability() {
+    // Iterate over all zones and check if they are reachable from the starting zone (the one with
+    // the town) If not, change the terrain of some tiles to make them reachable This is a simple
+    // implementation and can be improved by using a more sophisticated pathfinding algorithm
+    auto zoneMap = getZoneMap();
+    if (zoneMap.empty()) {
+        return;
+    }
+
+    unordered_map<int3, int3> monoliths;
+    for (const auto &[monolithFrom, monolithDest] : getMonolithVector()) {
+        monoliths[monolithFrom->getPosition()] = monolithDest->getPosition();
+        monoliths[monolithDest->getPosition()] = monolithFrom->getPosition();
+    }
+
+    for (const auto &[zoneID, zone] : zoneMap) {
+        int3 center = zone->getCenter();
+
+        int W = getWidth();
+        int H = getHeight();
+
+        auto neighbors = [&](const int3 &p) {
+            vector<int3> outVec;
+            for (int i = 0; i < 8; i++)
+                outVec.push_back(p + directions8[i]);
+
+            if (monoliths.find(p) != monoliths.end()) {
+                outVec.push_back(monoliths[p]);
+            }
+            return outVec;
+        };
+        auto passable = [&](const int3 &p) {
+            auto tile = getTile(p);
+            if (!tile)
+                return false;
+            if (tile->getZoneID() != zoneID)
+                return false;
+            if (tile->isTileType("BT"))
+                return false;
+            return true;
+        };
+        auto cost = [&](const int3 &a, const int3 &b) {
+            auto tile = getTile(b);
+            if (tile->isTileType("FrRoG"))
+                return 0;
+            return a.distance2DMH(b) + 1;
+        };
+
+        auto reachability = dijkstra_reachability(W, H, center, neighbors, passable, cost);
+
+        auto objectVector   = getObjectVector();
+        auto monolithVector = getMonolithVector();
+        auto treasureVector = getTreasureVector();
+
+        auto combinedVector = objectVector;
+        combinedVector.insert(combinedVector.end(), treasureVector.begin(), treasureVector.end());
+        for (const auto &[monolithFrom, monolithDest] : monolithVector) {
+            combinedVector.push_back(monolithFrom);
+            combinedVector.push_back(monolithDest);
+        }
+        for (int j = 0; j < H; j++) {
+            for (int i = 0; i < W; i++) {
+                int3 pos(i, j, 0);
+                if (reachability[pos].second == numeric_limits<int>::max()) {
+                    printColor(RED, "X ");
+                } else {
+                    if (reachability[pos].second == 0) {
+                        printColor(GREEN, "0 ");
+                    } else {
+                        string s = to_string(reachability[pos].second) + " ";
+                        printColor(BLUE, s);
+                    }
+                }
+            }
+            cerr << "\n";
+        }
+        cerr << "\n\n";
+        for (auto obj : combinedVector) {
+            int3 pos = obj->getPosition();
+            if (getTile(pos)->isTileType("T")) {
+                pos = pos + int3(-1, 1, 0);
+            }
+            if (reachability[pos].second == numeric_limits<int>::max()) {
+                continue;
+            }
+            if (reachability[pos].second == 0) {
+                continue;
+            }
+            int distance = reachability[pos].second;
+            while (distance != 0) {
+                auto tile = getTile(pos);
+                if (tile->isTileType("bO")) {
+                    tile->setTileType(TileType::TILE_FREE);
+                }
+                reachability[pos].second = 0;
+                pos                      = reachability[pos].first;
+                distance                 = reachability[pos].second;
+            }
+        }
+
+        for (int j = 0; j < H; j++) {
+            for (int i = 0; i < W; i++) {
+                int3 pos(i, j, 0);
+                if (reachability[pos].second == numeric_limits<int>::max()) {
+                    continue;
+                }
+                if (reachability[pos].second == 0) {
+                    continue;
+                }
+
+                if (getTile(pos)->isTileType("F")) {
+                    getTile(pos)->setTileType(TileType::TILE_OBSTACLE);
+                }
+            }
+        }
+    }
+}
+
 void Map::initTiles() {
     pair<int, int> width_height =
         chooseMapSize(templateInfo.getMinimumSize(), templateInfo.getMaximumSize());
@@ -119,6 +237,8 @@ void Map::generateMap() {
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
+
+    fixReachability();
 
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
@@ -182,6 +302,10 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
 
             if (tilePtr == nullptr)
                 continue;
+
+            if (tilePos == getZoneMap()[tilePtr->getZoneID()]->getCenter()) {
+                return true;
+            }
 
             if (debug) {
                 cerr << tilePos.toString() << "\n";

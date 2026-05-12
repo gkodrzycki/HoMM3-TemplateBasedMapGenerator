@@ -365,3 +365,65 @@ inline unordered_map<Node, int> bfs_distances(const Node &start, NeighFn neighbo
 
     return dist;
 }
+
+/*
+ * Dijkstra reachability
+ */
+template <typename NeighFn, typename PassableFn, typename CostFn>
+inline unordered_map<int3, pair<int3, int>>
+dijkstra_reachability(int W, int H, int3 &start, NeighFn neighbors, PassableFn passable,
+                      CostFn cost) {
+    using Dist     = int;
+    const Dist INF = numeric_limits<Dist>::max();
+
+    unordered_map<int3, pair<int3, int>> reachability;
+
+    for (int i = 0; i < W; i++) {
+        for (int j = 0; j < H; j++) {
+            for (int k = 0; k < 2; k++) {
+                reachability[int3(i, j, k)] = {int3(-1, -1, -1), INF};
+            }
+        }
+    }
+
+    struct Node {
+        Dist d;
+        int3 p;
+    };
+
+    struct Cmp {
+        bool operator()(const Node &a, const Node &b) const { return a.d > b.d; }
+    };
+
+    priority_queue<Node, vector<Node>, Cmp> pq;
+
+    if (!isInside(0, 0, W, H, start))
+        return {};
+    if (!passable(start))
+        return {};
+
+    reachability[start] = {int3(-1, -1, -1), 0};
+    pq.push({0, start});
+
+    while (!pq.empty()) {
+        auto cur = pq.top();
+        pq.pop();
+        if (cur.d != reachability[cur.p].second)
+            continue;
+
+        for (const auto &nxt : neighbors(cur.p)) {
+            if (!isInside(0, 0, W, H, nxt))
+                continue;
+            if (!passable(nxt))
+                continue;
+
+            Dist nd = cur.d + (Dist)cost(cur.p, nxt);
+            if (nd < reachability[nxt].second) {
+                reachability[nxt] = {cur.p, nd};
+                pq.push({nd, nxt});
+            }
+        }
+    }
+
+    return reachability;
+}

@@ -10,8 +10,12 @@ bool TownPlacer::hasSafeMargin(int3 pos, int zoneID, int margin) {
 
     for (int dx = -margin; dx <= margin; ++dx) {
         for (int dy = -margin; dy <= margin; ++dy) {
-            auto neighbor = map.getTile(int3(pos.x + dx, pos.y + dy, pos.z));
+            int3 neighborPos = pos + int3(dx, dy, 0);
+            auto neighbor    = map.getTile(neighborPos);
             if (neighbor && neighbor->getZoneID() != zoneID) {
+                return false;
+            }
+            if (neighborPos == map.getZoneMap()[zoneID]->getCenter()) {
                 return false;
             }
         }
@@ -212,5 +216,13 @@ void TownPlacer::placeTowns() {
         // Neutral Towns
         placeSpecificTowns(neutralTownsSettings, townTypes, zoneID, true, false, freeTiles,
                            placedTowns);
+
+        // if(placedTowns.size() > 0){
+        //     cerr << "Changing zone center for zone " << zoneID << " from " <<
+        //     map.getZoneMap()[zoneID]->getCenter().toString() << " to " << (placedTowns[0] +
+        //     int3(1, 1, 0)).toString() << endl;
+        //     // map.getZoneMap()[zoneID]->setCenter(placedTowns[0] + int3(1, 1, 0)); // TODO:
+        //     improve center calculation
+        // }
     }
 }
