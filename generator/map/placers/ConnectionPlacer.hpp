@@ -15,7 +15,7 @@ class ConnectionPlacer {
     void createMonoliths();
 
     vector<int3> createPath(int3 fromPos, int3 destPos);
-    std::map<int, int3> getConnectionsPoints();
+    std::map<int, vector<pair<int, int3>>> getConnectionsPoints();
 
   private:
     Map &map;
