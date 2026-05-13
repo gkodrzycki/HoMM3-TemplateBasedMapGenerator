@@ -9,9 +9,6 @@ void ObjectPlacer::placeArtifact(ArtifactType artifactType, int3 pos) {
 }
 
 void ObjectPlacer::placeResource(ResourceType resourceType, int3 pos, int quantity) {
-    if (quantity <= 0)
-        return;
-
     Resource resource(resourceType, quantity, pos, "Resource");
     auto resourcePtr = make_shared<Resource>(resource);
     map.addTreasure(resourcePtr);
@@ -131,7 +128,7 @@ void ObjectPlacer::placeMines() {
 
     int3 mineOffset = int3(1, 1, 0);
 
-    std::map<int, vector<pair<int3, shared_ptr<Tile>>>> zoneTiles;
+    std::map<int, vector<int3>> zoneTiles;
 
     for (int x = 0; x < mapWidth; x++) {
         for (int y = 0; y < mapHeight; y++) {
@@ -139,7 +136,11 @@ void ObjectPlacer::placeMines() {
             auto tile    = map.getTile(tilePos);
             int zoneID   = tile->getZoneID();
             if (tile->isTileType("F")) {
-                zoneTiles[zoneID].push_back({tilePos, tile});
+                if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, tilePos) ||
+                    map.checkPlacementConflict(tilePos, int3(4, 2, 0), "BbTRr", mineOffset)) {
+                    continue;
+                }
+                zoneTiles[zoneID].push_back(tilePos);
             }
         }
     }
@@ -148,66 +149,40 @@ void ObjectPlacer::placeMines() {
     for (const auto &[zoneID, zone] : zoneMap) {
         string zoneType = zone->getType();
 
-        // ZoneBlueprint zoneBlueprint = map.getBlueprintInfo().getTypeBlueprint(zoneType);
-        // auto mines                  = zoneBlueprint.getMines();
-
         auto minimumMinesCount =
             map.getTemplateInfo().getZoneById(zoneID).getMinimumMines().mineCounts;
 
+        vector<int3> placedMines;
+        auto objectVector = map.getObjectVector();
+        for (const auto &object : objectVector) {
+            if (auto town = dynamic_pointer_cast<Town>(object)) {
+                if (map.getTile(town->getPosition())->getZoneID() == zoneID) {
+                    placedMines.push_back(town->getPosition());
+                }
+            }
+        }
+
         for (const auto &[mineType, count] : minimumMinesCount) {
-            // if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
-            //     mineTypeStr =
-            //         getMineType(zoneBlueprint.getRandomMineTypes()[0], rng, zone->getFaction());
-            // }
             cerr << "Placing " << count << " mines of type " << getEnumName<MineType>(mineType)
                  << " in zone " << zoneID << endl;
 
-            int3 mineSize = getMineSize(mineType);
-
             for (int i = 0; i < count; i++) {
-                // if (mineTypeInfo == MineTypeInfo::RANDOM_MINE) {
-                //     mineTypeStr =
-                //         getMineType(zoneBlueprint.getRandomMineTypes()[i], rng,
-                //         zone->getFaction());
-                //     mineType = getEnumFromNameOrThrow<MineType>("MINE_" + mineTypeStr);
-                //     mineSize = getMineSize(mineType);
-                // }
-                int numberOfIterations = 100;
-                int3 bestPos           = int3(-1, -1, -1);
-                int bestEvalScore      = -1;
+                float tolerance = (zoneType == "treasure") ? 0.6f : 0.8f;
+                int3 minePos    = map.findBestDistributedPosition(zoneTiles[zoneID], placedMines,
+                                                                  zone->getCenter(), rng, tolerance);
 
-                while (numberOfIterations-- >= 0) {
-                    auto [tilePos, tile] =
-                        zoneTiles[zoneID][rng.nextInt(0, zoneTiles[zoneID].size() - 1)];
+                if (minePos.x == -1)
+                    break;
 
-                    if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, tilePos) ||
-                        map.checkPlacementConflict(tilePos, mineSize, "BbTRr", mineOffset)) {
-                        continue;
-                    }
-
-                    int evalScore = evalMinePos(tilePos, mineSize);
-
-                    if (evalScore > bestEvalScore) {
-                        bestPos       = tilePos;
-                        bestEvalScore = evalScore;
-                    }
-                }
-
-                if (bestEvalScore == -1) {
-                    throw runtime_error(
-                        "Failed to place mine after maximum iterations using seed " +
-                        to_string(map.getRNG().getOriginalSeed()));
-                }
-                pair<int, int> mineResourcesCount = {1, 0}; // TODO get from blueprint
-
-                placeMine(bestPos, mineType, mineResourcesCount);
+                placeMine(minePos, mineType);
+                placedMines.push_back(minePos);
             }
         }
     }
 }
 
-void ObjectPlacer::placeMine(int3 pos, MineType mineType, pair<int, int> mineResourcesCount) {
-    Mine mine(mineType, -1, pos, "Mine", mineResourcesCount);
+void ObjectPlacer::placeMine(int3 pos, MineType mineType) {
+    Mine mine(mineType, -1, pos, "Mine");
     auto minePtr = make_shared<Mine>(mine);
 
     map.addObject(minePtr);
@@ -225,9 +200,9 @@ void ObjectPlacer::placeMineResources() {
             ResourceType resourceType = mineTypeToResourceType(mineType);
 
             int3 pos = mine->getPosition();
-            placeResource(resourceType, pos + left, mine->getMineResourcesCount().first);
+            placeResource(resourceType, pos + left, 0);
             map.getTile(pos + left)->setTileType(TileType::TILE_OCCUPIED);
-            placeResource(resourceType, pos + right, mine->getMineResourcesCount().second);
+            placeResource(resourceType, pos + right, 0);
             map.getTile(pos + right)->setTileType(TileType::TILE_OCCUPIED);
         }
     }

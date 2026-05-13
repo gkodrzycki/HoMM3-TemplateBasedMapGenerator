@@ -3,15 +3,47 @@
 ConnectionPlacer::ConnectionPlacer(Map &map) : map(map) {}
 
 void ConnectionPlacer::placeRoads() {
-    std::map<int, int3> connectionsPoints = getConnectionsPoints();
+    std::map<int, vector<pair<int, int3>>> connectionsPoints = getConnectionsPoints();
+    ZoneMap zoneMap                                          = map.getZoneMap();
+
+    for (auto [zoneID, zone] : zoneMap) {
+        auto zoneConnectionPoints = connectionsPoints[zoneID];
+        for (size_t i = 0; i < zoneConnectionPoints.size(); i++) {
+            for (size_t j = i + 1; j < zoneConnectionPoints.size(); j++) {
+                int3 fromPos = connectionsPoints[zoneID][i].second;
+                int3 destPos = connectionsPoints[zoneID][j].second;
+
+                vector<int3> path = createPath(fromPos, destPos);
+
+                if (path.empty()) {
+                    throw runtime_error("Failed to create a path between zones " +
+                                        to_string(zoneID) + " and " + to_string(zoneID) +
+                                        " on seed " + to_string(map.getRNG().getOriginalSeed()) +
+                                        "\n");
+                }
+
+                Road road(1, path, "Road");
+                auto roadPtr = make_shared<Road>(road);
+                map.addRoad(roadPtr);
+
+                for (const auto &pos : path) {
+                    map.getTile(pos)->setTileType(TileType::TILE_ROAD);
+                    int3 posBelow = pos + int3(0, 1, 0);
+
+                    if (!map.getTile(posBelow)->isTileType("rTB"))
+                        map.getTile(posBelow)->setTileType(TileType::TILE_RESERVED);
+                }
+            }
+        }
+    }
 
     auto connections = map.getTemplateInfo().getConnections();
     for (auto connection : connections) {
         if (connection.getType() == "teleport" || connection.getType() == "underground")
             continue;
 
-        int3 fromPos = connectionsPoints[connection.getZone1()];
-        int3 destPos = connectionsPoints[connection.getZone2()];
+        int3 fromPos = connectionsPoints[connection.getZone1()][0].second;
+        int3 destPos = connectionsPoints[connection.getZone2()][0].second;
 
         vector<int3> path = createPath(fromPos, destPos);
 
@@ -37,10 +69,10 @@ void ConnectionPlacer::placeRoads() {
 }
 
 void ConnectionPlacer::createMonoliths() {
-    int mapWidth                          = map.getWidth();
-    int mapHeight                         = map.getHeight();
-    auto &rng                             = map.getRNG();
-    std::map<int, int3> connectionsPoints = getConnectionsPoints();
+    int mapWidth                                             = map.getWidth();
+    int mapHeight                                            = map.getHeight();
+    auto &rng                                                = map.getRNG();
+    std::map<int, vector<pair<int, int3>>> connectionsPoints = getConnectionsPoints();
 
     std::map<int, vector<int3>> zoneTiles;
 
@@ -62,8 +94,8 @@ void ConnectionPlacer::createMonoliths() {
         if (connection.getType() != "teleport")
             continue;
 
-        int3 centerFromPos = connectionsPoints[connection.getZone1()];
-        int3 centerDestPos = connectionsPoints[connection.getZone2()];
+        int3 centerFromPos = connectionsPoints[connection.getZone1()][0].second;
+        int3 centerDestPos = connectionsPoints[connection.getZone2()][0].second;
 
         vector<int3> fromZoneTiles = zoneTiles[connection.getZone1()];
         vector<int3> destZoneTiles = zoneTiles[connection.getZone2()];
@@ -270,15 +302,15 @@ vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
     return witness;
 }
 
-std::map<int, int3> ConnectionPlacer::getConnectionsPoints() {
+std::map<int, vector<pair<int, int3>>> ConnectionPlacer::getConnectionsPoints() {
     ObjectVector objectVector = map.getObjectVector();
-    std::map<int, int3> connectionsPoints;
+    std::map<int, vector<pair<int, int3>>> connectionsPoints;
 
     for (const auto &object : objectVector) {
         if (auto townPtr = dynamic_pointer_cast<Town>(object)) {
 
-            if (townPtr->getOwner() <= 0)
-                continue;
+            // if (townPtr->getOwner() <= 0)
+            //     continue;
 
             int3 townPos  = townPtr->getPosition();
             int3 townSize = townPtr->getSize();
@@ -287,15 +319,22 @@ std::map<int, int3> ConnectionPlacer::getConnectionsPoints() {
 
             int zoneID = map.getTile(townPos)->getZoneID();
 
-            connectionsPoints[zoneID] = connectionPointPos;
+            connectionsPoints[zoneID].push_back({(townPtr->getOwner() > 0), connectionPointPos});
         }
     }
 
     auto zoneMap = map.getZoneMap();
     for (auto [zoneID, zone] : zoneMap) {
         if (connectionsPoints.find(zoneID) == connectionsPoints.end()) {
-            int3 zoneCenter           = zone->getCenter();
-            connectionsPoints[zoneID] = zoneCenter;
+            int3 zoneCenter = zone->getCenter();
+            connectionsPoints[zoneID].push_back({0, zoneCenter});
+        } else {
+            // If there are multiple connection points for a zone, sort them so that owned towns are
+            // preferred
+            sort(connectionsPoints[zoneID].begin(), connectionsPoints[zoneID].end(),
+                 [](const pair<int, int3> &a, const pair<int, int3> &b) {
+                     return a.first > b.first; // Sort by ownership (owned first)
+                 });
         }
     }
     return connectionsPoints;

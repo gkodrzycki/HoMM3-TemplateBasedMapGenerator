@@ -2,99 +2,6 @@
 
 TownPlacer::TownPlacer(Map &map) : map(map) {}
 
-bool TownPlacer::hasSafeMargin(int3 pos, int zoneID, int margin) {
-    if (pos.x < margin || pos.y < margin || pos.x >= map.getWidth() - margin ||
-        pos.y >= map.getHeight() - margin) {
-        return false;
-    }
-
-    for (int dx = -margin; dx <= margin; ++dx) {
-        for (int dy = -margin; dy <= margin; ++dy) {
-            int3 neighborPos = pos + int3(dx, dy, 0);
-            auto neighbor    = map.getTile(neighborPos);
-            if (neighbor && neighbor->getZoneID() != zoneID) {
-                return false;
-            }
-            if (neighborPos == map.getZoneMap()[zoneID]->getCenter()) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-int3 findBestDistributedPosition(const vector<int3> &freeTiles, const vector<int3> &placedObjects,
-                                 const int3 &zoneCenter, RNG &rng, float tolerance = 0.8f) {
-    if (freeTiles.empty())
-        return int3(-1, -1, -1);
-
-    if (placedObjects.empty()) {
-        int minCenterDistSq = numeric_limits<int>::max();
-
-        vector<pair<int3, int>> tileDistances;
-        tileDistances.reserve(freeTiles.size());
-
-        // TODO - OPTIMIZE
-        for (const auto &pos : freeTiles) {
-            int dx     = pos.x - zoneCenter.x;
-            int dy     = pos.y - zoneCenter.y;
-            int distSq = dx * dx + dy * dy;
-
-            tileDistances.push_back({pos, distSq});
-
-            if (distSq < minCenterDistSq) {
-                minCenterDistSq = distSq;
-            }
-        }
-
-        int centerThresholdSq = minCenterDistSq + 8;
-
-        vector<int3> validCandidates;
-        for (const auto &item : tileDistances) {
-            if (item.second <= centerThresholdSq) {
-                validCandidates.push_back(item.first);
-            }
-        }
-
-        return rng.getRandomFromVector(validCandidates);
-    }
-
-    int maxMinDistSq = -1;
-    vector<pair<int3, int>> tileDistances;
-    tileDistances.reserve(freeTiles.size());
-
-    for (const auto &pos : freeTiles) {
-        int minDistToAnyObjectSq = numeric_limits<int>::max();
-
-        for (const auto &placedPos : placedObjects) {
-            int dx     = pos.x - placedPos.x;
-            int dy     = pos.y - placedPos.y;
-            int distSq = dx * dx + dy * dy;
-            if (distSq < minDistToAnyObjectSq) {
-                minDistToAnyObjectSq = distSq;
-            }
-        }
-
-        tileDistances.push_back({pos, minDistToAnyObjectSq});
-
-        if (minDistToAnyObjectSq > maxMinDistSq) {
-            maxMinDistSq = minDistToAnyObjectSq;
-        }
-    }
-
-    int thresholdSq = static_cast<int>(maxMinDistSq * (tolerance * tolerance));
-
-    vector<int3> validCandidates;
-    for (const auto &item : tileDistances) {
-        if (item.second >= thresholdSq) {
-            validCandidates.push_back(item.first);
-        }
-    }
-
-    return rng.getRandomFromVector(validCandidates);
-}
-
 void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &townTypes,
                                     int zoneID, bool neutral, bool upgraded,
                                     vector<int3> &freeTiles, vector<int3> &placedTowns) {
@@ -120,7 +27,8 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
                     for (int dx = -1; dx <= 1; dx++) {
                         for (int dy = -1; dy <= 1; dy++) {
                             int3 neighboursPos = tilePos + int3(dx, dy, 0);
-                            if (map.getTile(neighboursPos)->getZoneID() != zoneID) {
+                            auto neighbourTile = map.getTile(neighboursPos);
+                            if (neighbourTile && neighbourTile->getZoneID() != zoneID) {
                                 onBorder = true;
                                 break;
                             }
@@ -147,8 +55,8 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
             break;
 
         float tolerance = (zoneType == "treasure") ? 0.6f : 0.8f;
-        int3 townPos =
-            findBestDistributedPosition(currentFreeTiles, placedTowns, zoneCenter, rng, tolerance);
+        int3 townPos    = map.findBestDistributedPosition(currentFreeTiles, placedTowns, zoneCenter,
+                                                          rng, tolerance);
 
         if (townPos.x == -1)
             break;
@@ -171,6 +79,8 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
 
 void TownPlacer::placeTowns() {
     ZoneMap zoneMap = map.getZoneMap();
+    int mapWidth    = map.getWidth();
+    int mapHeight   = map.getHeight();
 
     for (auto [zoneID, zone] : zoneMap) {
         string zoneType = zone->getType();
@@ -188,28 +98,28 @@ void TownPlacer::placeTowns() {
         auto neutralTownsSettings = map.getTemplateInfo().getZoneById(zoneID).getNeutralTowns();
 
         vector<int3> freeTiles;
-        int requiredMargin = 3;
 
-        for (int x = 0; x < map.getWidth(); x++) {
-            for (int y = 0; y < map.getHeight(); y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
                 int3 pos(x, y, 0);
                 auto tile = map.getTile(pos);
-                if (tile->getZoneID() == zoneID && tile->getTileType() == TileType::TILE_FREE &&
-                    hasSafeMargin(pos, zoneID, requiredMargin)) {
+                if (tile->getZoneID() == zoneID && tile->getTileType() == TileType::TILE_FREE) {
+                    if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, pos) ||
+                        map.checkPlacementConflict(pos, int3(5, 3, 0), "BbTRr", int3(1, 1, 0))) {
+                        continue;
+                    }
                     freeTiles.push_back(pos);
                 }
             }
         }
 
         vector<int3> placedTowns;
-
         // Player Castles
         placeSpecificTowns(playerTownsSettings, townTypes, zoneID, false, true, freeTiles,
                            placedTowns);
         // Player Towns
         placeSpecificTowns(playerTownsSettings, townTypes, zoneID, false, false, freeTiles,
                            placedTowns);
-
         // Neutral Castles
         placeSpecificTowns(neutralTownsSettings, townTypes, zoneID, true, true, freeTiles,
                            placedTowns);

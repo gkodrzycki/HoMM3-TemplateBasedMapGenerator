@@ -50,7 +50,6 @@ RoadVector Map::getRoadVector() { return roadVector; }
 CreatureVector Map::getCreatureVector() { return creatureVector; }
 TreasureVector Map::getTreasureVector() { return treasureVector; }
 MonolithVector Map::getMonolithVector() { return monolithVector; }
-array<int, 4> &Map::getBasicResourceCount() { return basicResourceCount; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
@@ -124,23 +123,7 @@ void Map::fixReachability() {
             combinedVector.push_back(monolithFrom);
             combinedVector.push_back(monolithDest);
         }
-        for (int j = 0; j < H; j++) {
-            for (int i = 0; i < W; i++) {
-                int3 pos(i, j, 0);
-                if (reachability[pos].second == numeric_limits<int>::max()) {
-                    printColor(RED, "X ");
-                } else {
-                    if (reachability[pos].second == 0) {
-                        printColor(GREEN, "0 ");
-                    } else {
-                        string s = to_string(reachability[pos].second) + " ";
-                        printColor(BLUE, s);
-                    }
-                }
-            }
-            cerr << "\n";
-        }
-        cerr << "\n\n";
+
         for (auto obj : combinedVector) {
             int3 pos = obj->getPosition();
             if (getTile(pos)->isTileType("T")) {
@@ -196,14 +179,7 @@ void Map::initTiles() {
     }
 }
 
-void Map::initMap() {
-    initTiles();
-
-    // TODO Choose values based on templateInfo info?
-    for (int i = 0; i < 4; i++) {
-        basicResourceCount[i] = rng.nextInt(0, 15);
-    }
-}
+void Map::initMap() { initTiles(); }
 
 void Map::generateMap() {
     if (templateInfo.getDebug() > 0) {
@@ -233,7 +209,7 @@ void Map::generateMap() {
     // not
     objectPlacer.placeMines();
     objectPlacer.placeMineResources();
-    objectPlacer.placeTreasures();
+    // objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
@@ -317,6 +293,78 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
         }
     }
     return false;
+}
+
+int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
+                                      const vector<int3> &placedObjects, const int3 &zoneCenter,
+                                      RNG &rng, float tolerance) {
+    if (freeTiles.empty())
+        return int3(-1, -1, -1);
+
+    if (placedObjects.empty()) {
+        int minCenterDistSq = numeric_limits<int>::max();
+
+        vector<pair<int3, int>> tileDistances;
+        tileDistances.reserve(freeTiles.size());
+
+        // TODO - OPTIMIZE
+        for (const auto &pos : freeTiles) {
+            int dx     = pos.x - zoneCenter.x;
+            int dy     = pos.y - zoneCenter.y;
+            int distSq = dx * dx + dy * dy;
+
+            tileDistances.push_back({pos, distSq});
+
+            if (distSq < minCenterDistSq) {
+                minCenterDistSq = distSq;
+            }
+        }
+
+        int centerThresholdSq = minCenterDistSq + 8;
+
+        vector<int3> validCandidates;
+        for (const auto &item : tileDistances) {
+            if (item.second <= centerThresholdSq) {
+                validCandidates.push_back(item.first);
+            }
+        }
+
+        return rng.getRandomFromVector(validCandidates);
+    }
+
+    int maxMinDistSq = -1;
+    vector<pair<int3, int>> tileDistances;
+    tileDistances.reserve(freeTiles.size());
+
+    for (const auto &pos : freeTiles) {
+        int minDistToAnyObjectSq = numeric_limits<int>::max();
+
+        for (const auto &placedPos : placedObjects) {
+            int dx     = pos.x - placedPos.x;
+            int dy     = pos.y - placedPos.y;
+            int distSq = dx * dx + dy * dy;
+            if (distSq < minDistToAnyObjectSq) {
+                minDistToAnyObjectSq = distSq;
+            }
+        }
+
+        tileDistances.push_back({pos, minDistToAnyObjectSq});
+
+        if (minDistToAnyObjectSq > maxMinDistSq) {
+            maxMinDistSq = minDistToAnyObjectSq;
+        }
+    }
+
+    int thresholdSq = static_cast<int>(maxMinDistSq * (tolerance * tolerance));
+
+    vector<int3> validCandidates;
+    for (const auto &item : tileDistances) {
+        if (item.second >= thresholdSq) {
+            validCandidates.push_back(item.first);
+        }
+    }
+
+    return rng.getRandomFromVector(validCandidates);
 }
 
 void Map::printMap(int debugLevel) {
