@@ -111,16 +111,22 @@ string GuardHandler::getGuardCreatureId(GuardTypeHandler type, int level) {
     return creatureArray[randomIndex];
 }
 
-shared_ptr<Creature> GuardHandler::createGuard(GuardTypeHandler type, int3 position) {
+shared_ptr<Creature> GuardHandler::createGuard(GuardTypeHandler type, int3 position,
+                                               int guardValue) {
+    if (guardValue == 0) {
+        return nullptr; // No guard needed
+    }
+
     int zoneID        = map.getTile(position)->getZoneID();
     auto templateInfo = map.getTemplateInfo();
     auto zoneTemplate = templateInfo.getZoneById(zoneID);
+    auto connections  = templateInfo.getConnections();
 
     string zoneStrength = zoneTemplate.getMonsters().strength;
 
     int level         = getGuardLevel(type, zoneStrength);
     string creatureId = getGuardCreatureId(type, level);
-    int targetPower   = getGuardPower(type, zoneStrength);
+    int targetPower   = guardValue == -1 ? getGuardPower(type, zoneStrength) : guardValue;
 
     ifstream file("stats/CRTRAITS.json");
     if (!file.is_open()) {

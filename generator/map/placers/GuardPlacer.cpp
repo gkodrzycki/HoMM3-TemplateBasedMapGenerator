@@ -10,6 +10,16 @@ void GuardPlacer::placeBorderGuards() {
     int W                 = map.getWidth();
     int H                 = map.getHeight();
 
+    std::map<pair<int, int>, int> guardStrengths; // (zoneA, zoneB) -> guard strength
+
+    auto connections = map.getTemplateInfo().getConnections();
+    for (const auto &connection : connections) {
+        int zoneA                      = connection.getZone1();
+        int zoneB                      = connection.getZone2();
+        guardStrengths[{zoneA, zoneB}] = connection.getValue();
+        guardStrengths[{zoneB, zoneA}] = connection.getValue();
+    }
+
     for (const auto &road : roadVector) {
         vector<int3> path = road->getPath();
         if (path.empty())
@@ -109,7 +119,9 @@ void GuardPlacer::placeBorderGuards() {
 
         if (mostBorderTiles != -1) {
             GuardHandler guardHandler(map);
-            auto guardPtr = guardHandler.createGuard(GuardTypeHandler::BORDER, bestGuardPos);
+            int guardValue = guardStrengths[{zoneA, zoneB}];
+            auto guardPtr =
+                guardHandler.createGuard(GuardTypeHandler::BORDER, bestGuardPos, guardValue);
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);
             }
