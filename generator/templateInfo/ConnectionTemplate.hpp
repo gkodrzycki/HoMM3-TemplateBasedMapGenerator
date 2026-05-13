@@ -17,8 +17,7 @@ class ConnectionTemplate {
     int getZone2() const;
     int getValue() const;
     bool isWide() const;
-    bool isBorder() const;
-    bool isGuard() const;
+    bool isBorderGuard() const;
     bool isFictive() const;
     int getPortalRepulsion() const;
     string getType() const;
@@ -32,8 +31,7 @@ class ConnectionTemplate {
     int zone2;
     int value;
     bool wide;
-    bool border;
-    bool guard;
+    bool borderGuard;
     bool fictive;
     string type; // possible "ground", "teleport", "random", "underground"
     int portalRepulsion;

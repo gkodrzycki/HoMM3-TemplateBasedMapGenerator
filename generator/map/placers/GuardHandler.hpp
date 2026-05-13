@@ -14,7 +14,7 @@ class GuardHandler {
   public:
     GuardHandler(Map &map);
 
-    shared_ptr<Creature> createGuard(GuardTypeHandler type, int3 position);
+    shared_ptr<Creature> createGuard(GuardTypeHandler type, int3 position, int guardValue = -1);
 
   private:
     Map &map;

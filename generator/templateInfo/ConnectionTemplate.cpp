@@ -1,15 +1,14 @@
 #include "./ConnectionTemplate.hpp"
 
 ConnectionTemplate::ConnectionTemplate()
-    : zone1(0), zone2(0), value(0), wide(false), border(false), guard(false), fictive(false),
+    : zone1(0), zone2(0), value(0), wide(false), borderGuard(false), fictive(false),
       portalRepulsion(0) {}
 
 int ConnectionTemplate::getZone1() const { return zone1; }
 int ConnectionTemplate::getZone2() const { return zone2; }
 int ConnectionTemplate::getValue() const { return value; }
 bool ConnectionTemplate::isWide() const { return wide; }
-bool ConnectionTemplate::isBorder() const { return border; }
-bool ConnectionTemplate::isGuard() const { return guard; }
+bool ConnectionTemplate::isBorderGuard() const { return borderGuard; }
 bool ConnectionTemplate::isFictive() const { return fictive; }
 int ConnectionTemplate::getPortalRepulsion() const { return portalRepulsion; }
 string ConnectionTemplate::getType() const { return type; }
@@ -26,8 +25,7 @@ void ConnectionTemplate::deserialize(const json &connection) {
         const auto &opts = connection.at("Options");
         value            = getOrDefault<int>(opts, "Value", 0);
         wide             = getOrDefault<bool>(opts, "Wide", false);
-        border           = getOrDefault<bool>(opts, "Border", false);
-        guard            = getOrDefault<bool>(opts, "Guard", false);
+        borderGuard      = getOrDefault<bool>(opts, "Border Guard", false);
         fictive          = getOrDefault<bool>(opts, "Fictive", false);
         portalRepulsion  = getOrDefault<int>(opts, "Portal repulsion", 0);
         type             = getOrDefault<string>(opts, "Type", "");
@@ -48,10 +46,8 @@ void ConnectionTemplate::print() const {
     cerr << "      Value: " << value << "\n";
     if (wide)
         cerr << "      Wide: true\n";
-    if (border)
+    if (borderGuard)
         cerr << "      Border Guard: true\n";
-    if (guard)
-        cerr << "      Guard: true\n";
     if (fictive)
         cerr << "      Fictive: true\n";
     if (portalRepulsion)
