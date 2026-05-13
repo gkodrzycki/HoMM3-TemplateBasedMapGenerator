@@ -370,6 +370,18 @@ double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition,
 }
 
 void ObjectPlacer::placeTreasures() {
+    // int zoneID, int tier, TreasureTier treasureTier
+    for (auto &[zoneID, zone] : map.getZoneMap()) {
+        auto treasureSettingsVector = map.getTemplateInfo().getZoneById(zoneID).getTreasure();
+        int settingsNumber          = treasureSettingsVector.size();
+        // for(int tier = 0; tier < settingsNumber; tier++) {
+        int tier          = 0;
+        auto treasureTier = treasureSettingsVector[tier];
+        placeTreasuresFromTier(zoneID, tier, treasureTier);
+        // }
+    }
+    return;
+
     int mapWidth               = map.getWidth();
     int mapHeight              = map.getHeight();
     auto &rng                  = map.getRNG();
@@ -627,25 +639,61 @@ int ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition,
     }
 
     return placedTreasures;
-    // int blockedTiles = 0;
-    // for (auto &tilePos : tiles) {
-    //     if (abs(tilePos.x - candidatePosition.x) <= 1 &&
-    //         abs(tilePos.y - candidatePosition.y) <= 1) {
-    //         continue;
-    //     }
-    //     if (claimedTiles[tilePos.x][tilePos.y] == 0) {
-    //         blockedTiles++;
-    //     }
-    // }
-    // vector<int3> offsets = {int3(-1, -1, 0), int3(0, -1, 0), int3(1, -1, 0), int3(-1, 0, 0),
-    //                         int3(1, 0, 0),   int3(-1, 1, 0), int3(0, 1, 0),  int3(1, 1, 0)};
+}
 
-    // for (const auto &offset : offsets) {
-    //     int3 pos = treasurePoint + offset;
-    //     if (map.getTile(pos) && map.getTile(pos)->isTileType("F")) {
-    //         auto randomArtifactType = getArtifactFromTier(tierOfTreasures, map.getRNG());
-    //         placeArtifact(randomArtifactType, pos);
-    //         map.getTile(pos)->setTileType(TileType::TILE_OCCUPIED);
-    //     }
-    // }
+void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier treasureTier) {
+    int mapWidth  = map.getWidth();
+    int mapHeight = map.getHeight();
+
+    vector<int3> placedObjects;
+    vector<int3> possiblePositions;
+    int totalZoneArea = 0;
+
+    for (int x = 0; x < mapWidth; x++) {
+        for (int y = 0; y < mapHeight; y++) {
+            int3 tilePos = int3(x, y, 0);
+            if (map.getTile(tilePos)->getZoneID() == zoneID) {
+                if (map.getTile(tilePos)->isTileType("F")) {
+                    possiblePositions.push_back(tilePos);
+                }
+                totalZoneArea++;
+            }
+        }
+    }
+    cerr << "Zone " << zoneID << " has total area " << totalZoneArea << " and "
+         << possiblePositions.size() << " possible positions for treasures\n";
+
+    auto objectVector = map.getObjectVector();
+    for (const auto &object : objectVector) {
+        if (auto mine = dynamic_pointer_cast<Mine>(object)) {
+            if (map.getTile(mine->getPosition())->getZoneID() == zoneID) {
+                placedObjects.push_back(mine->getPosition());
+            }
+        } else if (auto town = dynamic_pointer_cast<Town>(object)) {
+            if (map.getTile(town->getPosition())->getZoneID() == zoneID) {
+                placedObjects.push_back(town->getPosition());
+            }
+        }
+    }
+
+    int density = treasureTier.density;
+    int low     = treasureTier.low;
+    int high    = treasureTier.high;
+
+    float minDistance = sqrt(totalZoneArea / density);
+    cerr << "Placing treasures in zone " << zoneID << " with tier " << tier << " and density "
+         << density << " and minDistance " << minDistance << endl;
+
+    while (true) {
+        int3 candidatePosition = map.findBestDistributedPosition(
+            possiblePositions, placedObjects, map.getZoneMap()[zoneID]->getCenter(), map.getRNG(),
+            0.8f, minDistance);
+        if (candidatePosition.x == -1)
+            break;
+
+        auto randomArtifactType = getArtifactFromTier(ArtifactTier::MID, map.getRNG());
+        placeArtifact(randomArtifactType, candidatePosition);
+        map.getTile(candidatePosition)->setTileType(TileType::TILE_OCCUPIED);
+        placedObjects.push_back(candidatePosition);
+    }
 }

@@ -63,7 +63,7 @@ class Map {
                                 const int3 &offset = int3(0, 0, 0), bool debug = false);
     int3 findBestDistributedPosition(const vector<int3> &freeTiles,
                                      const vector<int3> &placedObjects, const int3 &zoneCenter,
-                                     RNG &rng, float tolerance = 0.8f);
+                                     RNG &rng, float tolerance = 0.8f, int minDistance = -1);
 
   private:
     pair<int, int> chooseMapSize(int minimumSize, int maximumSize);

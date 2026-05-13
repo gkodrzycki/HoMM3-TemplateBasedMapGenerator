@@ -21,6 +21,7 @@ class ObjectPlacer {
     void placeMine(int3 pos, MineType mineType);
     void placeMineResources();
     void placeTreasures();
+    void placeTreasuresFromTier(int zoneID, int tier, TreasureTier treasureTier);
 
   private:
     Map &map;

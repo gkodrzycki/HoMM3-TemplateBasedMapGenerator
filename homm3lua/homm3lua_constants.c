@@ -508,6 +508,7 @@ void h3mlua_constants(lua_State *L) {
     literal("RESOURCE_ORE", "Ore");
     literal("RESOURCE_SULFUR", "Sulfur");
     literal("RESOURCE_WOOD", "Wood");
+    literal("RANDOM_RESOURCE", "Random Resource0");
     literal("TOWN_CASTLE", "Castle");
     literal("TOWN_DUNGEON", "Dungeon");
     literal("TOWN_FORTRESS", "Fortress");

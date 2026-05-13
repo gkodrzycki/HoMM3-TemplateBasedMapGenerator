@@ -209,7 +209,7 @@ void Map::generateMap() {
     // not
     objectPlacer.placeMines();
     objectPlacer.placeMineResources();
-    // objectPlacer.placeTreasures();
+    objectPlacer.placeTreasures();
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
@@ -297,7 +297,7 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
 
 int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
                                       const vector<int3> &placedObjects, const int3 &zoneCenter,
-                                      RNG &rng, float tolerance) {
+                                      RNG &rng, float tolerance, int minDistance) {
     if (freeTiles.empty())
         return int3(-1, -1, -1);
 
@@ -355,6 +355,13 @@ int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
         }
     }
 
+    if (minDistance > 0) {
+        if (maxMinDistSq < minDistance) {
+            cerr << "Failed to find a position with minDistance " << minDistance
+                 << " (maxMinDistSq was " << maxMinDistSq << ")\n";
+            return int3(-1, -1, -1);
+        }
+    }
     int thresholdSq = static_cast<int>(maxMinDistSq * (tolerance * tolerance));
 
     vector<int3> validCandidates;
