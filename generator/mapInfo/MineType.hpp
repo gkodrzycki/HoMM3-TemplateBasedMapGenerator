@@ -4,14 +4,14 @@
 #include "./ResourceType.hpp"
 
 enum class MineType {
-    MINE_ALCHEMISTS_LAB = 0,
+    MINE_SAWMILL = 0,
+    MINE_ORE_PIT,
+
+    MINE_ALCHEMISTS_LAB,
     MINE_CRYSTAL_CAVERN,
     MINE_GEM_POND,
     MINE_SULFUR_DUNE,
     MINE_GOLD_MINE,
-
-    MINE_ORE_PIT,
-    MINE_SAWMILL,
 
     MINE_UNKNOWN
 };

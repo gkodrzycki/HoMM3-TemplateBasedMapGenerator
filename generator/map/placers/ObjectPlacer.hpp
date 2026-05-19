@@ -22,6 +22,9 @@ class ObjectPlacer {
     void placeMineResources();
     void placeTreasures();
     void placeTreasuresFromTier(int zoneID, int tier, TreasureTier treasureTier);
+    vector<int3> generateTreasureCandidates(vector<int3> &zoneTiles, int minNeighbourTrees);
+    void filterCandidates(vector<int3> &candidates, int3 placedObject, float minDistance);
+    void evaluateCandidates(vector<int3> &candidates, vector<int3> &zoneTiles);
 
   private:
     Map &map;

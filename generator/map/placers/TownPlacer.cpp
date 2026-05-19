@@ -15,6 +15,7 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
     int3 zoneCenter = map.getZoneMap()[zoneID]->getCenter();
     string zoneType = map.getZoneMap()[zoneID]->getType();
 
+    vector<int3> placedObjects;
     if (zoneType == "treasure") {
         // For treasure zones treat each border as placed object so every player will have "similar"
         // distance
@@ -35,7 +36,7 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
                         }
                     }
                     if (onBorder) {
-                        placedTowns.push_back(tilePos);
+                        placedObjects.push_back(tilePos);
                     }
                 }
             }
@@ -55,8 +56,13 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
             break;
 
         float tolerance = (zoneType == "treasure") ? 0.6f : 0.8f;
-        int3 townPos    = map.findBestDistributedPosition(currentFreeTiles, placedTowns, zoneCenter,
-                                                          rng, tolerance);
+        int3 townPos = map.findBestDistributedPosition(currentFreeTiles, placedTowns, placedObjects,
+                                                       zoneCenter, tolerance);
+
+        cerr << "Placing town in zone " << zoneID << " at position " << townPos.toString() << endl;
+        cerr << "Size of placedTowns: " << placedTowns.size() << endl;
+
+        // Check if the found position is valid, if not try to find another one
 
         if (townPos.x == -1)
             break;
@@ -104,7 +110,7 @@ void TownPlacer::placeTowns() {
                 int3 pos(x, y, 0);
                 auto tile = map.getTile(pos);
                 if (tile->getZoneID() == zoneID && tile->getTileType() == TileType::TILE_FREE) {
-                    if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, pos) ||
+                    if (!isInside(3, 3, mapWidth - 3, mapHeight - 3, pos) ||
                         map.checkPlacementConflict(pos, int3(5, 3, 0), "BbTRr", int3(1, 1, 0))) {
                         continue;
                     }

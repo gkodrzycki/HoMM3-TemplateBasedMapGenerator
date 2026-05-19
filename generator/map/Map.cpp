@@ -197,24 +197,24 @@ void Map::generateMap() {
     TerrainPlacer terrainPlacer(*this);
     terrainPlacer.generateNoise();
 
-    TownPlacer townPlacer(*this);
-    townPlacer.placeTowns();
+    // TownPlacer townPlacer(*this);
+    // townPlacer.placeTowns();
 
-    ConnectionPlacer connectionPlacer(*this);
-    connectionPlacer.placeRoads();
-    connectionPlacer.createMonoliths();
+    // ConnectionPlacer connectionPlacer(*this);
+    // connectionPlacer.placeRoads();
+    // connectionPlacer.createMonoliths();
 
-    ObjectPlacer objectPlacer(*this);
-    // objectPlacer.placeBasicMines(); TODO: decide if we want to place basic mines standalone or
-    // not
-    objectPlacer.placeMines();
-    objectPlacer.placeMineResources();
-    objectPlacer.placeTreasures();
+    // ObjectPlacer objectPlacer(*this);
+    // // objectPlacer.placeBasicMines(); TODO: decide if we want to place basic mines standalone or
+    // // not
+    // objectPlacer.placeMines();
+    // objectPlacer.placeMineResources();
+    // objectPlacer.placeTreasures();
 
-    GuardPlacer guardPlacer(*this);
-    guardPlacer.placeGuards();
+    // GuardPlacer guardPlacer(*this);
+    // guardPlacer.placeGuards();
 
-    fixReachability();
+    // fixReachability();
 
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
@@ -296,73 +296,89 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
 }
 
 int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
-                                      const vector<int3> &placedObjects, const int3 &zoneCenter,
-                                      RNG &rng, float tolerance, int minDistance) {
+                                      const vector<int3> &placedSameObjects,
+                                      const vector<int3> &placedAllObjects, const int3 &zoneCenter,
+                                      float tolerance, int minDistanceRelative,
+                                      int minDistanceTotal) {
     if (freeTiles.empty())
         return int3(-1, -1, -1);
 
-    if (placedObjects.empty()) {
-        int minCenterDistSq = numeric_limits<int>::max();
+    if (placedSameObjects.empty() && placedAllObjects.empty()) {
+        int centerThresholdSq = 8;
 
-        vector<pair<int3, int>> tileDistances;
-        tileDistances.reserve(freeTiles.size());
-
-        // TODO - OPTIMIZE
+        vector<int3> validCandidates;
         for (const auto &pos : freeTiles) {
             int dx     = pos.x - zoneCenter.x;
             int dy     = pos.y - zoneCenter.y;
             int distSq = dx * dx + dy * dy;
 
-            tileDistances.push_back({pos, distSq});
-
-            if (distSq < minCenterDistSq) {
-                minCenterDistSq = distSq;
-            }
-        }
-
-        int centerThresholdSq = minCenterDistSq + 8;
-
-        vector<int3> validCandidates;
-        for (const auto &item : tileDistances) {
-            if (item.second <= centerThresholdSq) {
-                validCandidates.push_back(item.first);
+            if (distSq <= centerThresholdSq) {
+                validCandidates.push_back(pos);
             }
         }
 
         return rng.getRandomFromVector(validCandidates);
     }
 
-    int maxMinDistSq = -1;
+    int maxMinDistSqRelative = -1;
+    int maxMinDistSqTotal    = -1;
     vector<pair<int3, int>> tileDistances;
     tileDistances.reserve(freeTiles.size());
 
     for (const auto &pos : freeTiles) {
-        int minDistToAnyObjectSq = numeric_limits<int>::max();
+        int minDistToAnyObjectSqRelative = numeric_limits<int>::max();
+        int minDistToAnyObjectSqTotal    = numeric_limits<int>::max();
 
-        for (const auto &placedPos : placedObjects) {
+        for (const auto &placedPos : placedSameObjects) {
             int dx     = pos.x - placedPos.x;
             int dy     = pos.y - placedPos.y;
             int distSq = dx * dx + dy * dy;
-            if (distSq < minDistToAnyObjectSq) {
-                minDistToAnyObjectSq = distSq;
+            if (distSq < minDistToAnyObjectSqRelative) {
+                minDistToAnyObjectSqRelative = distSq;
             }
         }
 
-        tileDistances.push_back({pos, minDistToAnyObjectSq});
+        for (const auto &placedPos : placedAllObjects) {
+            int dx     = pos.x - placedPos.x;
+            int dy     = pos.y - placedPos.y;
+            int distSq = dx * dx + dy * dy;
+            if (distSq < minDistToAnyObjectSqTotal) {
+                minDistToAnyObjectSqTotal = distSq;
+            }
+        }
 
-        if (minDistToAnyObjectSq > maxMinDistSq) {
-            maxMinDistSq = minDistToAnyObjectSq;
+        if (minDistanceTotal > 0 &&
+            minDistToAnyObjectSqTotal < minDistanceTotal * minDistanceTotal) {
+            continue;
+        }
+
+        tileDistances.push_back({pos, minDistToAnyObjectSqRelative});
+
+        if (minDistToAnyObjectSqTotal > maxMinDistSqTotal) {
+            maxMinDistSqTotal = minDistToAnyObjectSqTotal;
+        }
+
+        if (minDistToAnyObjectSqRelative > maxMinDistSqRelative) {
+            maxMinDistSqRelative = minDistToAnyObjectSqRelative;
         }
     }
 
-    if (minDistance > 0) {
-        if (maxMinDistSq < minDistance) {
-            cerr << "Failed to find a position with minDistance " << minDistance
-                 << " (maxMinDistSq was " << maxMinDistSq << ")\n";
+    if (minDistanceRelative > 0) {
+        if (maxMinDistSqRelative < minDistanceRelative * minDistanceRelative) {
+            cerr << "Failed to find a position with minDistanceRelative " << minDistanceRelative
+                 << " (maxMinDistSqRelative was " << maxMinDistSqRelative << ")\n";
             return int3(-1, -1, -1);
         }
     }
-    int thresholdSq = static_cast<int>(maxMinDistSq * (tolerance * tolerance));
+
+    if (minDistanceTotal > 0) {
+        if (maxMinDistSqTotal < minDistanceTotal * minDistanceTotal) {
+            cerr << "Failed to find a position with minDistanceTotal " << minDistanceTotal
+                 << " (maxMinDistSqTotal was " << maxMinDistSqTotal << ")\n";
+            return int3(-1, -1, -1);
+        }
+    }
+    int thresholdSq = static_cast<int>(maxMinDistSqRelative * (tolerance * tolerance));
 
     vector<int3> validCandidates;
     for (const auto &item : tileDistances) {
@@ -373,6 +389,85 @@ int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
 
     return rng.getRandomFromVector(validCandidates);
 }
+
+// int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
+//                                       const vector<int3> &placedObjects, const int3 &zoneCenter,
+//                                       RNG &rng, float tolerance, int minDistance) {
+//     if (freeTiles.empty())
+//         return int3(-1, -1, -1);
+
+//     if (placedObjects.empty()) {
+//         int minCenterDistSq = numeric_limits<int>::max();
+
+//         vector<pair<int3, int>> tileDistances;
+//         tileDistances.reserve(freeTiles.size());
+
+//         // TODO - OPTIMIZE
+//         for (const auto &pos : freeTiles) {
+//             int dx     = pos.x - zoneCenter.x;
+//             int dy     = pos.y - zoneCenter.y;
+//             int distSq = dx * dx + dy * dy;
+
+//             tileDistances.push_back({pos, distSq});
+
+//             if (distSq < minCenterDistSq) {
+//                 minCenterDistSq = distSq;
+//             }
+//         }
+
+//         int centerThresholdSq = minCenterDistSq + 8;
+
+//         vector<int3> validCandidates;
+//         for (const auto &item : tileDistances) {
+//             if (item.second <= centerThresholdSq) {
+//                 validCandidates.push_back(item.first);
+//             }
+//         }
+
+//         return rng.getRandomFromVector(validCandidates);
+//     }
+
+//     int maxMinDistSq = -1;
+//     vector<pair<int3, int>> tileDistances;
+//     tileDistances.reserve(freeTiles.size());
+
+//     for (const auto &pos : freeTiles) {
+//         int minDistToAnyObjectSq = numeric_limits<int>::max();
+
+//         for (const auto &placedPos : placedObjects) {
+//             int dx     = pos.x - placedPos.x;
+//             int dy     = pos.y - placedPos.y;
+//             int distSq = dx * dx + dy * dy;
+//             if (distSq < minDistToAnyObjectSq) {
+//                 minDistToAnyObjectSq = distSq;
+//             }
+//         }
+
+//         tileDistances.push_back({pos, minDistToAnyObjectSq});
+
+//         if (minDistToAnyObjectSq > maxMinDistSq) {
+//             maxMinDistSq = minDistToAnyObjectSq;
+//         }
+//     }
+
+//     if (minDistance > 0) {
+//         if (maxMinDistSq < minDistance * minDistance) {
+//             cerr << "Failed to find a position with minDistance " << minDistance
+//                  << " (maxMinDistSq was " << maxMinDistSq << ")\n";
+//             return int3(-1, -1, -1);
+//         }
+//     }
+//     int thresholdSq = static_cast<int>(maxMinDistSq * (tolerance * tolerance));
+
+//     vector<int3> validCandidates;
+//     for (const auto &item : tileDistances) {
+//         if (item.second >= thresholdSq) {
+//             validCandidates.push_back(item.first);
+//         }
+//     }
+
+//     return rng.getRandomFromVector(validCandidates);
+// }
 
 void Map::printMap(int debugLevel) {
 

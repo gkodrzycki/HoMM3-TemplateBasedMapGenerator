@@ -124,7 +124,6 @@ int ObjectPlacer::evalMinePos(int3 minePos, int3 mineSize) {
 void ObjectPlacer::placeMines() {
     int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
-    auto &rng     = map.getRNG();
 
     int3 mineOffset = int3(1, 1, 0);
 
@@ -153,11 +152,12 @@ void ObjectPlacer::placeMines() {
             map.getTemplateInfo().getZoneById(zoneID).getMinimumMines().mineCounts;
 
         vector<int3> placedMines;
+        vector<int3> placedObjects;
         auto objectVector = map.getObjectVector();
         for (const auto &object : objectVector) {
             if (auto town = dynamic_pointer_cast<Town>(object)) {
                 if (map.getTile(town->getPosition())->getZoneID() == zoneID) {
-                    placedMines.push_back(town->getPosition());
+                    placedObjects.push_back(town->getPosition());
                 }
             }
         }
@@ -168,8 +168,9 @@ void ObjectPlacer::placeMines() {
 
             for (int i = 0; i < count; i++) {
                 float tolerance = (zoneType == "treasure") ? 0.6f : 0.8f;
-                int3 minePos    = map.findBestDistributedPosition(zoneTiles[zoneID], placedMines,
-                                                                  zone->getCenter(), rng, tolerance);
+                int3 minePos =
+                    map.findBestDistributedPosition(zoneTiles[zoneID], placedMines, placedObjects,
+                                                    zone->getCenter(), tolerance, -1, 2);
 
                 if (minePos.x == -1)
                     break;
@@ -374,136 +375,131 @@ void ObjectPlacer::placeTreasures() {
     for (auto &[zoneID, zone] : map.getZoneMap()) {
         auto treasureSettingsVector = map.getTemplateInfo().getZoneById(zoneID).getTreasure();
         int settingsNumber          = treasureSettingsVector.size();
-        // for(int tier = 0; tier < settingsNumber; tier++) {
-        int tier          = 0;
-        auto treasureTier = treasureSettingsVector[tier];
-        placeTreasuresFromTier(zoneID, tier, treasureTier);
-        // }
+        for (int tier = 0; tier < settingsNumber; tier++) {
+            auto treasureTier = treasureSettingsVector[tier];
+            placeTreasuresFromTier(zoneID, tier, treasureTier);
+        }
     }
     return;
 
-    int mapWidth               = map.getWidth();
-    int mapHeight              = map.getHeight();
-    auto &rng                  = map.getRNG();
-    int numberOfCandidates     = 100;
-    int acceptableBlockedTiles = 5;
+    // std::map<int, vector<int3>> zoneTiles;
 
-    std::map<int, vector<int3>> zoneTiles;
-
-    for (int x = 0; x < mapWidth; x++) {
-        for (int y = 0; y < mapHeight; y++) {
-            int3 tilePos = int3(x, y, 0);
-            int zoneID   = map.getTile(tilePos)->getZoneID();
-            if (map.getTile(tilePos)->isTileType("F")) {
-                zoneTiles[zoneID].push_back(tilePos);
-            }
-        }
-    }
-
-    auto neighbors4 = [&](const int3 &p) {
-        std::array<int3, 4> out;
-        for (int i = 0; i < 4; i++)
-            out[i] = p + directions4[i];
-        return out;
-    };
-    auto passable = [&](const int3 &p) { return map.getTile(p)->isTileType("F"); };
-
-    std::map<int, vector<int3>> tilesWithinTrees;
-
-    vector<vector<bool>> isSource(mapWidth, vector<bool>(mapHeight, false));
-    vector<vector<int>> tilesTreeCount(mapWidth, vector<int>(mapHeight, 0));
-    for (const auto &[zoneID, tiles] : zoneTiles) {
-        for (const auto &tilePos : tiles) {
-            bool alreadyPushed = false;
-            for (const auto &n : neighbors4(tilePos)) {
-                if (map.getTile(n) && map.getTile(n)->isTileType("OBb")) {
-                    if (!alreadyPushed) {
-                        tilesWithinTrees[zoneID].push_back(tilePos);
-                        isSource[tilePos.x][tilePos.y] = true;
-                    }
-                    alreadyPushed = true;
-
-                    tilesTreeCount[tilePos.x][tilePos.y]++;
-                }
-            }
-        }
-    }
-
-    // for (const auto &[zoneID, tiles] : zoneTiles) {
-    //     cerr << "Zone " << zoneID << " has " << tiles.size() << " free tiles, "
-    //          << tilesWithinTrees[zoneID].size() << " of which are within trees\n";
-
-    //     for (const auto &tilePos : tilesWithinTrees[zoneID]) {
-    //         // mark in map debugly those tiles
-    //         map.getTile(tilePos)->setTileType(TileType::TILE_DEBUG);
+    // for (int x = 0; x < mapWidth; x++) {
+    //     for (int y = 0; y < mapHeight; y++) {
+    //         int3 tilePos = int3(x, y, 0);
+    //         int zoneID   = map.getTile(tilePos)->getZoneID();
+    //         if (map.getTile(tilePos)->isTileType("F")) {
+    //             zoneTiles[zoneID].push_back(tilePos);
+    //         }
     //     }
     // }
 
-    for (auto [id, tiles] : zoneTiles) {
-        int numberOfTreasurePoints   = getNumberOfTreasures(id);
-        ArtifactTier tierOfTreasures = getTierOfTreasures(id);
+    // auto neighbors4 = [&](const int3 &p) {
+    //     std::array<int3, 4> out;
+    //     for (int i = 0; i < 4; i++)
+    //         out[i] = p + directions4[i];
+    //     return out;
+    // };
+    // auto passable = [&](const int3 &p) { return map.getTile(p)->isTileType("F"); };
 
-        auto sources = tilesWithinTrees[id];
-        auto possibleCandidates =
-            bfs_collect_depth_xy(mapWidth, mapHeight, sources, 1, neighbors4, passable);
+    // std::map<int, vector<int3>> tilesWithinTrees;
 
-        vector<int3> candidates;
-        for (const auto &candidate : possibleCandidates) {
-            if (!isSource[candidate.x][candidate.y]) {
-                candidates.push_back(candidate);
-            }
-        }
+    // vector<vector<bool>> isSource(mapWidth, vector<bool>(mapHeight, false));
+    // vector<vector<int>> tilesTreeCount(mapWidth, vector<int>(mapHeight, 0));
+    // for (const auto &[zoneID, tiles] : zoneTiles) {
+    //     for (const auto &tilePos : tiles) {
+    //         bool alreadyPushed = false;
+    //         for (const auto &n : neighbors4(tilePos)) {
+    //             if (map.getTile(n) && map.getTile(n)->isTileType("OBb")) {
+    //                 if (!alreadyPushed) {
+    //                     tilesWithinTrees[zoneID].push_back(tilePos);
+    //                     isSource[tilePos.x][tilePos.y] = true;
+    //                 }
+    //                 alreadyPushed = true;
 
-        vector<pair<double, int3>> candidatesWithEval;
-        for (int i = 0; i < numberOfCandidates; i++) {
-            int3 candidatePosition = rng.getRandomFromVector(candidates);
-            candidatesWithEval.push_back({evalTreasureCandidate(candidatePosition, tilesTreeCount,
-                                                                tiles, acceptableBlockedTiles),
-                                          candidatePosition});
-        }
+    //                 tilesTreeCount[tilePos.x][tilePos.y]++;
+    //             }
+    //         }
+    //     }
+    // }
 
-        sort(candidatesWithEval.begin(), candidatesWithEval.end(),
-             [](const pair<double, int3> &a, const pair<double, int3> &b) {
-                 return a.first > b.first;
-             });
+    // // for (const auto &[zoneID, tiles] : zoneTiles) {
+    // //     cerr << "Zone " << zoneID << " has " << tiles.size() << " free tiles, "
+    // //          << tilesWithinTrees[zoneID].size() << " of which are within trees\n";
 
-        // for (auto &[eval, candidatePosition] : candidatesWithEval) {
-        //     cerr << "Candidate at " << candidatePosition.toString() << " has eval " << eval <<
-        //     endl; map.getTile(candidatePosition)->setTileType(TileType::TILE_DEBUG);
-        // }
+    // //     for (const auto &tilePos : tilesWithinTrees[zoneID]) {
+    // //         // mark in map debugly those tiles
+    // //         map.getTile(tilePos)->setTileType(TileType::TILE_DEBUG);
+    // //     }
+    // // }
 
-        vector<int3> pickedTreasurePoints;
-        for (int i = 0; i < (int)candidatesWithEval.size(); i++) {
-            if (numberOfTreasurePoints <= 0)
-                break;
+    // for (auto [id, tiles] : zoneTiles) {
+    //     int numberOfTreasurePoints   = getNumberOfTreasures(id);
+    //     ArtifactTier tierOfTreasures = getTierOfTreasures(id);
 
-            auto candidatePosition = candidatesWithEval[i].second;
+    //     auto sources = tilesWithinTrees[id];
+    //     auto possibleCandidates =
+    //         bfs_collect_depth_xy(mapWidth, mapHeight, sources, 1, neighbors4, passable);
 
-            if (candidatePosition.distance2DMH(
-                    map.getZoneMap()[map.getTile(candidatePosition)->getZoneID()]->getCenter()) <=
-                2) {
-                continue;
-            }
+    //     vector<int3> candidates;
+    //     for (const auto &candidate : possibleCandidates) {
+    //         if (!isSource[candidate.x][candidate.y]) {
+    //             candidates.push_back(candidate);
+    //         }
+    //     }
 
-            bool tooClose = false;
-            for (const auto &pickedPos : pickedTreasurePoints) {
-                if (candidatePosition.distance2DMH(pickedPos) <= 5) {
-                    tooClose = true;
-                    break;
-                }
-            }
-            if (tooClose)
-                continue;
+    //     vector<pair<double, int3>> candidatesWithEval;
+    //     for (int i = 0; i < numberOfCandidates; i++) {
+    //         int3 candidatePosition = rng.getRandomFromVector(candidates);
+    //         candidatesWithEval.push_back({evalTreasureCandidate(candidatePosition,
+    //         tilesTreeCount,
+    //                                                             tiles, acceptableBlockedTiles),
+    //                                       candidatePosition});
+    //     }
 
-            int placedTreasures = placeTreasuresNearCandidate(candidatePosition, tierOfTreasures);
-            if (placedTreasures == 0) {
-                continue;
-            }
-            map.getTile(candidatePosition)->setTileType(TileType::TILE_GUARD);
-            pickedTreasurePoints.push_back(candidatePosition);
-            numberOfTreasurePoints--;
-        }
-    }
+    //     sort(candidatesWithEval.begin(), candidatesWithEval.end(),
+    //          [](const pair<double, int3> &a, const pair<double, int3> &b) {
+    //              return a.first > b.first;
+    //          });
+
+    //     // for (auto &[eval, candidatePosition] : candidatesWithEval) {
+    //     //     cerr << "Candidate at " << candidatePosition.toString() << " has eval " << eval <<
+    //     //     endl; map.getTile(candidatePosition)->setTileType(TileType::TILE_DEBUG);
+    //     // }
+
+    //     vector<int3> pickedTreasurePoints;
+    //     for (int i = 0; i < (int)candidatesWithEval.size(); i++) {
+    //         if (numberOfTreasurePoints <= 0)
+    //             break;
+
+    //         auto candidatePosition = candidatesWithEval[i].second;
+
+    //         if (candidatePosition.distance2DMH(
+    //                 map.getZoneMap()[map.getTile(candidatePosition)->getZoneID()]->getCenter())
+    //                 <=
+    //             2) {
+    //             continue;
+    //         }
+
+    //         bool tooClose = false;
+    //         for (const auto &pickedPos : pickedTreasurePoints) {
+    //             if (candidatePosition.distance2DMH(pickedPos) <= 5) {
+    //                 tooClose = true;
+    //                 break;
+    //             }
+    //         }
+    //         if (tooClose)
+    //             continue;
+
+    //         int placedTreasures = placeTreasuresNearCandidate(candidatePosition,
+    //         tierOfTreasures); if (placedTreasures == 0) {
+    //             continue;
+    //         }
+    //         map.getTile(candidatePosition)->setTileType(TileType::TILE_GUARD);
+    //         pickedTreasurePoints.push_back(candidatePosition);
+    //         numberOfTreasurePoints--;
+    //     }
+    // }
 }
 
 int ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition,
@@ -646,6 +642,7 @@ void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier tre
     int mapHeight = map.getHeight();
 
     vector<int3> placedObjects;
+    vector<int3> placedTreasures;
     vector<int3> possiblePositions;
     int totalZoneArea = 0;
 
@@ -675,25 +672,264 @@ void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier tre
             }
         }
     }
+    auto treasureVector = map.getTreasureVector();
+    for (const auto &treasure : treasureVector) {
+        if (auto resource = dynamic_pointer_cast<Resource>(treasure)) {
+            if (map.getTile(resource->getPosition())->getZoneID() == zoneID) {
+                placedObjects.push_back(resource->getPosition());
+            }
+        } else if (auto artifact = dynamic_pointer_cast<Artifact>(treasure)) {
+            if (map.getTile(artifact->getPosition())->getZoneID() == zoneID) {
+                cerr << "Found already placed artifact at " << artifact->getPosition().toString()
+                     << " in zone " << zoneID << endl;
+                placedObjects.push_back(artifact->getPosition());
+            }
+        }
+    }
 
     int density = treasureTier.density;
     int low     = treasureTier.low;
     int high    = treasureTier.high;
 
-    float minDistance = sqrt(totalZoneArea / density);
+    float minDistanceFactor = 10.0f;
+    switch (map.getWidth()) {
+    case 144:
+        minDistanceFactor = 10.0f;
+        break;
+    case 108:
+        minDistanceFactor = 5.0f;
+        break;
+    case 72:
+        minDistanceFactor = 3.0f;
+        break;
+    default:
+        minDistanceFactor = 2.0f;
+    }
+    float minDistanceRelative = sqrt(totalZoneArea / density / minDistanceFactor);
+    float minDistanceTotal    = 3;
     cerr << "Placing treasures in zone " << zoneID << " with tier " << tier << " and density "
-         << density << " and minDistance " << minDistance << endl;
+         << density << " and minDistance " << minDistanceRelative << endl;
+
+    vector<int3> treasureCandidatesPruned;
+    vector<int3> treasureCandidates;
+
+    if (tier <= 1) {
+        treasureCandidatesPruned = generateTreasureCandidates(possiblePositions, 7);
+        treasureCandidates       = generateTreasureCandidates(possiblePositions, 4);
+
+        for (const auto placedObject : placedObjects) {
+            filterCandidates(treasureCandidatesPruned, placedObject, minDistanceTotal);
+            filterCandidates(treasureCandidates, placedObject, minDistanceTotal);
+        }
+
+        evaluateCandidates(treasureCandidatesPruned, possiblePositions);
+    }
 
     while (true) {
-        int3 candidatePosition = map.findBestDistributedPosition(
-            possiblePositions, placedObjects, map.getZoneMap()[zoneID]->getCenter(), map.getRNG(),
-            0.8f, minDistance);
+
+        int3 candidatePosition = int3(-1, -1, -1);
+
+        if (tier <= 1) {
+            if (treasureCandidatesPruned.empty()) {
+                candidatePosition =
+                    treasureCandidates.empty() ? int3(-1, -1, -1) : treasureCandidates[0];
+            } else {
+                candidatePosition = treasureCandidatesPruned[0];
+            }
+        } else {
+            candidatePosition = map.findBestDistributedPosition(
+                possiblePositions, placedTreasures, placedObjects,
+                map.getZoneMap()[zoneID]->getCenter(), 0.8f, minDistanceRelative, minDistanceTotal);
+        }
+
         if (candidatePosition.x == -1)
             break;
 
-        auto randomArtifactType = getArtifactFromTier(ArtifactTier::MID, map.getRNG());
+        if (tier <= 1) {
+            filterCandidates(treasureCandidatesPruned, candidatePosition, minDistanceRelative);
+            filterCandidates(treasureCandidates, candidatePosition, minDistanceRelative);
+        }
+
+        auto randomArtifactType = ArtifactType::ARTIFACT_ANGEL_FEATHER_ARROWS;
+        if (tier == 0) {
+            randomArtifactType = ArtifactType::ARTIFACT_SPYGLASS;
+        } else if (tier == 1) {
+            randomArtifactType = ArtifactType::ARTIFACT_BOOTS_OF_POLARITY;
+        } else if (tier == 2) {
+            randomArtifactType = ArtifactType::ARTIFACT_DRAGON_SCALE_SHIELD;
+        }
         placeArtifact(randomArtifactType, candidatePosition);
         map.getTile(candidatePosition)->setTileType(TileType::TILE_OCCUPIED);
-        placedObjects.push_back(candidatePosition);
+
+        placedTreasures.push_back(candidatePosition);
     }
+}
+
+void ObjectPlacer::filterCandidates(vector<int3> &candidates, int3 placedObject,
+                                    float minDistance) {
+    int mapWidth  = map.getWidth();
+    int mapHeight = map.getHeight();
+
+    auto neighbors8 = [&](const int3 &p) {
+        std::array<int3, 8> out;
+        for (int i = 0; i < 8; i++)
+            out[i] = p + directions8[i];
+        return out;
+    };
+    auto passable = [&](const int3 &p) { return map.getTile(p)->isTileType("FRroG"); };
+
+    auto sources = vector<int3>{placedObject};
+
+    auto possibleCandidates =
+        bfs_collect_depth_xy(mapWidth, mapHeight, sources, minDistance, neighbors8, passable);
+
+    set<int3> possibleCandidatesSet(possibleCandidates.begin(), possibleCandidates.end());
+
+    candidates.erase(
+        remove_if(candidates.begin(), candidates.end(),
+                  [&](const int3 &candidate) { return possibleCandidatesSet.count(candidate); }),
+        candidates.end());
+}
+
+void ObjectPlacer::evaluateCandidates(vector<int3> &candidates, vector<int3> &zoneTiles) {
+    int mapWidth               = map.getWidth();
+    int mapHeight              = map.getHeight();
+    int acceptableBlockedTiles = 5;
+
+    auto neighbors4 = [&](const int3 &p) {
+        std::array<int3, 4> out;
+        for (int i = 0; i < 4; i++)
+            out[i] = p + directions4[i];
+        return out;
+    };
+
+    vector<vector<int>> tilesTreeCount(mapWidth, vector<int>(mapHeight, 0));
+    for (const auto &tilePos : zoneTiles) {
+        for (const auto &n : neighbors4(tilePos)) {
+            if (map.getTile(n) && map.getTile(n)->isTileType("OBb")) {
+                tilesTreeCount[tilePos.x][tilePos.y]++;
+            }
+        }
+    }
+
+    vector<pair<double, int3>> candidatesWithEval;
+    for (auto &candidate : candidates) {
+        candidatesWithEval.push_back(
+            {evalTreasureCandidate(candidate, tilesTreeCount, zoneTiles, acceptableBlockedTiles),
+             candidate});
+    }
+
+    sort(
+        candidatesWithEval.begin(), candidatesWithEval.end(),
+        [](const pair<double, int3> &a, const pair<double, int3> &b) { return a.first > b.first; });
+
+    vector<int3> finalCandidates;
+    for (auto &[eval, candidate] : candidatesWithEval) {
+        finalCandidates.push_back(candidate);
+    }
+
+    candidates = finalCandidates;
+}
+
+vector<int3> ObjectPlacer::generateTreasureCandidates(vector<int3> &zoneTiles,
+                                                      int minNeighbourTrees) {
+    int mapWidth               = map.getWidth();
+    int mapHeight              = map.getHeight();
+    auto &rng                  = map.getRNG();
+    int numberOfCandidates     = 100;
+    int acceptableBlockedTiles = 5;
+
+    auto neighbors4 = [&](const int3 &p) {
+        std::array<int3, 4> out;
+        for (int i = 0; i < 4; i++)
+            out[i] = p + directions4[i];
+        return out;
+    };
+    auto neighbors8 = [&](const int3 &p) {
+        std::array<int3, 8> out;
+        for (int i = 0; i < 8; i++)
+            out[i] = p + directions8[i];
+        return out;
+    };
+    auto passable = [&](const int3 &p) { return map.getTile(p)->isTileType("F"); };
+
+    vector<int3> tilesWithinTrees;
+
+    vector<vector<bool>> isSource(mapWidth, vector<bool>(mapHeight, false));
+    vector<vector<int>> tilesTreeCount(mapWidth, vector<int>(mapHeight, 0));
+
+    for (const auto &tilePos : zoneTiles) {
+        bool alreadyPushed      = false;
+        int treeCountDiagonal   = 0;
+        int treeCountOrthogonal = 0;
+        for (const auto &n : neighbors8(tilePos)) {
+            if (map.getTile(n) && map.getTile(n)->isTileType("OBb")) {
+                if (abs(n.x - tilePos.x) == 1 && abs(n.y - tilePos.y) == 1) {
+                    treeCountDiagonal++;
+                } else {
+                    treeCountOrthogonal++;
+                }
+                int sumTree = treeCountDiagonal + treeCountOrthogonal * 2;
+                if (!alreadyPushed && sumTree >= minNeighbourTrees) {
+                    tilesWithinTrees.push_back(tilePos);
+                    isSource[tilePos.x][tilePos.y] = true;
+                    alreadyPushed                  = true;
+                }
+
+                tilesTreeCount[tilePos.x][tilePos.y]++;
+            }
+        }
+    }
+
+    auto sources = tilesWithinTrees;
+    auto possibleCandidates =
+        bfs_collect_depth_xy(mapWidth, mapHeight, sources, 1, neighbors4, passable);
+
+    vector<int3> candidates;
+    for (const auto &candidate : possibleCandidates) {
+        if (!isSource[candidate.x][candidate.y]) {
+            candidates.push_back(candidate);
+        }
+    }
+
+    return candidates;
+
+    // cerr << "Generated " << candidates.size() << " treasure candidates\n";
+
+    // // TODO: filter candidates that are too closed to objects
+    // for (const auto &placedObject : placedObjects) {
+    //     candidates.erase(remove_if(candidates.begin(), candidates.end(),
+    //                                [&](const int3 &candidate) {
+    //                                    int distance = candidate.distance2DSQ(placedObject);
+    //                                    return distance * distance <= minDistance;
+    //                                }),
+    //                      candidates.end());
+    // }
+
+    // cerr << "Filtered candidates based on distance to placed objects, remaining candidates: " <<
+    // candidates.size() << endl;
+
+    // vector<pair<double, int3>> candidatesWithEval;
+    // for (int i = 0; i < min(numberOfCandidates, (int)candidates.size()); i++) {
+    //     int3 candidatePosition = rng.getRandomFromVector(candidates);
+    //     candidatesWithEval.push_back({evalTreasureCandidate(candidatePosition, tilesTreeCount,
+    //                                                         zoneTiles, acceptableBlockedTiles),
+    //                                     candidatePosition});
+    // }
+
+    // sort(candidatesWithEval.begin(), candidatesWithEval.end(),
+    //         [](const pair<double, int3> &a, const pair<double, int3> &b) {
+    //             return a.first > b.first;
+    //         });
+
+    // vector<int3> finalCandidates;
+    // for (auto &[eval, candidate]: candidatesWithEval) {
+    //     finalCandidates.push_back(candidate);
+    // }
+
+    // if (finalCandidates.empty()) {
+    //     return {int3(-1, -1, -1)};
+    // }
+
+    // return finalCandidates;
 }

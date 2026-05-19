@@ -72,6 +72,39 @@ inline vector<int3> bfs_path_xy(int W, int H, const int3 &start, const int3 &goa
 
     return reconstruct_path_xy(start, goal, parent);
 }
+/**
+ * Multi-source BFS "claim" component
+ */
+template <typename NeighFn, typename PassableFn>
+inline vector<int3> bfs_claim_component(int W, int H, int3 source, NeighFn neighbors,
+                                        PassableFn passable) {
+    vector<vector<int>> visited(W, vector<int>(H, 0));
+    queue<int3> q;
+    vector<int3> out;
+
+    visited[source.x][source.y] = 1;
+    q.push(source);
+
+    while (!q.empty()) {
+        int3 cur = q.front();
+        q.pop();
+        out.push_back(cur);
+
+        for (const auto &nxt : neighbors(cur)) {
+            if (!isInside(0, 0, W, H, nxt))
+                continue;
+            if (!passable(nxt))
+                continue;
+            if (visited[nxt.x][nxt.y] != 0)
+                continue;
+
+            visited[nxt.x][nxt.y] = 1;
+            q.push(nxt);
+        }
+    }
+
+    return out;
+}
 
 /**
  * Multi-source BFS "claim": claim[x][y] = id (0 = nieprzypisane)

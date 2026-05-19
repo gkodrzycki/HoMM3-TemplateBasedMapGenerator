@@ -62,8 +62,10 @@ class Map {
     bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BbOTRr",
                                 const int3 &offset = int3(0, 0, 0), bool debug = false);
     int3 findBestDistributedPosition(const vector<int3> &freeTiles,
-                                     const vector<int3> &placedObjects, const int3 &zoneCenter,
-                                     RNG &rng, float tolerance = 0.8f, int minDistance = -1);
+                                     const vector<int3> &placedSameObjects,
+                                     const vector<int3> &placedAllObjects, const int3 &zoneCenter,
+                                     float tolerance = 0.8f, int minDistanceRelative = -1,
+                                     int minDistanceTotal = -1);
 
   private:
     pair<int, int> chooseMapSize(int minimumSize, int maximumSize);
