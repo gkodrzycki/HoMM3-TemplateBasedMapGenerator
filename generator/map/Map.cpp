@@ -49,6 +49,7 @@ ObjectVector Map::getObjectVector() { return objectVector; }
 RoadVector Map::getRoadVector() { return roadVector; }
 CreatureVector Map::getCreatureVector() { return creatureVector; }
 TreasureVector Map::getTreasureVector() { return treasureVector; }
+PandoraBoxVector Map::getPandoraBoxVector() { return pandoraBoxVector; }
 MonolithVector Map::getMonolithVector() { return monolithVector; }
 
 int Map::getWidth() { return width; }
@@ -59,6 +60,9 @@ void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(ob
 void Map::addRoad(shared_ptr<Road> road) { this->roadVector.push_back(road); }
 void Map::addCreature(shared_ptr<Creature> creature) { this->creatureVector.push_back(creature); }
 void Map::addTreasure(shared_ptr<Treasure> treasure) { this->treasureVector.push_back(treasure); }
+void Map::addPandoraBox(shared_ptr<PandoraBox> pandoraBox) {
+    this->pandoraBoxVector.push_back(pandoraBox);
+}
 void Map::addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest) {
     this->monolithVector.push_back({monolithFrom, monolithDest});
 }

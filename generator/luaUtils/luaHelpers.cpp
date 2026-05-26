@@ -39,8 +39,9 @@ void AddTown(ofstream &luaFile, shared_ptr<Town> town, bool is_main) {
     int Y               = town->getPosition().y;
 
     luaFile << "instance:town(homm3lua." << nameOfObject << ", {x=" << X << ", y=" << Y
-            << ", z=0}, homm3lua.OWNER_" << (ID >= 0 ? std::to_string(ID) : "NEUTRAL") << ", " << (is_main ? "true" : "false") << ", "
-            << (town->getHasFort() ? "true" : "false") << ")\n";
+            << ", z=0}, homm3lua.OWNER_" << (ID >= 0 ? std::to_string(ID) : "NEUTRAL") << ", "
+            << (is_main ? "true" : "false") << ", " << (town->getHasFort() ? "true" : "false")
+            << ")\n";
 }
 
 // @function    AddTowns
@@ -272,6 +273,46 @@ void AddTreasures(ofstream &luaFile, Map &map) {
         } else if (auto resource = dynamic_pointer_cast<Resource>(treasure)) {
             AddResource(luaFile, resource);
         }
+    }
+}
+
+// @function    AddPandoraBox
+// @tparam      ofstream                    luaFile      file where we save lua script.
+// @tparam      shared_ptr<PandoraBox>      pandoraBox   completed PandoraBox object.
+void AddPandoraBox(ofstream &luaFile, shared_ptr<PandoraBox> pandoraBox) {
+    const auto &c   = pandoraBox->getContent();
+    const auto &pos = pandoraBox->getPosition();
+
+    luaFile << "instance:pandora({x=" << pos.x << ", y=" << pos.y << ", z=" << pos.z << "}, {";
+
+    bool first = true;
+    auto field = [&](const char *name, int val) {
+        if (val != 0) {
+            if (!first)
+                luaFile << ", ";
+            luaFile << name << "=" << val;
+            first = false;
+        }
+    };
+    field("gold", c.gold);
+    field("experience", c.experience);
+    field("spell_points", c.spellPoints);
+    field("morale", c.morale);
+    field("luck", c.luck);
+    field("attack", c.attack);
+    field("defense", c.defense);
+    field("spell_power", c.spellPower);
+    field("knowledge", c.knowledge);
+
+    luaFile << "})\n";
+}
+
+// @function    AddPandoraBoxes
+// @tparam      ofstream    luaFile     file where we save lua script.
+// @tparam      Map         map         object of map class with finished setup.
+void AddPandoraBoxes(ofstream &luaFile, Map &map) {
+    for (auto &pandoraBox : map.getPandoraBoxVector()) {
+        AddPandoraBox(luaFile, pandoraBox);
     }
 }
 
