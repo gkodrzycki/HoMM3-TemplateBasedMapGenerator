@@ -123,7 +123,10 @@ void ConnectionPlacer::createMonoliths() {
 
         int3 fromPos = rng.getRandomFromVector(fromZoneTiles);
         int3 destPos = rng.getRandomFromVector(destZoneTiles);
-        int3 size = (connectionCount == 0 || connectionCount == 5) ? int3(1, 1, 1) : int3(2, 2, 1);
+        int3 size = (connectionCount == 0 || connectionCount == 5) ? int3(1, 1, 1) : int3(2, 1, 1);
+        vector<string> realSize = (connectionCount == 0 || connectionCount == 5)
+                                      ? vector<string>{"1"}
+                                      : vector<string>{"11"};
 
         Object monolithFrom(fromPos, "Monolith", size);
         Object monolithDest(destPos, "Monolith", size);
@@ -133,8 +136,8 @@ void ConnectionPlacer::createMonoliths() {
 
         map.addMonoliths(monolithFromPtr, monolithDestPtr);
 
-        map.fixNeighbourTiles(fromPos, size, map.getTile(fromPos)->getZoneID());
-        map.fixNeighbourTiles(destPos, size, map.getTile(destPos)->getZoneID());
+        map.fixNeighbourTiles(fromPos, size, realSize, map.getTile(fromPos)->getZoneID());
+        map.fixNeighbourTiles(destPos, size, realSize, map.getTile(destPos)->getZoneID());
         connectionCount++;
     }
 }

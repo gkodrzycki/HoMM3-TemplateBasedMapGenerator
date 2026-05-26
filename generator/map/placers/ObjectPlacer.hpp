@@ -8,6 +8,7 @@
 #include "../../mapInfo/Obstacle.hpp"
 #include "../../mapInfo/Resource.hpp"
 #include "../../mapInfo/RichnessLevel.hpp"
+#include "../../mapInfo/TreasureInfo.hpp"
 #include "../Map.hpp"
 
 class Map;
@@ -28,12 +29,16 @@ class ObjectPlacer {
 
   private:
     Map &map;
+    MapObjectRegistry treasureInfo;
     int evalMinePos(int3 minePos, int3 mineSize);
+    void placeTreasure(string treasureName, int3 pos);
     void placeResource(ResourceType resourceType, int3 pos, int quantity);
     void placeArtifact(ArtifactType artifactType, int3 pos);
     double evalTreasureCandidate(int3 candidatePosition, vector<vector<int>> &tilesTreeCount,
                                  vector<int3> &freeTiles, int acceptableBlockedTiles);
-    int placeTreasuresNearCandidate(int3 candidatePosition, ArtifactTier tierOfTreasures);
+    void placeTreasuresNearCandidate(int3 candidatePosition, int desiredValue);
+    vector<int3> getPossibleTreasurePositions(int3 candidatePosition);
+    // int placeTreasuresNearCandidate(int3 candidatePosition, ArtifactTier tierOfTreasures);
     int getNumberOfTreasures(int zoneID);
     double getPercentageOfMaxTreasures(ArtifactTier tierOfTreasures);
     ArtifactTier getTierOfTreasures(int zoneID);

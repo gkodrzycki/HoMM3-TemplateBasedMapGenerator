@@ -1,0 +1,222 @@
+[
+    {
+        "objectName": "pandoraBox",
+        "value": 10000
+    },
+    {
+        "objectName": "refugeeCamp",
+        "value": 5000
+    },
+    {
+        "objectName": "warMachineFactory",
+        "value": 1500
+    },
+    {
+        "objectName": "obelisk",
+        "value": 3500
+    },
+    {
+        "objectName": "denOfThieves",
+        "value": 100
+    },
+    {
+        "objectName": "randomArtifactTreasure",
+        "value": 2000
+    },
+    {
+        "objectName": "randomArtifactMinor",
+        "value": 5000
+    },
+    {
+        "objectName": "randomArtifactMajor",
+        "value": 10000
+    },
+    {
+        "objectName": "randomArtifactRelic",
+        "value": 20000
+    },
+    {
+        "objectName": "hillFort",
+        "value": 7000
+    },
+    {
+        "objectName": "tavern",
+        "value": 100
+    },
+    {
+        "objectName": "sanctuary",
+        "value": 100
+    },
+    {
+        "objectName": "cyclopsStockpile",
+        "value": 3000
+    },
+    {
+        "objectName": "dwarvenTreasury",
+        "value": 2000
+    },
+    {
+        "objectName": "griffinConservatory",
+        "value": 2000
+    },
+    {
+        "objectName": "impCache",
+        "value": 5000
+    },
+    {
+        "objectName": "medusaStore",
+        "value": 1500
+    },
+    {
+        "objectName": "nagaBank",
+        "value": 3000
+    },
+    {
+        "objectName": "dragonFlyHive",
+        "value": 9000
+    },
+    {
+        "objectName": "crypt",
+        "value": 1000
+    },
+    {
+        "objectName": "dragonUtopia",
+        "value": 10000
+    },
+    {
+        "objectName": "wagon",
+        "value": 500
+    },
+    {
+        "objectName": "warriorTomb",
+        "value": 6000
+    },
+    {
+        "objectName": "campfire",
+        "value": 2000
+    },
+    {
+        "objectName": "treasureChest",
+        "value": 1500
+    },
+    {
+        "objectName": "mysticalGarden",
+        "value": 500
+    },
+    {
+        "objectName": "windmill",
+        "value": 1500
+    },
+    {
+        "objectName": "waterWheel",
+        "value": 750
+    },
+    {
+        "objectName": "arena",
+        "value": 3000
+    },
+    {
+        "objectName": "marlettoTower",
+        "value": 1500
+    },
+    {
+        "objectName": "gardenOfRevelation",
+        "value": 1500
+    },
+    {
+        "objectName": "libraryOfEnlightenment",
+        "value": 12000
+    },
+    {
+        "objectName": "mercenaryCamp",
+        "value": 1500
+    },
+    {
+        "objectName": "starAxis",
+        "value": 1500
+    },
+    {
+        "objectName": "treeOfKnowledge",
+        "value": 2500
+    },
+    {
+        "objectName": "schoolOfMagic",
+        "value": 1000
+    },
+    {
+        "objectName": "schoolOfWar",
+        "value": 1000
+    },
+    {
+        "objectName": "learningStone",
+        "value": 1500
+    },
+    {
+        "objectName": "swanPond",
+        "value": 100
+    },
+    {
+        "objectName": "faerieRing",
+        "value": 100
+    },
+    {
+        "objectName": "fountainOfFortune",
+        "value": 100
+    },
+    {
+        "objectName": "fountainOfYouth",
+        "value": 100
+    },
+    {
+        "objectName": "idolOfFortune",
+        "value": 100
+    },
+    {
+        "objectName": "oasis",
+        "value": 100
+    },
+    {
+        "objectName": "stables",
+        "value": 200
+    },
+    {
+        "objectName": "temple",
+        "value": 100
+    },
+    {
+        "objectName": "rallyFlag",
+        "value": 100
+    },
+    {
+        "objectName": "wateringHole",
+        "value": 500
+    },
+    {
+        "objectName": "Ore",
+        "value": 100
+    },
+    {
+        "objectName": "Wood",
+        "value": 100
+    },
+    {
+        "objectName": "Mercury",
+        "value": 250
+    },
+    {
+        "objectName": "Sulfur",
+        "value": 250
+    },
+    {
+        "objectName": "Crystal",
+        "value": 250
+    },
+    {
+        "objectName": "Gems",
+        "value": 250
+    },
+    {
+        "objectName": "Gold",
+        "value": 100
+    }
+]

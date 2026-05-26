@@ -26,6 +26,7 @@ void AddMine(ofstream &luaFile, shared_ptr<Mine> mine);
 void AddMines(ofstream &luaFile, Map &map);
 void AddResource(ofstream &luaFile, shared_ptr<Resource> resource);
 void AddArtifact(ofstream &luaFile, shared_ptr<Artifact> artifact);
+void AddTreasure(ofstream &luaFile, shared_ptr<Treasure> treasure);
 void AddTreasures(ofstream &luaFile, Map &map);
 // void AddBuildingTreasure(ofstream& luaFile, Treasure treasure);
 // void AddSign(ofstream& luaFile, string text, int x, int y, int z);
