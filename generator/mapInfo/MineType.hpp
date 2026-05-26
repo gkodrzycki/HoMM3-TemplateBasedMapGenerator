@@ -37,6 +37,27 @@ inline int3 getMineSize(MineType mineType) {
     }
 }
 
+inline vector<string> getMineRealSize(MineType mineType) {
+    switch (mineType) {
+    case MineType::MINE_ALCHEMISTS_LAB:
+        return vector<string>{"111"};
+    case MineType::MINE_CRYSTAL_CAVERN:
+        return vector<string>{"111"};
+    case MineType::MINE_GEM_POND:
+        return vector<string>{"111", "111"};
+    case MineType::MINE_GOLD_MINE:
+        return vector<string>{"111"};
+    case MineType::MINE_ORE_PIT:
+        return vector<string>{"111", "111"};
+    case MineType::MINE_SAWMILL:
+        return vector<string>{"0011", "1111"};
+    case MineType::MINE_SULFUR_DUNE:
+        return vector<string>{"111"};
+    default:
+        return vector<string>{"1"};
+    }
+}
+
 inline ResourceType mineTypeToResourceType(MineType mineType) {
     switch (mineType) {
     case MineType::MINE_ALCHEMISTS_LAB:

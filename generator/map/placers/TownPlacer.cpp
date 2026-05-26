@@ -75,8 +75,9 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
         auto townPtr = make_shared<Town>(town);
         map.addObject(townPtr);
 
-        map.fixNeighbourTiles(townPtr->getPosition(), townPtr->getSize(), zoneID, offset);
-        int3 entrancePos = townPtr->getPosition() - int3(townPtr->getSize().x / 2, 0, 0);
+        map.fixNeighbourTiles(townPtr->getPosition(), townPtr->getSize(), townPtr->getRealSize(),
+                              zoneID, offset);
+        int3 entrancePos = townPtr->getPosition() + townPtr->getEntryPoint();
         map.getTile(entrancePos)->setTileType(TileType::TILE_OCCUPIED);
 
         placedTowns.push_back(townPos);

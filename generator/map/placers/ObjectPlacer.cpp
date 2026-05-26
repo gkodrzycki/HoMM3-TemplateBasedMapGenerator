@@ -187,7 +187,8 @@ void ObjectPlacer::placeMine(int3 pos, MineType mineType) {
     auto minePtr = make_shared<Mine>(mine);
 
     map.addObject(minePtr);
-    map.fixNeighbourTiles(pos, getMineSize(mineType), map.getTile(pos)->getZoneID());
+    map.fixNeighbourTiles(pos, getMineSize(mineType), getMineRealSize(mineType),
+                          map.getTile(pos)->getZoneID());
 }
 
 void ObjectPlacer::placeMineResources() {

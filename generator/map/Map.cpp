@@ -197,24 +197,24 @@ void Map::generateMap() {
     TerrainPlacer terrainPlacer(*this);
     terrainPlacer.generateNoise();
 
-    // TownPlacer townPlacer(*this);
-    // townPlacer.placeTowns();
+    TownPlacer townPlacer(*this);
+    townPlacer.placeTowns();
 
-    // ConnectionPlacer connectionPlacer(*this);
-    // connectionPlacer.placeRoads();
-    // connectionPlacer.createMonoliths();
+    ConnectionPlacer connectionPlacer(*this);
+    connectionPlacer.placeRoads();
+    connectionPlacer.createMonoliths();
 
-    // ObjectPlacer objectPlacer(*this);
-    // // objectPlacer.placeBasicMines(); TODO: decide if we want to place basic mines standalone or
-    // // not
-    // objectPlacer.placeMines();
-    // objectPlacer.placeMineResources();
-    // objectPlacer.placeTreasures();
+    ObjectPlacer objectPlacer(*this);
+    // objectPlacer.placeBasicMines(); TODO: decide if we want to place basic mines standalone or
+    // not
+    objectPlacer.placeMines();
+    objectPlacer.placeMineResources();
+    objectPlacer.placeTreasures();
 
-    // GuardPlacer guardPlacer(*this);
-    // guardPlacer.placeGuards();
+    GuardPlacer guardPlacer(*this);
+    guardPlacer.placeGuards();
 
-    // fixReachability();
+    fixReachability();
 
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
@@ -239,7 +239,8 @@ void Map::placeDebugObjects() {
     }
 }
 
-void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const int3 &offset) {
+void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, const vector<string> &realSize,
+                            int zoneID, const int3 &offset) {
     auto zoneMap       = getZoneMap();
     string zoneTerrain = zoneMap[zoneID]->getTerrain();
 
@@ -254,7 +255,7 @@ void Map::fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID, const
             if (offset.x >= 1 && offset.y >= 1 &&
                 (dx == size.x + offset.x - 1 || dy == size.y + offset.y - 1)) {
                 tilePtr->setTileType(TileType::TILE_RESERVED);
-            } else {
+            } else if (dx < size.x && dy < size.y && realSize[dy][dx] == '1') {
                 tilePtr->setTileType(TileType::TILE_TAKEN);
             }
             tilePtr->setZoneID(zoneID);
