@@ -42,6 +42,7 @@ class ZonePlacer {
   private:
     Map &map;
     DistanceMap distancedBetweenZones;
+    GridSearchContext gridCtx;
     int gridN;
     vector<vector<int>> grid;
 };

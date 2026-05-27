@@ -30,8 +30,6 @@ vector<int3> BorderPlacer::getBorderTiles() {
 }
 
 void BorderPlacer::expandBorderTiles(vector<int3> &borderTiles, int maxDepth) {
-    int mapWidth = map.getWidth(), mapHeight = map.getHeight();
-
     auto neighbors8 = [&](const int3 &p) {
         std::array<int3, 8> out;
         for (int i = 0; i < 8; i++)
@@ -42,7 +40,7 @@ void BorderPlacer::expandBorderTiles(vector<int3> &borderTiles, int maxDepth) {
     auto passable = [&](const int3 &p) { return true; };
 
     borderTiles =
-        bfs_collect_depth_xy(mapWidth, mapHeight, borderTiles, maxDepth, neighbors8, passable);
+        bfs_collect_depth_xy(map.getSearchCtx(), borderTiles, maxDepth, neighbors8, passable);
 }
 
 void BorderPlacer::reserveBorderTiles() {

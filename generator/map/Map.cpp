@@ -1,6 +1,6 @@
 #include "./Map.hpp"
 
-Map::Map(RNG &rng, TemplateInfo templateInfo) : rng(rng), templateInfo(templateInfo) {}
+Map::Map(RNG &rng, TemplateInfo templateInfo) : rng(rng), templateInfo(templateInfo), searchCtx() {}
 
 pair<int, int> Map::chooseMapSize(int minimumSize, int maximumSize) {
     vector<string> sizes;
@@ -54,6 +54,7 @@ CreatureVector Map::getCreatureVector() { return creatureVector; }
 TreasureVector Map::getTreasureVector() { return treasureVector; }
 PandoraBoxVector Map::getPandoraBoxVector() { return pandoraBoxVector; }
 MonolithVector Map::getMonolithVector() { return monolithVector; }
+GridSearchContext &Map::getSearchCtx() { return searchCtx; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
@@ -118,8 +119,8 @@ void Map::fixReachability() {
                 return 0;
             return a.distance2DMH(b) + 1;
         };
-
-        auto reachability = dijkstra_reachability(W, H, center, neighbors, passable, cost);
+        auto ctx = getSearchCtx();
+        dijkstra_reachability(ctx, center, neighbors, passable, cost);
 
         auto objectVector   = getObjectVector();
         auto monolithVector = getMonolithVector();
@@ -137,31 +138,30 @@ void Map::fixReachability() {
             if (getTile(pos)->isTileType("T")) {
                 pos = pos + int3(-1, 1, 0);
             }
-            if (reachability[pos].second == numeric_limits<int>::max()) {
+            if (reach_dist(ctx, pos.x, pos.y) == numeric_limits<int>::max()) {
                 continue;
             }
-            if (reachability[pos].second == 0) {
+            if (reach_dist(ctx, pos.x, pos.y) == 0) {
                 continue;
             }
-            int distance = reachability[pos].second;
+            int distance = reach_dist(ctx, pos.x, pos.y);
             while (distance != 0) {
                 auto tile = getTile(pos);
                 if (tile->isTileType("bO")) {
                     tile->setTileType(TileType::TILE_FREE);
                 }
-                reachability[pos].second = 0;
-                pos                      = reachability[pos].first;
-                distance                 = reachability[pos].second;
+                pos      = reach_parent(ctx, pos.x, pos.y);
+                distance = reach_dist(ctx, pos.x, pos.y);
             }
         }
 
         for (int j = 0; j < H; j++) {
             for (int i = 0; i < W; i++) {
                 int3 pos(i, j, 0);
-                if (reachability[pos].second == numeric_limits<int>::max()) {
+                if (reach_dist(ctx, pos.x, pos.y) == numeric_limits<int>::max()) {
                     continue;
                 }
-                if (reachability[pos].second == 0) {
+                if (reach_dist(ctx, pos.x, pos.y) == 0) {
                     continue;
                 }
 
@@ -179,6 +179,7 @@ void Map::initTiles() {
 
     width  = width_height.first;
     height = width_height.second;
+    searchCtx.resize(width, height);
     tileMap.resize(height, vector<shared_ptr<Tile>>(width));
 
     for (int i = 0; i < height; i++) {
@@ -194,7 +195,6 @@ void Map::generateMap() {
     if (templateInfo.getDebug() > 0) {
         cerr << "==== SEED: " << rng.getOriginalSeed() << " ====\n";
     }
-
     initMap();
 
     ZonePlacer zonePlacer(*this);
@@ -224,7 +224,11 @@ void Map::generateMap() {
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
 
+    cerr << "Guards placed, fixing reachability...\n";
+
     fixReachability();
+
+    cerr << "Reachability fixed, placing borders and obstacles...\n";
 
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();

@@ -2,6 +2,7 @@
 
 #include "../global/CellularAutomata.hpp"
 #include "../global/Global.hpp"
+#include "../global/GridSearch.hpp"
 #include "../global/Random.hpp"
 #include "../mapInfo/Creature.hpp"
 #include "../mapInfo/GroupSetting.hpp"
@@ -64,6 +65,7 @@ class Map {
     PandoraBoxVector getPandoraBoxVector();
     MonolithVector getMonolithVector();
     HashMap getHashMap();
+    GridSearchContext &getSearchCtx();
     RNG &getRNG();
     int getWidth();
     int getHeight();
@@ -83,6 +85,8 @@ class Map {
 
     RNG &rng;
     TemplateInfo templateInfo;
+
+    GridSearchContext searchCtx;
 
     int width, height;
 
