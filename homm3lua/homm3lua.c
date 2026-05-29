@@ -1,4 +1,8 @@
 #include "homm3lua.h"
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /// Glue between homm3tools and Lua.
 // @module homm3lua
@@ -475,6 +479,234 @@ static int write(lua_State *L) {
     return 0;
 }
 
+// Write a 32-bit little-endian value into a byte buffer at the given offset.
+static void write_le32(uint8_t *buf, int offset, uint32_t val) {
+    buf[offset + 0] = val & 0xFF;
+    buf[offset + 1] = (val >> 8) & 0xFF;
+    buf[offset + 2] = (val >> 16) & 0xFF;
+    buf[offset + 3] = (val >> 24) & 0xFF;
+}
+
+/// Place a Pandora's Box with optional content.
+// @function    pandora
+// @tparam      homm3lua_xyz    xyz       Position in {x, y, z} format.
+// @tparam      table           content   Optional table with content fields:
+//   gold, experience, spell_points, morale, luck,
+//   attack, defense, spell_power, knowledge.
+//
+// Binary layout of the default Pandora's Box body (55 bytes, all-zero baseline):
+//   [0]    has_guardians  (uint8)
+//   [1-4]  experience     (uint32 LE)
+//   [5-8]  spell_points   (uint32 LE)
+//   [9]    morale         (int8)
+//   [10]   luck           (int8)
+//   [11-14] wood          (uint32 LE)
+//   [15-18] mercury       (uint32 LE)
+//   [19-22] ore           (uint32 LE)
+//   [23-26] sulfur        (uint32 LE)
+//   [27-30] crystal       (uint32 LE)
+//   [31-34] gems          (uint32 LE)
+//   [35-38] gold          (uint32 LE)
+//   [39]   attack         (uint8)
+//   [40]   defense        (uint8)
+//   [41]   spell_power    (uint8)
+//   [42]   knowledge      (uint8)
+//   [43]   secondary_skills_count (uint8)
+//   [44]   artifacts_count        (uint8)
+//   [45]   spells_count           (uint8)
+//   [46]   creatures_count        (uint8)
+//   [47-54] unknown1[8]
+static int pandora(lua_State *L) {
+    h3mlib_ctx_t *h3m = (h3mlib_ctx_t *)luaL_checkudata(L, 1, "homm3lua");
+
+    const h3mlua_xyz xyz = h3mlua_check_xyz(L, 2);
+
+    int object = 0;
+    if (h3m_object_add(*h3m, "Pandora's Box", xyz.x, xyz.y, xyz.z, &object))
+        return luaL_error(L, "h3m_object_add: Pandora's Box");
+
+    if ((*h3m)->meta.od_entries[object].oa_type != META_OBJECT_PANDORAS_BOX)
+        return luaL_error(L, "internal error: expected PANDORAS_BOX type");
+
+    uint8_t *body = (uint8_t *)(*h3m)->h3m.od.entries[object].body;
+
+    if (lua_istable(L, 3)) {
+        lua_getfield(L, 3, "gold");
+        if (!lua_isnil(L, -1))
+            write_le32(body, 35, (uint32_t)luaL_checkinteger(L, -1));
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "experience");
+        if (!lua_isnil(L, -1))
+            write_le32(body, 1, (uint32_t)luaL_checkinteger(L, -1));
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "spell_points");
+        if (!lua_isnil(L, -1))
+            write_le32(body, 5, (uint32_t)luaL_checkinteger(L, -1));
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "morale");
+        if (!lua_isnil(L, -1))
+            body[9] = (uint8_t)(luaL_checkinteger(L, -1) & 0xFF);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "luck");
+        if (!lua_isnil(L, -1))
+            body[10] = (uint8_t)(luaL_checkinteger(L, -1) & 0xFF);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "attack");
+        if (!lua_isnil(L, -1))
+            body[39] = (uint8_t)(luaL_checkinteger(L, -1) & 0xFF);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "defense");
+        if (!lua_isnil(L, -1))
+            body[40] = (uint8_t)(luaL_checkinteger(L, -1) & 0xFF);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "spell_power");
+        if (!lua_isnil(L, -1))
+            body[41] = (uint8_t)(luaL_checkinteger(L, -1) & 0xFF);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 3, "knowledge");
+        if (!lua_isnil(L, -1))
+            body[42] = (uint8_t)(luaL_checkinteger(L, -1) & 0xFF);
+        lua_pop(L, 1);
+
+        /* ---- artifacts: array of artifact name strings or numeric IDs ---- */
+        int art_ids[64];
+        int art_count = 0;
+        lua_getfield(L, 3, "artifacts");
+        if (!lua_isnil(L, -1) && lua_istable(L, -1)) {
+            extern int object_names_hash(const char *key);
+            lua_len(L, -1);
+            int na = (int)lua_tointeger(L, -1);
+            lua_pop(L, 1);
+            if (na > 64)
+                na = 64;
+            for (int i = 0; i < na; ++i) {
+                lua_rawgeti(L, -1, i + 1);
+                if (lua_isstring(L, -1)) {
+                    const char *aname = lua_tostring(L, -1);
+                    char fixed[68]    = {0};
+                    size_t alen       = strlen(aname);
+                    /* h3mlib expects def name: append '0' if name ends in a letter */
+                    if (alen > 0 && isalpha((unsigned char)aname[alen - 1]))
+                        snprintf(fixed, sizeof(fixed), "%s0", aname);
+                    else
+                        snprintf(fixed, sizeof(fixed), "%s", aname);
+                    int aid = object_names_hash(fixed);
+                    if (aid >= 0)
+                        art_ids[art_count++] = aid;
+                } else if (lua_isinteger(L, -1)) {
+                    art_ids[art_count++] = (int)lua_tointeger(L, -1);
+                }
+                lua_pop(L, 1);
+            }
+        }
+        lua_pop(L, 1);
+
+        /* ---- creatures: array of {name='X', quantity=N} tables ---- */
+        int cr_types[64];
+        int cr_qtys[64];
+        int cr_count = 0;
+        lua_getfield(L, 3, "creatures");
+        if (!lua_isnil(L, -1) && lua_istable(L, -1)) {
+            extern int creature_names_hash(const char *);
+            lua_len(L, -1);
+            int nc = (int)lua_tointeger(L, -1);
+            lua_pop(L, 1);
+            if (nc > 64)
+                nc = 64;
+            for (int i = 0; i < nc; ++i) {
+                lua_rawgeti(L, -1, i + 1);
+                if (!lua_isnil(L, -1) && lua_istable(L, -1)) {
+                    lua_getfield(L, -1, "name");
+                    const char *cname = lua_isstring(L, -1) ? lua_tostring(L, -1) : NULL;
+                    lua_pop(L, 1);
+                    lua_getfield(L, -1, "quantity");
+                    int qty = lua_isinteger(L, -1) ? (int)lua_tointeger(L, -1) : 1;
+                    lua_pop(L, 1);
+                    if (cname) {
+                        int cid = creature_names_hash(cname);
+                        if (cid >= 0) {
+                            cr_types[cr_count] = cid;
+                            cr_qtys[cr_count]  = qty;
+                            cr_count++;
+                        }
+                    }
+                }
+                lua_pop(L, 1);
+            }
+        }
+        lua_pop(L, 1);
+
+        /* ---- rebuild binary body when artifacts or creatures are present ----
+         *
+         * Default body (55 bytes, all zeros, binary-compatible) layout:
+         *   [0]    has_guardians
+         *   [1..43] experience, spell_points, morale, luck, resources[7],
+         *           primary_skills, secondary_skills_count=0
+         *   [44]   artifacts_count  then: artifacts_count * (1 or 2) bytes
+         *   [?]    spells_count     then: spells_count bytes
+         *   [?]    creatures_count  then: creatures_count * (3 or 4) bytes
+         *   [?]    unknown1[8]
+         * ROE uses 1-byte artifact IDs and 3-byte creature slots;
+         * AB/SOD uses 2-byte artifact IDs and 4-byte creature slots.
+         */
+        if (art_count > 0 || cr_count > 0) {
+            const int is_roe      = (int)((*h3m)->h3m.format == H3M_FORMAT_ROE);
+            const int art_item_sz = is_roe ? 1 : 2;
+            const int cr_slot_sz  = is_roe ? 3 : 4;
+            const size_t prefix   = 44; /* bytes [0..43] are pure scalars */
+            size_t new_size       = prefix + 1 + (size_t)art_count * (size_t)art_item_sz +
+                              1 /* spells_count = 0 */
+                              + 1 + (size_t)cr_count * (size_t)cr_slot_sz + 8; /* unknown1[8] */
+
+            uint8_t *nb = (uint8_t *)calloc(new_size, 1);
+            if (!nb)
+                return luaL_error(L, "pandora: out of memory");
+
+            memcpy(nb, body, prefix);
+            size_t pos = prefix;
+
+            /* artifacts */
+            nb[pos++] = (uint8_t)art_count;
+            for (int i = 0; i < art_count; ++i) {
+                nb[pos++] = (uint8_t)(art_ids[i] & 0xFF);
+                if (!is_roe)
+                    nb[pos++] = (uint8_t)((art_ids[i] >> 8) & 0xFF);
+            }
+
+            /* spells: none */
+            nb[pos++] = 0;
+
+            /* creatures */
+            nb[pos++] = (uint8_t)cr_count;
+            for (int i = 0; i < cr_count; ++i) {
+                if (is_roe) {
+                    nb[pos++] = (uint8_t)(cr_types[i] & 0xFF);
+                } else {
+                    nb[pos++] = (uint8_t)(cr_types[i] & 0xFF);
+                    nb[pos++] = (uint8_t)((cr_types[i] >> 8) & 0xFF);
+                }
+                nb[pos++] = (uint8_t)(cr_qtys[i] & 0xFF);
+                nb[pos++] = (uint8_t)((cr_qtys[i] >> 8) & 0xFF);
+            }
+            /* unknown1[8] already zeroed by calloc */
+
+            free((*h3m)->h3m.od.entries[object].body);
+            (*h3m)->h3m.od.entries[object].body       = nb;
+            (*h3m)->meta.od_entries[object].body_size = new_size;
+        }
+    }
+
+    return 0;
+}
+
 // -----------------------------------------------------------------------------
 
 static const struct luaL_Reg h3mlua_instance[] = {{"__gc", __gc},
@@ -486,6 +718,7 @@ static const struct luaL_Reg h3mlua_instance[] = {{"__gc", __gc},
                                                   {"mine", mine},
                                                   {"name", name},
                                                   {"obstacle", obstacle},
+                                                  {"pandora", pandora},
                                                   {"player", player},
                                                   {"resource", resource},
                                                   {"sign", sign},

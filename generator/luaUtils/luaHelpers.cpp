@@ -287,6 +287,46 @@ void AddTreasures(ofstream &luaFile, Map &map) {
     }
 }
 
+// @function    AddPandoraBox
+// @tparam      ofstream                    luaFile      file where we save lua script.
+// @tparam      shared_ptr<PandoraBox>      pandoraBox   completed PandoraBox object.
+void AddPandoraBox(ofstream &luaFile, shared_ptr<PandoraBox> pandoraBox) {
+    const auto &c   = pandoraBox->getContent();
+    const auto &pos = pandoraBox->getPosition();
+
+    luaFile << "instance:pandora({x=" << pos.x << ", y=" << pos.y << ", z=" << pos.z << "}, {";
+
+    bool first = true;
+    auto field = [&](const char *name, int val) {
+        if (val != 0) {
+            if (!first)
+                luaFile << ", ";
+            luaFile << name << "=" << val;
+            first = false;
+        }
+    };
+    field("gold", c.gold);
+    field("experience", c.experience);
+    field("spell_points", c.spellPoints);
+    field("morale", c.morale);
+    field("luck", c.luck);
+    field("attack", c.attack);
+    field("defense", c.defense);
+    field("spell_power", c.spellPower);
+    field("knowledge", c.knowledge);
+
+    luaFile << "})\n";
+}
+
+// @function    AddPandoraBoxes
+// @tparam      ofstream    luaFile     file where we save lua script.
+// @tparam      Map         map         object of map class with finished setup.
+void AddPandoraBoxes(ofstream &luaFile, Map &map) {
+    for (auto &pandoraBox : map.getPandoraBoxVector()) {
+        AddPandoraBox(luaFile, pandoraBox);
+    }
+}
+
 // // @function    AddBuildingTreasure
 // // @tparam      ofstream    luaFile          file where we save lua script.
 // // @tparam      Treasure    treasure         Treasure object to place.

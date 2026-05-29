@@ -55,6 +55,7 @@ COMMON_SOURCES = \
 			  $(MAP_INFO_DIR)/TreasureInfo.cpp \
 			  $(MAP_INFO_DIR)/Resource.cpp \
 			  $(MAP_INFO_DIR)/Artifact.cpp \
+			  $(MAP_INFO_DIR)/PandoraBox.cpp \
 			  $(MAP_INFO_DIR)/Mine.cpp \
 			  $(MAP_INFO_DIR)/Road.cpp
 

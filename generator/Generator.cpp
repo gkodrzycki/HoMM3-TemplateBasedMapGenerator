@@ -43,6 +43,8 @@ void generateLuaScript(Map map, string &saveLocation) {
 
     AddTreasures(luaFile, map);
 
+    AddPandoraBoxes(luaFile, map);
+
     // Finishing luaScript
     string homeDir = getenv("HOME");
 
