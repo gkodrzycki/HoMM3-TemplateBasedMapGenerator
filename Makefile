@@ -52,6 +52,7 @@ COMMON_SOURCES = \
 			  $(MAP_INFO_DIR)/Obstacle.cpp \
 			  $(MAP_INFO_DIR)/Creature.cpp \
 			  $(MAP_INFO_DIR)/Treasure.cpp \
+			  $(MAP_INFO_DIR)/TreasureInfo.cpp \
 			  $(MAP_INFO_DIR)/Resource.cpp \
 			  $(MAP_INFO_DIR)/Artifact.cpp \
 			  $(MAP_INFO_DIR)/Mine.cpp \
