@@ -5,6 +5,7 @@
 #include "../global/Random.hpp"
 #include "../mapInfo/Creature.hpp"
 #include "../mapInfo/Object.hpp"
+#include "../mapInfo/PandoraBox.hpp"
 #include "../mapInfo/Resource.hpp"
 #include "../mapInfo/Tile.hpp"
 #include "../mapInfo/Zone.hpp"
@@ -17,13 +18,14 @@
 #include "./placers/TownPlacer.hpp"
 #include "./placers/ZonePlacer.hpp"
 
-using ZoneMap        = map<int, shared_ptr<Zone>>;
-using TileMap        = map<int, map<int, shared_ptr<Tile>>>;
-using ObjectVector   = vector<shared_ptr<Object>>;
-using CreatureVector = vector<shared_ptr<Creature>>;
-using RoadVector     = vector<shared_ptr<Road>>;
-using TreasureVector = vector<shared_ptr<Treasure>>;
-using MonolithVector = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
+using ZoneMap          = map<int, shared_ptr<Zone>>;
+using TileMap          = map<int, map<int, shared_ptr<Tile>>>;
+using ObjectVector     = vector<shared_ptr<Object>>;
+using CreatureVector   = vector<shared_ptr<Creature>>;
+using RoadVector       = vector<shared_ptr<Road>>;
+using TreasureVector   = vector<shared_ptr<Treasure>>;
+using PandoraBoxVector = vector<shared_ptr<PandoraBox>>;
+using MonolithVector   = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
 
 class Map {
   public:
@@ -42,6 +44,7 @@ class Map {
     void addRoad(shared_ptr<Road> road);
     void addCreature(shared_ptr<Creature> creature);
     void addTreasure(shared_ptr<Treasure> treasure);
+    void addPandoraBox(shared_ptr<PandoraBox> pandoraBox);
     void addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest);
     void fixReachability();
     TemplateInfo getTemplateInfo();
@@ -52,6 +55,7 @@ class Map {
     RoadVector getRoadVector();
     CreatureVector getCreatureVector();
     TreasureVector getTreasureVector();
+    PandoraBoxVector getPandoraBoxVector();
     MonolithVector getMonolithVector();
     RNG &getRNG();
     int getWidth();
@@ -78,6 +82,7 @@ class Map {
     ObjectVector objectVector;
     CreatureVector creatureVector;
     TreasureVector treasureVector;
+    PandoraBoxVector pandoraBoxVector;
     RoadVector roadVector;
     MonolithVector monolithVector;
 };
