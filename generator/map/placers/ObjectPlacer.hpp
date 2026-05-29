@@ -16,8 +16,6 @@ class Map;
 class ObjectPlacer {
   public:
     ObjectPlacer(Map &map);
-
-    void placeBasicMines();
     void placeMines();
     void placeMine(int3 pos, MineType mineType);
     void placeMineResources();
@@ -30,7 +28,6 @@ class ObjectPlacer {
   private:
     Map &map;
     MapObjectRegistry treasureInfo;
-    int evalMinePos(int3 minePos, int3 mineSize);
     void placeTreasure(string treasureName, int3 pos);
     void placeResource(ResourceType resourceType, int3 pos, int quantity);
     void placeArtifact(ArtifactType artifactType, int3 pos);

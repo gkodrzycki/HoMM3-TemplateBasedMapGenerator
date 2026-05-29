@@ -9,22 +9,20 @@ enum class ObjectCategory {
     VISITABLE,
     CREATURE_BANK,
     RESOURCE,
-    PANDORAS_BOX // osobno?
+    PANDORAS_BOX // TODO: standalone?
 };
 
 struct MapObjectDefinition {
-    string objectName;
     int value;
+    int3 size;
+    int3 entryPoint;
+    string objectName;
+    vector<string> realSize;
     ObjectCategory category;
 };
 
 class MapObjectRegistry {
   public:
     vector<MapObjectDefinition> allObjects;
-    unordered_map<string, MapObjectDefinition> objectByName;
     void loadFromJson(const string &filepath);
-    MapObjectDefinition getRandomObject(ObjectCategory category, int targetValue, int tolerance,
-                                        RNG &rng);
-
-    int getObjectValue(const string &objectName);
 };

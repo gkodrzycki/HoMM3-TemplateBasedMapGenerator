@@ -18,7 +18,7 @@
 #include "./placers/ZonePlacer.hpp"
 
 using ZoneMap        = map<int, shared_ptr<Zone>>;
-using TileMap        = map<int, map<int, shared_ptr<Tile>>>;
+using TileMap        = vector<vector<shared_ptr<Tile>>>;
 using ObjectVector   = vector<shared_ptr<Object>>;
 using CreatureVector = vector<shared_ptr<Creature>>;
 using RoadVector     = vector<shared_ptr<Road>>;

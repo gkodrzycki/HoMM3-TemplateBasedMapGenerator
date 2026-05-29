@@ -171,6 +171,7 @@ void Map::initTiles() {
 
     width  = width_height.first;
     height = width_height.second;
+    tileMap.resize(height, vector<shared_ptr<Tile>>(width));
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -366,16 +367,12 @@ int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
 
     if (minDistanceRelative > 0) {
         if (maxMinDistSqRelative < minDistanceRelative * minDistanceRelative) {
-            cerr << "Failed to find a position with minDistanceRelative " << minDistanceRelative
-                 << " (maxMinDistSqRelative was " << maxMinDistSqRelative << ")\n";
             return int3(-1, -1, -1);
         }
     }
 
     if (minDistanceTotal > 0) {
         if (maxMinDistSqTotal < minDistanceTotal * minDistanceTotal) {
-            cerr << "Failed to find a position with minDistanceTotal " << minDistanceTotal
-                 << " (maxMinDistSqTotal was " << maxMinDistSqTotal << ")\n";
             return int3(-1, -1, -1);
         }
     }

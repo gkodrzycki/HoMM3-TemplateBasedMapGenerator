@@ -80,7 +80,7 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
         int3 entrancePos = townPtr->getPosition() + townPtr->getEntryPoint();
         map.getTile(entrancePos)->setTileType(TileType::TILE_OCCUPIED);
 
-        placedTowns.push_back(townPos);
+        placedTowns.push_back(townPtr->getPosition());
     }
 }
 
@@ -134,12 +134,8 @@ void TownPlacer::placeTowns() {
         placeSpecificTowns(neutralTownsSettings, townTypes, zoneID, true, false, freeTiles,
                            placedTowns);
 
-        // if(placedTowns.size() > 0){
-        //     cerr << "Changing zone center for zone " << zoneID << " from " <<
-        //     map.getZoneMap()[zoneID]->getCenter().toString() << " to " << (placedTowns[0] +
-        //     int3(1, 1, 0)).toString() << endl;
-        //     // map.getZoneMap()[zoneID]->setCenter(placedTowns[0] + int3(1, 1, 0)); // TODO:
-        //     improve center calculation
-        // }
+        if (placedTowns.size() > 0) {
+            map.getZoneMap()[zoneID]->setCenter(placedTowns[0] + int3(-2, 0, 0));
+        }
     }
 }

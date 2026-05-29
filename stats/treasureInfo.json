@@ -5,11 +5,13 @@
     },
     {
         "objectName": "refugeeCamp",
-        "value": 5000
+        "value": 5000,
+        "size": "2,1"
     },
     {
         "objectName": "warMachineFactory",
-        "value": 1500
+        "value": 1500,
+        "size": "2,1"
     },
     {
         "objectName": "obelisk",
@@ -17,7 +19,8 @@
     },
     {
         "objectName": "denOfThieves",
-        "value": 100
+        "value": 100,
+        "size": "2,1"
     },
     {
         "objectName": "randomArtifactTreasure",
@@ -37,39 +40,53 @@
     },
     {
         "objectName": "hillFort",
-        "value": 7000
+        "value": 7000,
+        "size": "2,1"
     },
     {
         "objectName": "tavern",
-        "value": 100
+        "value": 100,
+        "size": "2,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "sanctuary",
-        "value": 100
+        "value": 100,
+        "size": "2,1"
     },
     {
         "objectName": "cyclopsStockpile",
-        "value": 3000
+        "value": 3000,
+        "size": "2,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "dwarvenTreasury",
-        "value": 2000
+        "value": 2000,
+        "size": "3,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "griffinConservatory",
-        "value": 2000
+        "value": 2000,
+        "size": "2,1"
     },
     {
         "objectName": "impCache",
-        "value": 5000
+        "value": 5000,
+        "size": "2,1"
     },
     {
         "objectName": "medusaStore",
-        "value": 1500
+        "value": 1500,
+        "size": "2,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "nagaBank",
-        "value": 3000
+        "value": 3000,
+        "size": "2,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "dragonFlyHive",
@@ -77,11 +94,16 @@
     },
     {
         "objectName": "crypt",
-        "value": 1000
+        "value": 1000,
+        "size": "3,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "dragonUtopia",
-        "value": 10000
+        "value": 10000,
+        "size": "6,3",
+        "entryPoint": "-1,0",
+        "realSize": ["001111", "111110", "001110"]
     },
     {
         "objectName": "wagon",
@@ -89,7 +111,8 @@
     },
     {
         "objectName": "warriorTomb",
-        "value": 6000
+        "value": 6000,
+        "size": "2,1"
     },
     {
         "objectName": "campfire",
@@ -101,23 +124,30 @@
     },
     {
         "objectName": "mysticalGarden",
-        "value": 500
+        "value": 500,
+        "size": "3,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "windmill",
-        "value": 1500
+        "value": 1500,
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "waterWheel",
-        "value": 750
+        "value": 750,
+        "size": "3,2"
     },
     {
         "objectName": "arena",
-        "value": 3000
+        "value": 3000,
+        "size": "3,2",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "marlettoTower",
-        "value": 1500
+        "value": 1500,
+        "size": "2,1"
     },
     {
         "objectName": "gardenOfRevelation",
@@ -125,11 +155,16 @@
     },
     {
         "objectName": "libraryOfEnlightenment",
-        "value": 12000
+        "value": 12000,
+        "size": "4,2",
+        "entryPoint": "-1,0",
+        "realSize": ["0011", "1111"]
     },
     {
         "objectName": "mercenaryCamp",
-        "value": 1500
+        "value": 1500,
+        "size": "3,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "starAxis",
@@ -137,7 +172,8 @@
     },
     {
         "objectName": "treeOfKnowledge",
-        "value": 2500
+        "value": 2500,
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "schoolOfMagic",
@@ -145,7 +181,10 @@
     },
     {
         "objectName": "schoolOfWar",
-        "value": 1000
+        "value": 1000,
+        "size": "4,3",
+        "entryPoint": "-1,0",
+        "realSize": ["0110", "1111", "0110"]
     },
     {
         "objectName": "learningStone",
@@ -153,11 +192,15 @@
     },
     {
         "objectName": "swanPond",
-        "value": 100
+        "value": 100,
+        "size": "2,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "faerieRing",
-        "value": 100
+        "value": 100,
+        "size": "2,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "fountainOfFortune",
@@ -165,7 +208,8 @@
     },
     {
         "objectName": "fountainOfYouth",
-        "value": 100
+        "value": 100,
+        "size": "2,2"
     },
     {
         "objectName": "idolOfFortune",
@@ -173,23 +217,24 @@
     },
     {
         "objectName": "oasis",
-        "value": 100
+        "value": 100,
+        "size": "2,2"
     },
     {
         "objectName": "stables",
-        "value": 200
+        "value": 200,
+        "size": "2,1"
     },
     {
         "objectName": "temple",
-        "value": 100
+        "value": 100,
+        "size": "2,1",
+        "entryPoint": "-1,0"
     },
     {
         "objectName": "rallyFlag",
-        "value": 100
-    },
-    {
-        "objectName": "wateringHole",
-        "value": 500
+        "value": 100,
+        "size": "2,1"
     },
     {
         "objectName": "Ore",

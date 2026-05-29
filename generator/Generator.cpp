@@ -47,9 +47,9 @@ void generateLuaScript(Map map, string &saveLocation) {
     string homeDir = getenv("HOME");
 
     if (saveLocation == "") {
-        saveLocation = homeDir +
-                       "/Games/Heroic/Heroes\ of\ Might\ and\ Magic\ III\ -\ Horn\ of\ the\ Abyss/"
-                       "Maps/test.h3m";
+        saveLocation =
+            homeDir +
+            R"(/Games/Heroic/Heroes of Might and Magic III - Horn of the Abyss/Maps/test.h3m)";
     }
 
     luaFile << "instance:write('" + saveLocation + "')";

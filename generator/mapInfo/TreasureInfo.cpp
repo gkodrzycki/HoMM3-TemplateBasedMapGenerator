@@ -1,36 +1,16 @@
 #include "TreasureInfo.hpp"
 
-MapObjectDefinition MapObjectRegistry::getRandomObject(ObjectCategory category, int targetValue,
-                                                       int tolerance, RNG &rng) {
-    std::vector<MapObjectDefinition> validCandidates;
-
-    for (const auto &obj : allObjects) {
-        if (obj.category == category) {
-            // Sprawdzamy czy wartość mieści się w widełkach (np. +/- 20%)
-            if (obj.value >= targetValue - tolerance && obj.value <= targetValue + tolerance) {
-                validCandidates.push_back(obj);
-            }
-        }
+int3 parseInt3(const string &entryStr) {
+    size_t commaPos = entryStr.find(',');
+    if (commaPos != string::npos) {
+        int x = stoi(entryStr.substr(0, commaPos));
+        int y = stoi(entryStr.substr(commaPos + 1));
+        return int3(x, y, 0);
     }
-
-    if (validCandidates.empty()) {
-        throw std::runtime_error("No objects found for category and value criteria.");
-    }
-
-    // Losujemy jeden z pasujących obiektów
-    int index = rng.nextInt(0, validCandidates.size() - 1);
-    return validCandidates[index];
+    return int3(0, 0, 0);
 }
 
-int MapObjectRegistry::getObjectValue(const std::string &objectName) {
-    auto it = objectByName.find(objectName);
-    if (it != objectByName.end()) {
-        return it->second.value;
-    }
-    return 0;
-}
-
-ObjectCategory determineCategory(const std::string &objectName) {
+ObjectCategory determineCategory(const string &objectName) {
     if (objectName == "cyclopsStockpile" || objectName == "dwarvenTreasury" ||
         objectName == "griffinConservatory" || objectName == "impCache" ||
         objectName == "medusaStore" || objectName == "nagaBank" || objectName == "dragonFlyHive" ||
@@ -51,21 +31,37 @@ ObjectCategory determineCategory(const std::string &objectName) {
     }
 }
 
-void MapObjectRegistry::loadFromJson(const std::string &filepath) {
-    std::ifstream file(filepath);
+void MapObjectRegistry::loadFromJson(const string &filepath) {
+    ifstream file(filepath);
     if (!file.is_open()) {
-        throw std::runtime_error("Failed to open file: " + filepath);
+        throw runtime_error("Failed to open file: " + filepath);
     }
     json jsonData;
     file >> jsonData;
 
     for (const auto &item : jsonData) {
         MapObjectDefinition obj;
-        obj.objectName = item["objectName"].get<std::string>();
-        obj.value      = item["value"].get<int>();
-        obj.category   = determineCategory(obj.objectName);
+        obj.objectName = getOrError<string>(item, "objectName");
+        obj.value      = getOrError<int>(item, "value");
+        obj.size       = parseInt3(getOrDefault<string>(item, "size", "1,1"));
+        obj.entryPoint = parseInt3(getOrDefault<string>(item, "entryPoint", "0,0"));
 
+        if (item.contains("realSize")) {
+            for (const auto &row : item["realSize"]) {
+                obj.realSize.push_back(row.get<string>());
+            }
+        } else {
+            for (int i = 0; i < obj.size.y; ++i) {
+                obj.realSize.push_back(string(obj.size.x, '1'));
+            }
+        }
+
+        obj.category = determineCategory(obj.objectName);
         allObjects.push_back(obj);
-        objectByName[obj.objectName] = obj;
     }
+
+    sort(allObjects.begin(), allObjects.end(),
+         [](const MapObjectDefinition &a, const MapObjectDefinition &b) {
+             return a.value < b.value;
+         });
 }

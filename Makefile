@@ -1,6 +1,6 @@
 CC ?= gcc
 CXX = g++
-CXXFLAGS = -Wall -std=c++17
+CXXFLAGS = -Wall -std=c++17 -O3
 
 INC := -I homm3tools/h3m/h3mlib -I homm3tools/3rdparty/uthash/src
 LIBDIR := homm3tools/OUTPUT/gcc
