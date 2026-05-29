@@ -241,7 +241,6 @@ void ZonePlacer::generateAbstractGrid() {
         temperature *= coolingRate;
     }
 
-    cerr << "gotya\n";
     for (const auto &center : centers) {
         int zoneID         = center.id;
         int percentageSize = getPercentageSize(zoneMap[zoneID]->getSize(), gridN - 2, totalSize);
