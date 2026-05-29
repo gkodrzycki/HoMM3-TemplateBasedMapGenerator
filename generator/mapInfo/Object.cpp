@@ -22,9 +22,8 @@ Object::Object(int3 position, string name, int3 size) {
     this->position   = position;
     this->entryPoint = int3(0, 0, 0);
     for (int i = 0; i < size.y; i++) {
-        for (int j = 0; j < size.x; j++) {
-            this->realSize.push_back("1");
-        }
+        string row(size.x, '1');
+        realSize.push_back(row);
     }
 }
 Object::Object(int3 position, string name, int3 size, int3 entryPoint, vector<string> realSize) {
