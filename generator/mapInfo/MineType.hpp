@@ -4,14 +4,14 @@
 #include "./ResourceType.hpp"
 
 enum class MineType {
-    MINE_ALCHEMISTS_LAB = 0,
+    MINE_SAWMILL = 0,
+    MINE_ORE_PIT,
+
+    MINE_ALCHEMISTS_LAB,
     MINE_CRYSTAL_CAVERN,
     MINE_GEM_POND,
     MINE_SULFUR_DUNE,
     MINE_GOLD_MINE,
-
-    MINE_ORE_PIT,
-    MINE_SAWMILL,
 
     MINE_UNKNOWN
 };
@@ -34,6 +34,27 @@ inline int3 getMineSize(MineType mineType) {
         return int3(3, 1, 1);
     default:
         return int3(1, 1, 1);
+    }
+}
+
+inline vector<string> getMineRealSize(MineType mineType) {
+    switch (mineType) {
+    case MineType::MINE_ALCHEMISTS_LAB:
+        return vector<string>{"111"};
+    case MineType::MINE_CRYSTAL_CAVERN:
+        return vector<string>{"111"};
+    case MineType::MINE_GEM_POND:
+        return vector<string>{"111", "111"};
+    case MineType::MINE_GOLD_MINE:
+        return vector<string>{"111"};
+    case MineType::MINE_ORE_PIT:
+        return vector<string>{"111", "111"};
+    case MineType::MINE_SAWMILL:
+        return vector<string>{"0011", "1111"};
+    case MineType::MINE_SULFUR_DUNE:
+        return vector<string>{"111"};
+    default:
+        return vector<string>{"1"};
     }
 }
 

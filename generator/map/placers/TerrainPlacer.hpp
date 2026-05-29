@@ -10,6 +10,7 @@ class TerrainPlacer {
     TerrainPlacer(Map &map);
     void generateNoise();
     void placeObstacles();
+    void fillClosedRooms();
 
   private:
     Map &map;

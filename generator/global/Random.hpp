@@ -35,5 +35,8 @@ template <typename T> void RNG::shuffle(vector<T> &vec) {
 }
 
 template <typename T> T RNG::getRandomFromVector(vector<T> &vec) {
+    if (vec.empty()) {
+        throw std::runtime_error("Cannot get random element from an empty vector");
+    }
     return vec[nextInt(0, vec.size() - 1)];
 }

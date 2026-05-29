@@ -262,16 +262,27 @@ void AddArtifact(ofstream &luaFile, shared_ptr<Artifact> artifact) {
             << ", z=" << artifact->getPosition().z << "})\n";
 }
 
+// @function    AddTreasure
+// @tparam      ofstream    luaFile          file where we save lua script.
+// @tparam      shared_ptr<Treasure>    treasure         completed treasure object.
+void AddTreasure(ofstream &luaFile, shared_ptr<Treasure> treasure) {
+    luaFile << "instance:obstacle(homm3lua." << treasure->getName()
+            << ", {x=" << treasure->getPosition().x << ", y=" << treasure->getPosition().y
+            << ", z=" << treasure->getPosition().z << "})\n";
+}
+
 // @function    AddTreasures
 // @tparam      ofstream    luaFile     file where we save lua script.
 // @tparam      Map         map         object of map class with finished setup.
 void AddTreasures(ofstream &luaFile, Map &map) {
     TreasureVector treasureVector = map.getTreasureVector();
-    for (auto treasure : treasureVector) {
-        if (auto artifact = dynamic_pointer_cast<Artifact>(treasure)) {
+    for (auto object : treasureVector) {
+        if (auto artifact = dynamic_pointer_cast<Artifact>(object)) {
             AddArtifact(luaFile, artifact);
-        } else if (auto resource = dynamic_pointer_cast<Resource>(treasure)) {
+        } else if (auto resource = dynamic_pointer_cast<Resource>(object)) {
             AddResource(luaFile, resource);
+        } else if (auto treasure = dynamic_pointer_cast<Treasure>(object)) {
+            AddTreasure(luaFile, treasure);
         }
     }
 }

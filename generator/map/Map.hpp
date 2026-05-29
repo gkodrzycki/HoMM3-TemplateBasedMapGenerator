@@ -18,14 +18,14 @@
 #include "./placers/TownPlacer.hpp"
 #include "./placers/ZonePlacer.hpp"
 
-using ZoneMap          = map<int, shared_ptr<Zone>>;
-using TileMap          = map<int, map<int, shared_ptr<Tile>>>;
-using ObjectVector     = vector<shared_ptr<Object>>;
-using CreatureVector   = vector<shared_ptr<Creature>>;
-using RoadVector       = vector<shared_ptr<Road>>;
-using TreasureVector   = vector<shared_ptr<Treasure>>;
+using ZoneMap        = map<int, shared_ptr<Zone>>;
+using TileMap        = vector<vector<shared_ptr<Tile>>>;
+using ObjectVector   = vector<shared_ptr<Object>>;
+using CreatureVector = vector<shared_ptr<Creature>>;
+using RoadVector     = vector<shared_ptr<Road>>;
+using TreasureVector = vector<shared_ptr<Treasure>>;
 using PandoraBoxVector = vector<shared_ptr<PandoraBox>>;
-using MonolithVector   = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
+using MonolithVector = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
 
 class Map {
   public:
@@ -61,13 +61,15 @@ class Map {
     int getWidth();
     int getHeight();
 
-    void fixNeighbourTiles(const int3 &pos, const int3 &size, int zoneID,
-                           const int3 &offset = int3(1, 1, 0));
+    void fixNeighbourTiles(const int3 &pos, const int3 &size, const vector<string> &realSize,
+                           int zoneID, const int3 &offset = int3(1, 1, 0));
     bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BbOTRr",
                                 const int3 &offset = int3(0, 0, 0), bool debug = false);
     int3 findBestDistributedPosition(const vector<int3> &freeTiles,
-                                     const vector<int3> &placedObjects, const int3 &zoneCenter,
-                                     RNG &rng, float tolerance = 0.8f);
+                                     const vector<int3> &placedSameObjects,
+                                     const vector<int3> &placedAllObjects, const int3 &zoneCenter,
+                                     float tolerance = 0.8f, int minDistanceRelative = -1,
+                                     int minDistanceTotal = -1);
 
   private:
     pair<int, int> chooseMapSize(int minimumSize, int maximumSize);

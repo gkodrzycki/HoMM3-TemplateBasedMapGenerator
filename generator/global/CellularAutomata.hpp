@@ -25,6 +25,7 @@ class CellularAutomata {
   private:
     int countAliveNeighbors(int x, int y) const;
     void doSimulationStep();
+    void eraseTooSmallComponents();
 
     AutomataConfig m_config;
     std::vector<bool> m_grid;

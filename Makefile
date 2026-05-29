@@ -1,6 +1,6 @@
 CC ?= gcc
 CXX = g++
-CXXFLAGS = -Wall -std=c++17
+CXXFLAGS = -Wall -std=c++17 -O3
 
 INC := -I homm3tools/h3m/h3mlib -I homm3tools/3rdparty/uthash/src
 LIBDIR := homm3tools/OUTPUT/gcc
@@ -52,6 +52,7 @@ COMMON_SOURCES = \
 			  $(MAP_INFO_DIR)/Obstacle.cpp \
 			  $(MAP_INFO_DIR)/Creature.cpp \
 			  $(MAP_INFO_DIR)/Treasure.cpp \
+			  $(MAP_INFO_DIR)/TreasureInfo.cpp \
 			  $(MAP_INFO_DIR)/Resource.cpp \
 			  $(MAP_INFO_DIR)/Artifact.cpp \
 			  $(MAP_INFO_DIR)/PandoraBox.cpp \
