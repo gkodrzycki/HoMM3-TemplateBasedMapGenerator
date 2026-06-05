@@ -17,6 +17,8 @@ class Object {
     int3 getSize() const;
     int3 getEntryPoint() const;
     vector<string> &getRealSize();
+    const vector<string> &getRealSize() const;
+    int getTileCount() const;
 
     void setPosition(int3 position);
     void setName(string name);

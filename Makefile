@@ -65,6 +65,9 @@ GEN_SOURCES = $(SRC_DIR)/Generator.cpp $(COMMON_SOURCES)
 # Source files for Units generator
 UNITS_SOURCES = ./tests/Units.cpp $(COMMON_SOURCES)
 
+# Source files for TestObstacles generator
+TEST_OBSTACLES_SOURCES = ./tests/TestObstacles.cpp $(COMMON_SOURCES)
+
 # Object files for Generator
 ## Place object files for sources under generator/ into `build/`
 OBJ_DIR := build
@@ -77,11 +80,15 @@ GEN_OBJECTS := $(patsubst $(GENERATOR_DIR)/%.o,$(OBJ_DIR)/%.o,$(GEN_OBJECTS))
 UNITS_OBJECTS = $(UNITS_SOURCES:.cpp=.o)
 UNITS_OBJECTS := $(patsubst $(GENERATOR_DIR)/%.o,$(OBJ_DIR)/%.o,$(UNITS_OBJECTS))
 
+# Object files for TestObstacles
+TEST_OBSTACLES_OBJECTS = $(TEST_OBSTACLES_SOURCES:.cpp=.o)
+TEST_OBSTACLES_OBJECTS := $(patsubst $(GENERATOR_DIR)/%.o,$(OBJ_DIR)/%.o,$(TEST_OBSTACLES_OBJECTS))
+
 # Create necessary directories for object files
 OBJECT_DIRS = $(sort $(dir $(GEN_OBJECTS) $(UNITS_OBJECTS))) dist
 
 # Main targets
-all: dist/homm3lua.so Generator Units
+all: dist/homm3lua.so Generator Units TestObstacles
 
 # Create directories
 $(OBJECT_DIRS):
@@ -94,6 +101,10 @@ Generator: $(GEN_OBJECTS)
 # Units target
 Units: $(UNITS_OBJECTS)
 	$(CXX) $(UNITS_OBJECTS) -o $@ $(LDFLAGS)
+
+# TestObstacles target
+TestObstacles: $(TEST_OBSTACLES_OBJECTS)
+	$(CXX) $(TEST_OBSTACLES_OBJECTS) -o $@ $(LDFLAGS)
 
 # HOMM3 libraries
 .PHONY: libs
@@ -142,6 +153,10 @@ run: Generator
 .PHONY: units
 units: dist/homm3lua.so Units
 	./Units
+
+.PHONY: test_obstacles
+test_obstacles: dist/homm3lua.so TestObstacles
+	./TestObstacles
 
 FMT_SRCS := $(shell find . \
     -name '*.c' -o -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | \

@@ -40,6 +40,19 @@ int3 Object::getSize() const { return size; }
 
 vector<string> &Object::getRealSize() { return realSize; }
 
+const vector<string> &Object::getRealSize() const { return realSize; }
+
+int Object::getTileCount() const {
+    int count = 0;
+    for (const auto &row : realSize) {
+        for (char c : row) {
+            if (c == '1')
+                count++;
+        }
+    }
+    return count;
+}
+
 int3 Object::getPosition() const { return position; }
 
 string Object::getName() const { return name; }

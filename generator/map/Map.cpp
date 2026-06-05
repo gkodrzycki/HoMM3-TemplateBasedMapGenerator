@@ -225,6 +225,7 @@ void Map::generateMap() {
     terrainPlacer.placeObstacles();
 
     if (templateInfo.getDebug() > 0) {
+        printRealSizeMap();
         placeDebugObjects();
     }
 }
@@ -520,8 +521,87 @@ void Map::printMap(int debugLevel) {
             case TileType::TILE_GUARD:
                 printColor(RED, tileTypeToChar(tileType));
                 break;
+            case TileType::TILE_OBSTACLE_BODY:
+                printColor(WHITE, tileTypeToChar(tileType));
+                break;
             default:
                 cerr << tileTypeToChar(tileType);
+            }
+        }
+        cerr << "\n";
+    }
+}
+
+void Map::printRealSizeMap() {
+    cerr << "==== Map after placeObstacles (with realSize shown as 'X') ====\n";
+    vector<string> tempMap(height, string(width, '.'));
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            tempMap[i][j] = tileTypeToChar(tileMap[i][j]->getTileType());
+        }
+    }
+
+    for (auto &object : objectVector) {
+        int3 pos                       = object->getPosition();
+        int3 size                      = object->getSize();
+        const vector<string> &realSize = object->getRealSize();
+
+        if (realSize.empty() || (int)realSize.size() != size.y) {
+            continue;
+        }
+
+        for (int dy = 0; dy < size.y; dy++) {
+            if ((int)realSize[dy].size() != size.x)
+                continue;
+
+            for (int dx = 0; dx < size.x; dx++) {
+                if (realSize[dy][dx] == '1') {
+                    int tileX = pos.x - size.x + dx + 1;
+                    int tileY = pos.y - size.y + dy + 1;
+
+                    if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
+                        tempMap[tileY][tileX] = 'X';
+                    }
+                }
+            }
+        }
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            if (tempMap[y][x] == 'X') {
+                printColor(RED, 'X');
+            } else {
+                TileType tileType = tileMap[y][x]->getTileType();
+                switch (tileType) {
+                case TileType::TILE_FREE:
+                    printColor(GREEN, tempMap[y][x]);
+                    break;
+                case TileType::TILE_OCCUPIED:
+                    printColor(YELLOW, tempMap[y][x]);
+                    break;
+                case TileType::TILE_TAKEN:
+                    printColor(CYAN, tempMap[y][x]);
+                    break;
+                case TileType::TILE_ROAD:
+                    printColor(MAGENTA, tempMap[y][x]);
+                    break;
+                case TileType::TILE_BORDER_INNER:
+                    printColor(BLUE, tempMap[y][x]);
+                    break;
+                case TileType::TILE_BORDER_OUTER:
+                    printColor(BRIGHT_BLUE, tempMap[y][x]);
+                    break;
+                case TileType::TILE_GUARD:
+                    printColor(RED, tempMap[y][x]);
+                    break;
+                case TileType::TILE_OBSTACLE_BODY:
+                    printColor(WHITE, tempMap[y][x]);
+                    break;
+                default:
+                    cerr << tempMap[y][x];
+                }
             }
         }
         cerr << "\n";

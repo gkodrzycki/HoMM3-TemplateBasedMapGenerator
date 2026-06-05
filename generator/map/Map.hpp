@@ -18,14 +18,14 @@
 #include "./placers/TownPlacer.hpp"
 #include "./placers/ZonePlacer.hpp"
 
-using ZoneMap        = map<int, shared_ptr<Zone>>;
-using TileMap        = vector<vector<shared_ptr<Tile>>>;
-using ObjectVector   = vector<shared_ptr<Object>>;
-using CreatureVector = vector<shared_ptr<Creature>>;
-using RoadVector     = vector<shared_ptr<Road>>;
-using TreasureVector = vector<shared_ptr<Treasure>>;
+using ZoneMap          = map<int, shared_ptr<Zone>>;
+using TileMap          = vector<vector<shared_ptr<Tile>>>;
+using ObjectVector     = vector<shared_ptr<Object>>;
+using CreatureVector   = vector<shared_ptr<Creature>>;
+using RoadVector       = vector<shared_ptr<Road>>;
+using TreasureVector   = vector<shared_ptr<Treasure>>;
 using PandoraBoxVector = vector<shared_ptr<PandoraBox>>;
-using MonolithVector = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
+using MonolithVector   = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
 
 class Map {
   public:
