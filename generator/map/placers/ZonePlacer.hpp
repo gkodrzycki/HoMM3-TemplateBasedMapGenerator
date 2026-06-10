@@ -13,6 +13,7 @@ class ZonePlacer {
     ZonePlacer(Map &map);
 
     void initZones();
+    void groupZones();
     void generateZones();
 
     int calculateTotalSize();
@@ -36,6 +37,7 @@ class ZonePlacer {
     bool validateAbstractGrid();
 
     void placeAbstractGridOnRealMap();
+    string generateZoneHash(int zoneID);
 
   private:
     Map &map;

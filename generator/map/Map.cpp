@@ -41,6 +41,9 @@ shared_ptr<Tile> Map::getTile(int3 pos) {
     return tileMap[pos.y][pos.x];
 }
 
+string Map::getZoneHash(int zoneID) { return hashMap[zoneID]; }
+GroupSettingMap &Map::getGroupSettingMap() { return groupSettingMap; }
+HashMap Map::getHashMap() { return hashMap; }
 TemplateInfo Map::getTemplateInfo() { return templateInfo; }
 RNG &Map::getRNG() { return rng; }
 ZoneMap Map::getZoneMap() { return zoneMap; }
@@ -55,6 +58,7 @@ MonolithVector Map::getMonolithVector() { return monolithVector; }
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
 
+void Map::addHash(int zoneID, string hash) { this->hashMap[zoneID] = hash; }
 void Map::addZone(shared_ptr<Zone> zone) { this->zoneMap[zone->getZoneID()] = zone; }
 void Map::addObject(shared_ptr<Object> object) { this->objectVector.push_back(object); }
 void Map::addRoad(shared_ptr<Road> road) { this->roadVector.push_back(road); }
@@ -195,6 +199,7 @@ void Map::generateMap() {
 
     ZonePlacer zonePlacer(*this);
     zonePlacer.placeZones();
+    zonePlacer.groupZones();
 
     BorderPlacer borderPlacer(*this);
     borderPlacer.reserveBorderTiles();
@@ -283,7 +288,7 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
             auto tilePtr = getTile(tilePos);
 
             if (tilePtr == nullptr)
-                continue;
+                return true;
 
             if (tilePos == getZoneMap()[tilePtr->getZoneID()]->getCenter()) {
                 return true;
