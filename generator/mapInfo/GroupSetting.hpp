@@ -7,7 +7,7 @@ class GroupSetting {
     GroupSetting() : isOrderSetted(false) {};
     void setOrder(vector<MineType> &order) {
         orderOfMines  = order;
-        isOrderSetted = true;
+        isOrderSet = true;
     }
     vector<MineType> &getOrder() { return orderOfMines; }
     bool getIsOrderSetted() { return isOrderSetted; }
