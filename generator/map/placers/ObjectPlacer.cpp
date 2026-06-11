@@ -95,7 +95,7 @@ void ObjectPlacer::placeMines() {
             }
         }
 
-        if (groupSettingMap[zoneHash]->getIsOrderSetted()) {
+        if (groupSettingMap[zoneHash]->getIsOrderSet()) {
             mineTypeOrder = groupSettingMap[zoneHash]->getOrder();
         } else {
             groupSettingMap[zoneHash]->setOrder(mineTypeOrder);

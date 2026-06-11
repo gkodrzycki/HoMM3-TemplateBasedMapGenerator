@@ -4,15 +4,15 @@
 
 class GroupSetting {
   public:
-    GroupSetting() : isOrderSetted(false) {};
+    GroupSetting() : isOrderSet(false) {};
     void setOrder(vector<MineType> &order) {
         orderOfMines  = order;
         isOrderSet = true;
     }
     vector<MineType> &getOrder() { return orderOfMines; }
-    bool getIsOrderSetted() { return isOrderSetted; }
+    bool getIsOrderSet() { return isOrderSet; }
 
   private:
-    bool isOrderSetted;
+    bool isOrderSet;
     vector<MineType> orderOfMines;
 };
