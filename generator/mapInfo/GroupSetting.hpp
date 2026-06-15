@@ -1,18 +1,19 @@
 #pragma once
 
 #include "../global/Global.hpp"
+#include "./MineType.hpp"
 
 class GroupSetting {
   public:
-    GroupSetting() : isOrderSet(false) {};
+    GroupSetting() : _isOrderSet(false) {};
     void setOrder(vector<MineType> &order) {
-        orderOfMines  = order;
-        isOrderSet = true;
+        orderOfMines = order;
+        _isOrderSet  = true;
     }
     vector<MineType> &getOrder() { return orderOfMines; }
-    bool getIsOrderSet() { return isOrderSet; }
+    bool isOrderSet() { return _isOrderSet; }
 
   private:
-    bool isOrderSet;
+    bool _isOrderSet;
     vector<MineType> orderOfMines;
 };
