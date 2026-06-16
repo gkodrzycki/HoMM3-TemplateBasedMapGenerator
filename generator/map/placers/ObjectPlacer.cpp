@@ -34,6 +34,7 @@ void ObjectPlacer::placeMine(int3 pos, MineType mineType) {
 void ObjectPlacer::placeMines() {
     int mapWidth  = map.getWidth();
     int mapHeight = map.getHeight();
+    RNG &rng      = map.getRNG();
 
     int3 mineOffset = int3(1, 1, 0);
 
@@ -56,7 +57,9 @@ void ObjectPlacer::placeMines() {
 
     auto zoneMap = map.getZoneMap();
     for (const auto &[zoneID, zone] : zoneMap) {
-        string zoneType = zone->getType();
+        GroupSettingMap &groupSettingMap = map.getGroupSettingMap();
+        string zoneType                  = zone->getType();
+        string zoneHash                  = map.getZoneHash(zoneID);
 
         auto minimumMinesCount =
             map.getTemplateInfo().getZoneById(zoneID).getMinimumMines().mineCounts;
@@ -72,22 +75,90 @@ void ObjectPlacer::placeMines() {
             }
         }
 
+        vector<int3> minePositions;
+        vector<MineType> mineTypeOrder;
+
+        int totalMinesToPlace = 0;
         for (const auto &[mineType, count] : minimumMinesCount) {
-            cerr << "Placing " << count << " mines of type " << getEnumName<MineType>(mineType)
-                 << " in zone " << zoneID << endl;
+            totalMinesToPlace += count;
+            for (int i = 0; i < count; i++)
+                mineTypeOrder.push_back(mineType);
+        }
+        rng.shuffle(mineTypeOrder);
 
-            for (int i = 0; i < count; i++) {
-                float tolerance = (zoneType == "treasure") ? 0.6f : 0.8f;
-                int3 minePos =
-                    map.findBestDistributedPosition(zoneTiles[zoneID], placedMines, placedObjects,
-                                                    zone->getCenter(), tolerance, -1, 2);
-
-                if (minePos.x == -1)
-                    break;
-
-                placeMine(minePos, mineType);
-                placedMines.push_back(minePos);
+        // want to keep sawmill and ore pit on first and second place
+        for (size_t i = 0; i < mineTypeOrder.size(); i++) {
+            if (mineTypeOrder[i] == MineType::MINE_SAWMILL && i != 0) {
+                swap(mineTypeOrder[i], mineTypeOrder[0]);
+            } else if (mineTypeOrder[i] == MineType::MINE_ORE_PIT && i != 1) {
+                swap(mineTypeOrder[i], mineTypeOrder[1]);
             }
+        }
+
+        if (groupSettingMap[zoneHash]->isOrderSet()) {
+            mineTypeOrder = groupSettingMap[zoneHash]->getOrder();
+        } else {
+            groupSettingMap[zoneHash]->setOrder(mineTypeOrder);
+        }
+
+        for (int i = 0; i < totalMinesToPlace; i++) {
+            float tolerance = (zoneType == "treasure") ? 0.6f : 0.8f;
+            int3 minePos    = map.findBestDistributedPosition(
+                zoneTiles[zoneID], placedMines, placedObjects, zone->getCenter(), tolerance, -1, 2);
+
+            if (minePos.x == -1)
+                break;
+
+            minePositions.push_back(minePos);
+            placedMines.push_back(minePos);
+        }
+
+        vector<bool> used(minePositions.size(), false);
+        int3 current = zone->getCenter();
+
+        for (size_t i = 0; i < mineTypeOrder.size() && i < minePositions.size(); i++) {
+
+            auto passable = [&](const int3 &p) -> bool {
+                auto tile = map.getTile(p);
+                if (!tile)
+                    return false;
+                if (tile->isTileType("BbOT"))
+                    return false;
+                return true;
+            };
+            auto neighbours = [&](const int3 &p) {
+                vector<int3> out;
+                for (int k = 0; k < 8; k++) {
+                    int3 nxt = p + directions8[k];
+                    if (passable(nxt))
+                        out.push_back(nxt);
+                }
+                return out;
+            };
+
+            auto bfsDist = bfs_distances<int3>(current, neighbours);
+
+            int bestIdx  = -1;
+            int bestDist = numeric_limits<int>::max();
+
+            for (size_t j = 0; j < minePositions.size(); j++) {
+                if (used[j])
+                    continue;
+                auto it = bfsDist.find(minePositions[j]);
+                if (it == bfsDist.end())
+                    continue; // unreachable
+                if (it->second < bestDist) {
+                    bestDist = it->second;
+                    bestIdx  = j;
+                }
+            }
+
+            if (bestIdx == -1)
+                break;
+
+            used[bestIdx] = true;
+            placeMine(minePositions[bestIdx], mineTypeOrder[i]);
+            current = minePositions[bestIdx];
         }
     }
 }

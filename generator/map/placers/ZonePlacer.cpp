@@ -12,6 +12,43 @@ void ZonePlacer::initZones() {
     }
 }
 
+string ZonePlacer::generateZoneHash(int zoneID) {
+    string zoneHash = "";
+
+    TemplateInfo templateInfo = map.getTemplateInfo();
+    auto zoneTemplate         = templateInfo.getZoneById(zoneID);
+
+    zoneHash += zoneTemplate.getType() + "_";
+
+    for (auto [mineType, mineCount] : zoneTemplate.getMinimumMines().mineCounts) {
+        string enumName = getEnumName(mineType);
+        zoneHash += enumName + "_" + to_string(mineCount) + "_";
+    }
+
+    auto connectionVector = templateInfo.getConnections();
+    for (auto connection : connectionVector) {
+        if (connection.getZone1() == zoneID) {
+            zoneHash += to_string(connection.getZone2()) + "_";
+        } else if (connection.getZone2() == zoneID) {
+            zoneHash += to_string(connection.getZone1()) + "_";
+        }
+    }
+    zoneHash += "#";
+
+    return zoneHash;
+}
+
+void ZonePlacer::groupZones() {
+
+    GroupSettingMap &groupSettingMap = map.getGroupSettingMap();
+    auto zoneMap                     = map.getZoneMap();
+    for (auto [zoneID, zone] : zoneMap) {
+        string zoneHash = generateZoneHash(zoneID);
+        map.addHash(zoneID, zoneHash);
+        groupSettingMap[zoneHash] = make_shared<GroupSetting>(GroupSetting());
+    }
+}
+
 int ZonePlacer::calculateTotalSize() {
     int sumOfSizes = 0;
 

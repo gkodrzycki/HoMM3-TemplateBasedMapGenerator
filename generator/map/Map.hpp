@@ -4,6 +4,7 @@
 #include "../global/Global.hpp"
 #include "../global/Random.hpp"
 #include "../mapInfo/Creature.hpp"
+#include "../mapInfo/GroupSetting.hpp"
 #include "../mapInfo/Object.hpp"
 #include "../mapInfo/PandoraBox.hpp"
 #include "../mapInfo/Resource.hpp"
@@ -18,14 +19,16 @@
 #include "./placers/TownPlacer.hpp"
 #include "./placers/ZonePlacer.hpp"
 
-using ZoneMap        = map<int, shared_ptr<Zone>>;
-using TileMap        = vector<vector<shared_ptr<Tile>>>;
-using ObjectVector   = vector<shared_ptr<Object>>;
-using CreatureVector = vector<shared_ptr<Creature>>;
-using RoadVector     = vector<shared_ptr<Road>>;
-using TreasureVector = vector<shared_ptr<Treasure>>;
+using HashMap          = map<int, string>;
+using GroupSettingMap  = map<string, shared_ptr<GroupSetting>>;
+using ZoneMap          = map<int, shared_ptr<Zone>>;
+using TileMap          = vector<vector<shared_ptr<Tile>>>;
+using ObjectVector     = vector<shared_ptr<Object>>;
+using CreatureVector   = vector<shared_ptr<Creature>>;
+using RoadVector       = vector<shared_ptr<Road>>;
+using TreasureVector   = vector<shared_ptr<Treasure>>;
 using PandoraBoxVector = vector<shared_ptr<PandoraBox>>;
-using MonolithVector = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
+using MonolithVector   = vector<pair<shared_ptr<Object>, shared_ptr<Object>>>;
 
 class Map {
   public:
@@ -39,6 +42,7 @@ class Map {
     void placeDebugObjects();
     void printMap(int debugLevel);
 
+    void addHash(int zoneID, string hash);
     void addZone(shared_ptr<Zone> zone);
     void addObject(shared_ptr<Object> object);
     void addRoad(shared_ptr<Road> road);
@@ -47,6 +51,8 @@ class Map {
     void addPandoraBox(shared_ptr<PandoraBox> pandoraBox);
     void addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest);
     void fixReachability();
+    string getZoneHash(int zoneID);
+    GroupSettingMap &getGroupSettingMap();
     TemplateInfo getTemplateInfo();
     shared_ptr<Tile> getTile(int3 pos);
     ZoneMap getZoneMap();
@@ -57,6 +63,7 @@ class Map {
     TreasureVector getTreasureVector();
     PandoraBoxVector getPandoraBoxVector();
     MonolithVector getMonolithVector();
+    HashMap getHashMap();
     RNG &getRNG();
     int getWidth();
     int getHeight();
@@ -79,6 +86,8 @@ class Map {
 
     int width, height;
 
+    HashMap hashMap;
+    GroupSettingMap groupSettingMap;
     ZoneMap zoneMap;
     TileMap tileMap;
     ObjectVector objectVector;
