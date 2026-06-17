@@ -119,7 +119,7 @@ void Map::fixReachability() {
                 return 0;
             return a.distance2DMH(b) + 1;
         };
-        auto ctx = getSearchCtx();
+        auto &ctx = getSearchCtx();
         dijkstra_reachability(ctx, center, neighbors, passable, cost);
 
         auto objectVector   = getObjectVector();
