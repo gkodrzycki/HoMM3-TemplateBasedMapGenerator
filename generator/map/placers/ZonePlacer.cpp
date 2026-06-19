@@ -477,7 +477,7 @@ void ZonePlacer::placeZones() {
     initZones();
     calculateDistances();
     generateZones();
-    // roughenBoundaries();
+    roughenBoundaries();
     bool allClaimed = claimFreeTiles();
     if (!allClaimed) {
         cerr << "Not all tiles were claimed in the first pass, claiming remaining tiles with "
