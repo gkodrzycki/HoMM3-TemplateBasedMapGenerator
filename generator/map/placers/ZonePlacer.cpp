@@ -440,11 +440,44 @@ void ZonePlacer::calculateZoneCenters() {
         zone->setCenter(visitedNodes.back());
     }
 }
+void ZonePlacer::roughenBoundaries() {
+    auto &rng = map.getRNG();
+
+    FastNoiseLite noiseX, noiseY;
+    noiseX.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    noiseX.SetFrequency(0.04f);
+    noiseX.SetSeed(rng.getSeed());
+
+    noiseY.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    noiseY.SetFrequency(0.04f);
+    noiseY.SetSeed(rng.getSeed());
+
+    int mapWidth = map.getWidth(), mapHeight = map.getHeight();
+    float strength = 6.0f;
+
+    vector<vector<int>> snapshot(mapWidth, vector<int>(mapHeight, 0));
+    for (int y = 0; y < mapHeight; y++)
+        for (int x = 0; x < mapWidth; x++)
+            snapshot[x][y] = map.getTile(int3(x, y, 0))->getZoneID();
+
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            float dx = noiseX.GetNoise((float)x, (float)y) * strength;
+            float dy = noiseY.GetNoise((float)x, (float)y) * strength;
+
+            int sx = std::clamp((int)(x + dx), 0, mapWidth - 1);
+            int sy = std::clamp((int)(y + dy), 0, mapHeight - 1);
+
+            map.getTile(int3(x, y, 0))->setZoneID(snapshot[sx][sy]);
+        }
+    }
+}
 
 void ZonePlacer::placeZones() {
     initZones();
     calculateDistances();
     generateZones();
+    // roughenBoundaries();
     bool allClaimed = claimFreeTiles();
     if (!allClaimed) {
         cerr << "Not all tiles were claimed in the first pass, claiming remaining tiles with "

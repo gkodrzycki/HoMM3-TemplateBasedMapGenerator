@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../global/FastNoiseLite.h"
 #include "../../global/Global.hpp"
 #include "../../global/GridSearch.hpp"
 #include "../Map.hpp"
@@ -19,7 +20,7 @@ class ZonePlacer {
     int calculateTotalSize();
 
     void placeZones();
-
+    void roughenBoundaries();
     void calculateZoneCenters();
 
     void claimAbstractTile(int zoneID, int3 zoneCenter);

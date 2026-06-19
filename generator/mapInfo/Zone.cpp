@@ -32,7 +32,8 @@ Zone::Zone(ZoneTemplate zoneTemplate, RNG &rng) {
                                     }),
                           allowedFactions.end());
 
-    string chosenFaction = rng.getRandomFromVector(allowedFactions);
+    string chosenFaction =
+        (allowedFactions.size() > 0) ? rng.getRandomFromVector(allowedFactions) : "NEUTRAL";
     this->setFaction(getEnumFromNameOrThrow<Faction>(chosenFaction));
 
     int owner = 0;
