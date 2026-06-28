@@ -224,12 +224,15 @@ void Map::generateMap() {
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
 
+if (templateInfo.getDebug() > 0) {
     cerr << "Guards placed, fixing reachability...\n";
+}
 
-    fixReachability();
+fixReachability();
 
+if (templateInfo.getDebug() > 0) {
     cerr << "Reachability fixed, placing borders and obstacles...\n";
-
+}
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
 
