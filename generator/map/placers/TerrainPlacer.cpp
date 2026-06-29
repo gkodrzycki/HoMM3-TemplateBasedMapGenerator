@@ -8,7 +8,7 @@ vector<vector<int3>> TerrainPlacer::collectObstacleComponents() {
 
     auto passable = [&](const int3 &pos) {
         auto tile = map.getTile(pos);
-        return tile && !tile->isTileType("B") && tile->isTileType("O");
+        return tile && tile->isTileType("OBb");
     };
 
     auto neighbours = [&](const int3 &pos) {
@@ -109,9 +109,9 @@ bool TerrainPlacer::canPlaceTemplateAtAnchor(const Obstacle &templ, const int3 &
                     return false;
             } else {
                 // Transparent tile - must not sit on anything that matters:
-                // 'T'=TAKEN (building), 'R'=RESERVED, 'r'=ROAD, 'o'=OCCUPIED,
-                // 'G'=GUARD, 'B'/'b'=BORDER, 'X'=OBSTACLE_BODY (already placed obstacle)
-                if (tile->isTileType("TRroBbGX"))
+                // 'T'=TAKEN (building), 'R'=RESERVED, 'r'=ROAD, 'o'=OCCUPIED, 'G'=GUARD
+                // B/b/X (border, obstacle body) are acceptable under transparent regions.
+                if (tile->isTileType("TRroG"))
                     return false;
             }
         }
@@ -159,10 +159,7 @@ void TerrainPlacer::loadObstacleInfo() {
                 realSize.push_back(string(size.x, '1'));
         }
 
-        Obstacle templ(name, int3(0, 0, 0), "Obstacle");
-        templ.setSize(size);
-        templ.setRealSize(realSize);
-        templ.setEntryPoint(int3(0, 0, 0));
+        Obstacle templ(name, int3(0, 0, 0), "Obstacle", size, int3(0, 0, 0), realSize);
 
         for (const auto &terrainVal : item.at("terrains")) {
             string terrain = terrainVal.get<string>();
@@ -192,10 +189,8 @@ const vector<Obstacle> &TerrainPlacer::getObstaclesForTerrain(const string &terr
     // Fallback: use a generic 1x1 pine tree if the terrain has no entry
     static vector<Obstacle> fallback;
     if (fallback.empty()) {
-        Obstacle obs("Pine Trees", int3(0, 0, 0), "Obstacle");
-        obs.setSize(int3(1, 1, 0));
-        obs.setRealSize({"1"});
-        obs.setEntryPoint(int3(0, 0, 0));
+        Obstacle obs("Pine Trees", int3(0, 0, 0), "Obstacle", int3(1, 1, 0), int3(0, 0, 0),
+                     vector<string>{"1"});
         fallback.push_back(obs);
     }
     return fallback;
@@ -273,11 +268,8 @@ void TerrainPlacer::placeObstacleComponent(const vector<int3> &component) {
                 name = map.getRNG().getRandomFromVector(singles).getName();
         }
 
-        Obstacle obstacle(name, fallbackPos, "Obstacle");
-        auto obstaclePtr = make_shared<Obstacle>(obstacle);
-        obstaclePtr->setSize(int3(1, 1, 0));
-        obstaclePtr->setRealSize({"1"});
-        obstaclePtr->setEntryPoint(int3(0, 0, 0));
+        auto obstaclePtr = make_shared<Obstacle>(name, fallbackPos, "Obstacle", int3(1, 1, 0),
+                                                 int3(0, 0, 0), vector<string>{"1"});
         map.addObject(obstaclePtr);
 
         remaining.erase(fallbackPos);
@@ -304,8 +296,6 @@ void TerrainPlacer::generateNoise() {
             auto tilePtr = map.getTile(int3(x, y, 0));
             if (tilePtr != nullptr) {
                 if (grid[y * width + x]) {
-                    if (tilePtr->isTileType("B"))
-                        continue;
                     tilePtr->setTileType(TileType::TILE_OBSTACLE);
                 }
             }
