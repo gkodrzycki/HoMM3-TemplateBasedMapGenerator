@@ -16,6 +16,7 @@ void AddTowns(ofstream &luaFile, Map &map);
 void AddTerrain(ofstream &luaFile, string terrain = "GRASS");
 void AddTerrainTiles(ofstream &luaFile, Map &map);
 void AddBorderObstacles(ofstream &luaFile, Map &map);
+void AddObstacle(ofstream &luaFile, const string &obstacle, int3 pos);
 void AddRoad(ofstream &luaFile, const int &tier, int3 pos);
 void AddRoads(ofstream &luaFile, Map &map);
 void AddMonolith(ofstream &luaFile, int3 pos, int connectionNumber);

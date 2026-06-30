@@ -41,6 +41,7 @@ class Map {
 
     void placeDebugObjects();
     void printMap(int debugLevel);
+    void printRealSizeMap();
 
     void addHash(int zoneID, string hash);
     void addZone(shared_ptr<Zone> zone);

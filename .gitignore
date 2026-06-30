@@ -4,6 +4,8 @@
 **/Generator
 **/units.lua
 **/Units
+**/test_obstacles.lua
+**/TestObstacles
 **/debug.txt
 **/.vscode
 build/
