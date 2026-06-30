@@ -343,9 +343,8 @@ bool ZonePlacer::claimTiles(vector<pair<int, int3>> &zoneTiles, bool fullClaim) 
             return false;
         return true;
     };
-    auto &ctx  = map.getSearchCtx();
-    auto claim = bfs_claim_xyz2(ctx, zoneTiles, neighbors4, passable, claimFn);
-
+auto &ctx = map.getSearchCtx();
+bfs_claim_xyz2(ctx, zoneTiles, neighbors4, passable, claimFn);
     ZoneMap zoneMap = map.getZoneMap();
 
     bool fullyClaimed = true;

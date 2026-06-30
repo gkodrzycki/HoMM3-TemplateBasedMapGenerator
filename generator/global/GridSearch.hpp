@@ -600,14 +600,15 @@ inline unordered_map<Node, int> bfs_distances(const Node &start, NeighFn neighbo
 // ---------------------------------------------------------------------------
 inline int reach_dist(const GridSearchContext &ctx, int x, int y) {
     int i = ctx.idx(x, y);
-    return ctx.reachDist[i];
+    return (ctx.stamp[i] == ctx.epoch) ? ctx.reachDist[i] : numeric_limits<int>::max();
 }
 inline int reach_dist(const GridSearchContext &ctx, const int3 &p) {
     return reach_dist(ctx, p.x, p.y);
 }
 inline int3 reach_parent(const GridSearchContext &ctx, int x, int y) {
     int i = ctx.idx(x, y);
-    return int3(ctx.reachParentX[i], ctx.reachParentY[i], 0);
+    return (ctx.stamp[i] == ctx.epoch) ? int3(ctx.reachParentX[i], ctx.reachParentY[i], 0)
+                                       : int3(-1, -1, 0);
 }
 inline int3 reach_parent(const GridSearchContext &ctx, const int3 &p) {
     return reach_parent(ctx, p.x, p.y);

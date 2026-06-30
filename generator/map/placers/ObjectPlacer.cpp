@@ -313,9 +313,11 @@ vector<int3> ObjectPlacer::getPossibleTreasurePositions(int3 candidatePosition) 
     auto zoneCenter                = map.getZoneMap()[zoneID]->getCenter();
     vector<pair<int, int3>> source = {{2, zoneCenter}};
 
-    auto& ctx = map.getSearchCtx();
-    auto claimedTilesWithoutCandidate = bfs_claim_xy(ctx, source, neighbours8, passableWithoutCandidate);
-    auto claimedTilesWithCandidate = bfs_claim_xy(ctx, source, neighbours8, passableWithCandidate);
+auto &ctx = map.getSearchCtx();
+auto claimedTilesWithoutCandidate =
+    bfs_claim_xy_copy(ctx, source, neighbours8, passableWithoutCandidate);
+auto claimedTilesWithCandidate =
+    bfs_claim_xy_copy(ctx, source, neighbours8, passableWithCandidate);
 
     vector<int3> possiblePositions;
     for (int x = 0; x < map.getWidth(); x++) {
