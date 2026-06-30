@@ -5,7 +5,7 @@
 #include "../global/Random.hpp"
 #include "../map/Map.hpp"
 
-#include </usr/include/lua/lua.hpp>
+#include <lua.hpp>
 
 string encodeMapSize(int width, int height);
 

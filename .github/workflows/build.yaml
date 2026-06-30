@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential ccache liblua5.4-dev libmagicenum-dev nlohmann-json3-dev
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ubuntu-ccache-${{ github.ref }}
+        restore-keys: |
+          ubuntu-ccache-
+
+    - name: Build Generator
+      run: make CXX="ccache g++" CC="ccache gcc" -j$(nproc)
