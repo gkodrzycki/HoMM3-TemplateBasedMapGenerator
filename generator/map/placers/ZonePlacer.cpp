@@ -78,7 +78,7 @@ void ZonePlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
 
     auto passable = [&](const int3 &p) { return true; };
 
-    auto possibleTiles = bfs_collect_depth_xy(gridN, gridN, zoneTiles, 1, neighbors4, passable);
+    auto possibleTiles = bfs_collect_depth_xy(gridCtx, zoneTiles, 1, neighbors4, passable);
 
     vector<int3> filteredTiles;
     for (const auto &tile : possibleTiles) {
@@ -115,6 +115,7 @@ void ZonePlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
 void ZonePlacer::initGrid() {
     grid.clear();
     grid = vector<vector<int>>(gridN, vector<int>(gridN, 0));
+    gridCtx.resize(gridN, gridN);
 }
 
 int ZonePlacer::getPercentageSize(int zoneSize, int gridN, int totalSize) {
@@ -342,15 +343,14 @@ bool ZonePlacer::claimTiles(vector<pair<int, int3>> &zoneTiles, bool fullClaim) 
             return false;
         return true;
     };
-
-    auto claim = bfs_claim_xyz2(mapWidth, mapHeight, zoneTiles, neighbors4, passable, claimFn);
-
+auto &ctx = map.getSearchCtx();
+bfs_claim_xyz2(ctx, zoneTiles, neighbors4, passable, claimFn);
     ZoneMap zoneMap = map.getZoneMap();
 
     bool fullyClaimed = true;
     for (int y = 0; y < mapHeight; y++) {
         for (int x = 0; x < mapWidth; x++) {
-            int zoneID = claim[x][y][0];
+            int zoneID = claim2_get(ctx, int3(x, y, 0));
             if (!fullClaim && zoneID == 0) {
                 fullyClaimed = false;
                 continue;
@@ -432,7 +432,7 @@ void ZonePlacer::calculateZoneCenters() {
         }
 
         auto visitedNodes = bfs_collect_depth_xy(
-            mapWidth, mapHeight, borderTiles, numeric_limits<int>::max(), neighbors4,
+            map.getSearchCtx(), borderTiles, numeric_limits<int>::max(), neighbors4,
             [&](const int3 &p) { return map.getTile(p)->getZoneID() == zoneID; });
 
         // last element in visitedNodes will be the farthest from border, so it will be in the
