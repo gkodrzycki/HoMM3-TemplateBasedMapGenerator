@@ -133,6 +133,7 @@ void Map::fixReachability() {
             combinedVector.push_back(monolithDest);
         }
 
+        map<int3, bool> clearedTiles;
         for (auto obj : combinedVector) {
             int3 pos = obj->getPosition();
             if (getTile(pos)->isTileType("T")) {
@@ -150,8 +151,9 @@ void Map::fixReachability() {
                 if (tile->isTileType("bO")) {
                     tile->setTileType(TileType::TILE_FREE);
                 }
-                pos      = reach_parent(ctx, pos.x, pos.y);
-                distance = reach_dist(ctx, pos.x, pos.y);
+                clearedTiles[pos] = true;
+                pos               = reach_parent(ctx, pos.x, pos.y);
+                distance          = reach_dist(ctx, pos.x, pos.y);
             }
         }
 
@@ -162,6 +164,9 @@ void Map::fixReachability() {
                     continue;
                 }
                 if (reach_dist(ctx, pos.x, pos.y) == 0) {
+                    continue;
+                }
+                if (clearedTiles[pos] == true) {
                     continue;
                 }
 
