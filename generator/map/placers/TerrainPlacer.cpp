@@ -296,6 +296,8 @@ void TerrainPlacer::generateNoise() {
             auto tilePtr = map.getTile(int3(x, y, 0));
             if (tilePtr != nullptr) {
                 if (grid[y * width + x]) {
+                    if (tilePtr->isTileType("B"))
+                        continue;
                     tilePtr->setTileType(TileType::TILE_OBSTACLE);
                 }
             }
