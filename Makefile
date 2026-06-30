@@ -1,20 +1,20 @@
 CC ?= gcc
 CXX = g++
-CXXFLAGS = -Wall -std=c++17 -O3
+CXXFLAGS = -Wall -std=c++17 -O3 -I/usr/include/lua5.4
 
 INC := -I homm3tools/h3m/h3mlib -I homm3tools/3rdparty/uthash/src
 LIBDIR := homm3tools/OUTPUT/gcc
 STATICLIBS := $(LIBDIR)/h3mlib.a $(LIBDIR)/h3mtilespritegen.a
 
-LUAC ?= $(shell pkg-config --cflags lua)
-LUAL ?= $(shell pkg-config --libs   lua)
+LUAC ?= $(shell pkg-config --cflags lua5.4)
+LUAL ?= $(shell pkg-config --libs   lua5.4)
 
 CFLAGS := $(LUAC) -W -Wall -Wextra -O3 -fPIC -shared -std=c99 $(INC)
 LDLIBS := $(LUAL)
 LFLAGS := -L $(LIBDIR)
 
 # Library flags
-LDFLAGS = -L/usr/lib -llua
+LDFLAGS = $(LUAL)
 
 HOMM3_SRC := $(shell find homm3lua -type f -name '*.c')
 HOMM3_OBJ := $(addprefix dist/,$(notdir $(HOMM3_SRC:.c=.o)))

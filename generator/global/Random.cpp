@@ -69,7 +69,7 @@ int RNG::getOriginalSeed() { return originalSeed; }
 pair<int3, int3> RNG::getRandomTriangle(int3 anchorPoint, int perimeter) {
 
     int x, y;
-    int a, b, c;
+    int a = 0, b = 0, c = 1;
     int maxIterations = 100;
     while (maxIterations--) {
         x = nextInt(5, perimeter);

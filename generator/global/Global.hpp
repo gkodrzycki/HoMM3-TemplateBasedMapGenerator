@@ -1,7 +1,7 @@
 #pragma once
 
 #include <bits/stdc++.h>
-#include <magic_enum/magic_enum.hpp>
+#include <magic_enum.hpp>
 #include <nlohmann/json.hpp>
 
 #include "./float3.hpp"
