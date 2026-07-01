@@ -465,8 +465,8 @@ void ZonePlacer::roughenBoundaries() {
             float dx = noiseX.GetNoise((float)x, (float)y) * strength;
             float dy = noiseY.GetNoise((float)x, (float)y) * strength;
 
-            int sx = std::clamp((int)(x + dx), 0, mapWidth - 1);
-            int sy = std::clamp((int)(y + dy), 0, mapHeight - 1);
+            int sx = clamp((int)(x + dx), 0, mapWidth - 1);
+            int sy = clamp((int)(y + dy), 0, mapHeight - 1);
 
             map.getTile(int3(x, y, 0))->setZoneID(snapshot[sx][sy]);
         }
@@ -485,7 +485,7 @@ void ZonePlacer::relaxOutliers(float thresholdFactor) {
             if (zoneID == 0)
                 continue;
             int3 center = zoneMap[zoneID]->getCenter();
-            float d     = sqrt((float)int3(x, y, 0).distance2DSQ(center));
+            float d     = (float)int3(x, y, 0).distance2DSQ(center);
             distancesPerZone[zoneID].push_back(d);
         }
     }
@@ -511,7 +511,7 @@ void ZonePlacer::relaxOutliers(float thresholdFactor) {
                 continue;
 
             int3 ownCenter = zoneMap[zoneID]->getCenter();
-            float ownDist  = sqrt((float)pos.distance2DSQ(ownCenter));
+            float ownDist  = (float)pos.distance2DSQ(ownCenter);
 
             if (ownDist <= threshold[zoneID])
                 continue;
@@ -519,7 +519,7 @@ void ZonePlacer::relaxOutliers(float thresholdFactor) {
             int bestZone   = zoneID;
             float bestDist = ownDist;
             for (auto &[zid, zone] : zoneMap) {
-                float d = sqrt((float)pos.distance2DSQ(zone->getCenter()));
+                float d = (float)pos.distance2DSQ(zone->getCenter());
                 if (d < bestDist) {
                     bestDist = d;
                     bestZone = zid;
@@ -608,7 +608,7 @@ void ZonePlacer::placeZones() {
 
     calculateZoneCenters();
     for (int i = 0; i < 4; i++) {
-        relaxOutliers(1.8f - 0.1f * i);
+        relaxOutliers(2.5f - 0.1f * i);
         calculateZoneCenters();
     }
 
