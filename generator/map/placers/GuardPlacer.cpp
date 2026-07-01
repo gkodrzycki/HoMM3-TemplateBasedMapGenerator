@@ -176,6 +176,7 @@ void GuardPlacer::placeMonolithGuards() {
 
 void GuardPlacer::placeTreasureGuards() {
 
+    auto guardValueMap = map.getGuardValueMap();
     for (int x = 0; x < map.getWidth(); x++) {
         for (int y = 0; y < map.getHeight(); y++) {
             int3 tilePos = int3(x, y, 0);
@@ -183,8 +184,14 @@ void GuardPlacer::placeTreasureGuards() {
             if (!tile || !tile->isTileType("G"))
                 continue;
 
+            if (map.getTemplateInfo().getDebug() > 1) {
+                cerr << "Placing treasure guard at position " << tilePos.toString()
+                     << " with value " << guardValueMap[tilePos] << endl;
+            }
+
             GuardHandler guardHandler(map);
-            auto guardPtr = guardHandler.createGuard(GuardTypeHandler::TREASURE, tilePos);
+            auto guardPtr = guardHandler.createGuard(GuardTypeHandler::TREASURE, tilePos,
+                                                     guardValueMap[tilePos]);
             if (guardPtr != nullptr) {
                 map.addCreature(guardPtr);
             }

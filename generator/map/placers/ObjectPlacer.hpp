@@ -25,6 +25,8 @@ class ObjectPlacer {
     void filterCandidates(vector<int3> &candidates, int3 placedObject, float minDistance);
     void evaluateCandidates(vector<int3> &candidates, vector<int3> &zoneTiles);
 
+    float getModifierForTreasure(int treasureTier, string monsterStrength);
+
   private:
     Map &map;
     MapObjectRegistry treasureInfo;
@@ -39,4 +41,7 @@ class ObjectPlacer {
     int getNumberOfTreasures(int zoneID);
     double getPercentageOfMaxTreasures(ArtifactTier tierOfTreasures);
     ArtifactTier getTierOfTreasures(int zoneID);
+
+    array<array<float, 3>, 3> valueOfTreasureModifiers = {
+        {{{0.8f, 0.8f, 0.8f}}, {{1.f, 1.f, 1.f}}, {{1.2f, 1.2f, 1.2f}}}};
 };

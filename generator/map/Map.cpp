@@ -55,6 +55,7 @@ TreasureVector Map::getTreasureVector() { return treasureVector; }
 PandoraBoxVector Map::getPandoraBoxVector() { return pandoraBoxVector; }
 MonolithVector Map::getMonolithVector() { return monolithVector; }
 GridSearchContext &Map::getSearchCtx() { return searchCtx; }
+GuardValueMap Map::getGuardValueMap() { return guardValueMap; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
@@ -71,6 +72,7 @@ void Map::addPandoraBox(shared_ptr<PandoraBox> pandoraBox) {
 void Map::addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest) {
     this->monolithVector.push_back({monolithFrom, monolithDest});
 }
+void Map::addGuardValue(int3 pos, int value) { this->guardValueMap[pos] = value; }
 
 void Map::fixReachability() {
     // Iterate over all zones and check if they are reachable from the starting zone (the one with
