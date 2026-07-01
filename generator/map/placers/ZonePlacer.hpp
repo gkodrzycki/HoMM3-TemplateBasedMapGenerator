@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../global/FastNoiseLite.h"
+#include "../../global/FastNoiseLite.hpp"
 #include "../../global/Global.hpp"
 #include "../../global/GridSearch.hpp"
 #include "../Map.hpp"
