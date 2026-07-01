@@ -37,6 +37,10 @@ class ZonePlacer {
     void generateAbstractGrid();
     bool validateAbstractGrid();
 
+    void relaxOutliers(float thresholdFactor = 1.5f);
+
+    void fixDisjointZones();
+
     void placeAbstractGridOnRealMap();
     string generateZoneHash(int zoneID);
 
