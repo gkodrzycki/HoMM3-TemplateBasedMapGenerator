@@ -557,8 +557,9 @@ void ZonePlacer::fixDisjointZones() {
 
         auto passable = [&](const int3 &p) { return map.getTile(p)->getZoneID() == zoneID; };
 
-        auto connectedTiles = bfs_collect_depth_xy(
-            mapWidth, mapHeight, {center}, numeric_limits<int>::max(), neighbors4, passable);
+        vector<int3> sources = {center};
+        auto connectedTiles  = bfs_collect_depth_xy(
+            mapWidth, mapHeight, sources, numeric_limits<int>::max(), neighbors4, passable);
 
         std::map<int3, bool> isConnected;
         for (const auto &tile : connectedTiles) {
