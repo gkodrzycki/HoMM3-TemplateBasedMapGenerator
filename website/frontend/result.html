@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Map Ready! - HoMM3 Generator</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* Spacing between buttons */
+        }
+
+        .h3-button {
+            display: inline-block;
+            padding: 12px 24px;
+            color: #fce6c9 !important; /* Forces parchment text color, overrides blue */
+            text-decoration: none !important; /* Forces removal of the underline */
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: 2px solid #2e1d10;
+            border-radius: 4px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6), inset 0px 0px 5px rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.1s;
+            text-align: center;
+            min-width: 260px; /* Keeps all buttons the exact same width */
+        }
+
+        .h3-button:hover {
+            filter: brightness(1.2); /* Brightens the button on hover */
+            color: #ffffff !important;
+        }
+
+        .h3-button:active {
+            transform: translateY(2px); /* Physical click-down effect */
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Specific colors for each button to match HoMM3 aesthetic */
+        .btn-download { background-color: #6b4423; } /* Castle Wood */
+        .btn-rate { background-color: #3b4d3c; }     /* Rampart Green */
+        .btn-new { background-color: #4a4a4a; }      /* Dungeon Stone */
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🗺️ Map Successfully Generated!</h1>
+
+    <h3 id="seed-display">Seed: Loading...</h3>
+
+    <p>Your map is ready for heroes to explore.</p>
+
+    <div class="action-buttons">
+        <a id="download-link" href="#" class="h3-button btn-download" download>📥 Download .h3m File</a>
+
+        <a id="rate-link" href="#" target="_blank" class="h3-button btn-rate">⭐ Rate Map</a>
+
+        <a href="/" class="h3-button btn-new">🧙‍♂️ Generate New Map</a>
+    </div>
+</div>
+
+<script>
+    // Grab the data from the URL (e.g., ?file=/download/map_123.h3m&seed=123)
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileUrl = urlParams.get('file');
+    const seed = urlParams.get('seed');
+
+    // If someone visits this page directly without generating a map, send them back
+    if (!fileUrl) {
+        window.location.href = "/";
+    }
+
+    // Update the HTML with the seed and the correct download link
+    document.getElementById("seed-display").innerText = "Seed: " + seed;
+    document.getElementById("download-link").href = fileUrl;
+
+    // Dynamically build the Rate Map link to pre-fill the seed in Google Forms
+    const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSehr81J2O5ruLAhABm6RJLE7IxUuyZ5xaLP-5YiUkcAUDWmJQ/viewform?usp=pp_url";
+    const rateUrl = `${formBase}&entry.1989238419=${encodeURIComponent(seed || "")}`;
+    document.getElementById("rate-link").href = rateUrl;
+</script>
+
+</body>
+</html>

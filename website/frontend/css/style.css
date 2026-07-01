@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
+/* Main dark background */
+body {
+    background-color: #1a1612;
+    /* Optional: A subtle dark texture could go here */
+    color: #3b2b18;
+    font-family: 'MedievalSharp', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* The 'Parchment' Box */
+.container {
+    background: #eaddc5;
+    border: 6px solid #6b4c1a;
+    border-radius: 4px;
+    padding: 40px 50px;
+    box-shadow:
+        inset 0 0 30px rgba(139, 101, 8, 0.4), /* Inner parchment shadow */
+        0 0 0 2px #d4af37, /* Gold trim */
+        0 15px 35px rgba(0, 0, 0, 0.8); /* Deep drop shadow */
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+}
+
+h1 {
+    color: #5c1e06;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 0px #fff, 2px 2px 0px rgba(0,0,0,0.2);
+    font-size: 32px;
+    margin-top: 0;
+    border-bottom: 2px solid #b68b42;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+p {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+/* Wood/Parchment Input */
+input {
+    background: #fdf5e6;
+    border: 2px solid #6b4c1a;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 18px;
+    color: #3b2b18;
+    width: calc(100% - 28px); /* Adjusts for padding */
+    margin-bottom: 20px;
+    box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3);
+    outline: none;
+}
+
+input:focus {
+    border-color: #d4af37;
+}
+
+/* Custom Button Styling */
+.button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #6b4423; /* HoMM3 Wood/Leather Brown */
+    color: #fce6c9; /* Light parchment text */
+    text-decoration: none; /* Removes the blue underline */
+    font-family: inherit; /* Keeps your awesome custom font */
+    font-size: 1.2rem;
+    border: 2px solid #3e2312; /* Darker border */
+    border-radius: 4px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    text-align: center;
+    min-width: 250px; /* Makes both buttons the exact same width */
+}
+
+/* Hover glow effect */
+.button:hover {
+    background-color: #8c5a2f;
+    color: #ffffff;
+}
+
+/* Physical click effect */
+.button:active {
+    transform: translateY(2px);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* A slightly different color for the 'New Map' button so they don't blend together */
+.button-secondary {
+    background-color: #4a5441; /* Swampy/Fortress green-grey */
+    border-color: #2c3325;
+}
+
+.button-secondary:hover {
+    background-color: #5d6951;
+}
+
+/* A container to center the buttons nicely */
+.button-container {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Puts exactly 15px of space between the buttons */
+}
+
+#status, #info {
+    margin-top: 25px;
+    font-weight: bold;
+    color: #8b0000; /* Deep red for alerts/status */
+    font-size: 18px;
+}

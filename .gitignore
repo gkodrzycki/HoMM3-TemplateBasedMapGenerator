@@ -1,7 +1,6 @@
 *.o
 *.so
 **/generated_script.lua
-**/Generator
 **/units.lua
 **/Units
 **/test_obstacles.lua
@@ -11,3 +10,6 @@
 build/
 **/log*
 **/config_debug.json
+**/node_modules
+.env
+website/backend/output/**

@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HoMM3 Map Generator</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+    <h1>⚔️ Map Generator</h1>
+
+    <p>Enter seed (optional):</p>
+
+    <input type="number" id="seed" placeholder="Random if empty" min="1">
+
+    <button id="generateBtn" onclick="generate()">Generate Map</button>
+
+    <div id="status"></div>
+</div>
+
+<script>
+async function generate() {
+    let seed = document.getElementById("seed").value;
+    const btn = document.getElementById("generateBtn");
+    const status = document.getElementById("status");
+
+    if (!seed) {
+        seed = Math.floor(Math.random() * 1e9);
+    }
+
+    // Disable the button so the user doesn't spam the server
+    btn.disabled = true;
+    status.innerText = "Summoning terrain... ⏳";
+
+    try {
+        const res = await fetch(`/generate?seed=${seed}`);
+        const data = await res.json();
+
+        if (!data.ok) {
+            status.innerText = "❌ Error generating map: " + (data.error || "Unknown error");
+            btn.disabled = false; // Re-enable button on error
+            console.error(data);
+            return;
+        }
+
+        // Redirect to the results page
+        window.location.href = `/result.html?file=${encodeURIComponent(data.file)}&seed=${seed}`;
+
+    } catch (e) {
+        console.error(e);
+        status.innerText = "❌ Server error. Is the backend running?";
+        btn.disabled = false;
+    }
+}
+</script>
+
+</body>
+</html>
