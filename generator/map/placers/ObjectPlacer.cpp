@@ -235,22 +235,21 @@ double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition,
         abs(candidatePosition.y - zoneCenter.y) <= 1)
         return numeric_limits<double>::min();
 
-    auto claimedTilesWithoutCandidate = bfs_claim_xy(map.getWidth(), map.getHeight(), source,
-                                                     neighbours8, passableWithoutCandidate);
-
-    auto claimedTilesWithCandidate =
-        bfs_claim_xy(map.getWidth(), map.getHeight(), source, neighbours8, passableWithCandidate);
+    auto &ctx = map.getSearchCtx();
+    auto claimedTilesWithoutCandidate =
+        bfs_claim_xy(ctx, source, neighbours8, passableWithoutCandidate);
+    auto claimedTilesWithCandidate = bfs_claim_xy(ctx, source, neighbours8, passableWithCandidate);
 
     int blockedTiles = 0;
     for (auto &tilePos : freeTiles) {
-        if (claimedTilesWithCandidate[tilePos.x][tilePos.y] == 0 &&
-            claimedTilesWithoutCandidate[tilePos.x][tilePos.y] == 2) {
+        if (claimedTilesWithCandidate[ctx.idx(tilePos)] == 0 &&
+            claimedTilesWithoutCandidate[ctx.idx(tilePos)] == 2) {
             bool isBlocked = true;
             for (int i = 0; i < 8; i++) {
                 auto neighborPos = tilePos + directions8[i];
                 if (!map.getTile(neighborPos))
                     continue;
-                if (claimedTilesWithCandidate[neighborPos.x][neighborPos.y] == 2) {
+                if (claimedTilesWithCandidate[ctx.idx(neighborPos)] == 2) {
                     isBlocked = false;
                     break;
                 }
@@ -315,11 +314,11 @@ vector<int3> ObjectPlacer::getPossibleTreasurePositions(int3 candidatePosition) 
     auto zoneCenter                = map.getZoneMap()[zoneID]->getCenter();
     vector<pair<int, int3>> source = {{2, zoneCenter}};
 
-    auto claimedTilesWithoutCandidate = bfs_claim_xy(map.getWidth(), map.getHeight(), source,
-                                                     neighbours8, passableWithoutCandidate);
-
+    auto &ctx = map.getSearchCtx();
+    auto claimedTilesWithoutCandidate =
+        bfs_claim_xy_copy(ctx, source, neighbours8, passableWithoutCandidate);
     auto claimedTilesWithCandidate =
-        bfs_claim_xy(map.getWidth(), map.getHeight(), source, neighbours8, passableWithCandidate);
+        bfs_claim_xy_copy(ctx, source, neighbours8, passableWithCandidate);
 
     vector<int3> possiblePositions;
     for (int x = 0; x < map.getWidth(); x++) {
@@ -327,8 +326,7 @@ vector<int3> ObjectPlacer::getPossibleTreasurePositions(int3 candidatePosition) 
             int3 tilePos = int3(x, y, 0);
             if (tilePos == candidatePosition)
                 continue;
-            if (claimedTilesWithoutCandidate[tilePos.x][tilePos.y] == 2 &&
-                claimedTilesWithCandidate[tilePos.x][tilePos.y] == 0 &&
+            if (claimedTilesWithoutCandidate[x][y] == 2 && claimedTilesWithCandidate[x][y] == 0 &&
                 map.getTile(tilePos)->isTileType("F") &&
                 map.getTile(tilePos)->getZoneID() == zoneID) {
                 bool isGood = true;
@@ -579,8 +577,6 @@ void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier tre
 
 void ObjectPlacer::filterCandidates(vector<int3> &candidates, int3 placedObject,
                                     float minDistance) {
-    int mapWidth  = map.getWidth();
-    int mapHeight = map.getHeight();
 
     auto neighbors8 = [&](const int3 &p) {
         std::array<int3, 8> out;
@@ -592,8 +588,8 @@ void ObjectPlacer::filterCandidates(vector<int3> &candidates, int3 placedObject,
 
     auto sources = vector<int3>{placedObject};
 
-    auto possibleCandidates =
-        bfs_collect_depth_xy(mapWidth, mapHeight, sources, minDistance, neighbors8, passable);
+    auto &ctx               = map.getSearchCtx();
+    auto possibleCandidates = bfs_collect_depth_xy(ctx, sources, minDistance, neighbors8, passable);
 
     set<int3> possibleCandidatesSet(possibleCandidates.begin(), possibleCandidates.end());
 
@@ -691,9 +687,9 @@ vector<int3> ObjectPlacer::generateTreasureCandidates(vector<int3> &zoneTiles,
     }
 
     auto sources = tilesWithinTrees;
-    auto possibleCandidates =
-        bfs_collect_depth_xy(mapWidth, mapHeight, sources, 1, neighbors4, passable);
 
+    auto possibleCandidates =
+        bfs_collect_depth_xy(map.getSearchCtx(), sources, 1, neighbors4, passable);
     vector<int3> candidates;
     for (const auto &candidate : possibleCandidates) {
         if (!isSource[candidate.x][candidate.y]) {

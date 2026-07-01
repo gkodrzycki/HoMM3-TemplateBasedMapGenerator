@@ -1,6 +1,6 @@
 #include "./Map.hpp"
 
-Map::Map(RNG &rng, TemplateInfo templateInfo) : rng(rng), templateInfo(templateInfo) {}
+Map::Map(RNG &rng, TemplateInfo templateInfo) : rng(rng), templateInfo(templateInfo), searchCtx() {}
 
 pair<int, int> Map::chooseMapSize(int minimumSize, int maximumSize) {
     vector<string> sizes;
@@ -54,6 +54,7 @@ CreatureVector Map::getCreatureVector() { return creatureVector; }
 TreasureVector Map::getTreasureVector() { return treasureVector; }
 PandoraBoxVector Map::getPandoraBoxVector() { return pandoraBoxVector; }
 MonolithVector Map::getMonolithVector() { return monolithVector; }
+GridSearchContext &Map::getSearchCtx() { return searchCtx; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
@@ -118,8 +119,8 @@ void Map::fixReachability() {
                 return 0;
             return a.distance2DMH(b) + 1;
         };
-
-        auto reachability = dijkstra_reachability(W, H, center, neighbors, passable, cost);
+        auto &ctx = getSearchCtx();
+        dijkstra_reachability(ctx, center, neighbors, passable, cost);
 
         auto objectVector   = getObjectVector();
         auto monolithVector = getMonolithVector();
@@ -132,36 +133,40 @@ void Map::fixReachability() {
             combinedVector.push_back(monolithDest);
         }
 
+        map<int3, bool> clearedTiles;
         for (auto obj : combinedVector) {
             int3 pos = obj->getPosition();
             if (getTile(pos)->isTileType("T")) {
                 pos = pos + int3(-1, 1, 0);
             }
-            if (reachability[pos].second == numeric_limits<int>::max()) {
+            if (reach_dist(ctx, pos.x, pos.y) == numeric_limits<int>::max()) {
                 continue;
             }
-            if (reachability[pos].second == 0) {
+            if (reach_dist(ctx, pos.x, pos.y) == 0) {
                 continue;
             }
-            int distance = reachability[pos].second;
+            int distance = reach_dist(ctx, pos.x, pos.y);
             while (distance != 0) {
                 auto tile = getTile(pos);
                 if (tile->isTileType("bO")) {
                     tile->setTileType(TileType::TILE_FREE);
                 }
-                reachability[pos].second = 0;
-                pos                      = reachability[pos].first;
-                distance                 = reachability[pos].second;
+                clearedTiles[pos] = true;
+                pos               = reach_parent(ctx, pos.x, pos.y);
+                distance          = reach_dist(ctx, pos.x, pos.y);
             }
         }
 
         for (int j = 0; j < H; j++) {
             for (int i = 0; i < W; i++) {
                 int3 pos(i, j, 0);
-                if (reachability[pos].second == numeric_limits<int>::max()) {
+                if (reach_dist(ctx, pos.x, pos.y) == numeric_limits<int>::max()) {
                     continue;
                 }
-                if (reachability[pos].second == 0) {
+                if (reach_dist(ctx, pos.x, pos.y) == 0) {
+                    continue;
+                }
+                if (clearedTiles[pos] == true) {
                     continue;
                 }
 
@@ -179,6 +184,7 @@ void Map::initTiles() {
 
     width  = width_height.first;
     height = width_height.second;
+    searchCtx.resize(width, height);
     tileMap.resize(height, vector<shared_ptr<Tile>>(width));
 
     for (int i = 0; i < height; i++) {
@@ -194,42 +200,85 @@ void Map::generateMap() {
     if (templateInfo.getDebug() > 0) {
         cerr << "==== SEED: " << rng.getOriginalSeed() << " ====\n";
     }
-
     initMap();
 
     ZonePlacer zonePlacer(*this);
     zonePlacer.placeZones();
     zonePlacer.groupZones();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Zones placed...\n";
+    }
+
     BorderPlacer borderPlacer(*this);
     borderPlacer.reserveBorderTiles();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Borders reserved...\n";
+    }
 
     TerrainPlacer terrainPlacer(*this);
     terrainPlacer.generateNoise();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Noise generated...\n";
+    }
+
     TownPlacer townPlacer(*this);
     townPlacer.placeTowns();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Towns placed...\n";
+    }
+
     ConnectionPlacer connectionPlacer(*this);
     connectionPlacer.placeRoads();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Roads placed...\n";
+    }
     connectionPlacer.createMonoliths();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Monoliths placed...\n";
+    }
 
     ObjectPlacer objectPlacer(*this);
     // objectPlacer.placeBasicMines(); TODO: decide if we want to place basic mines standalone or
     // not
     objectPlacer.placeMines();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Mines placed...\n";
+    }
     objectPlacer.placeMineResources();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Mine resources placed...\n";
+    }
     objectPlacer.placeTreasures();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Treasures placed...\n";
+    }
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Guards placed, fixing reachability...\n";
+    }
+
     fixReachability();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Reachability fixed, placing borders and obstacles...\n";
+    }
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
 
     if (templateInfo.getDebug() > 0) {
+        printRealSizeMap();
         placeDebugObjects();
     }
 }
@@ -525,8 +574,87 @@ void Map::printMap(int debugLevel) {
             case TileType::TILE_GUARD:
                 printColor(RED, tileTypeToChar(tileType));
                 break;
+            case TileType::TILE_OBSTACLE_BODY:
+                printColor(WHITE, tileTypeToChar(tileType));
+                break;
             default:
                 cerr << tileTypeToChar(tileType);
+            }
+        }
+        cerr << "\n";
+    }
+}
+
+void Map::printRealSizeMap() {
+    cerr << "==== Map after placeObstacles (with realSize shown as 'X') ====\n";
+    vector<string> tempMap(height, string(width, '.'));
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            tempMap[i][j] = tileTypeToChar(tileMap[i][j]->getTileType());
+        }
+    }
+
+    for (auto &object : objectVector) {
+        int3 pos                       = object->getPosition();
+        int3 size                      = object->getSize();
+        const vector<string> &realSize = object->getRealSize();
+
+        if (realSize.empty() || (int)realSize.size() != size.y) {
+            continue;
+        }
+
+        for (int dy = 0; dy < size.y; dy++) {
+            if ((int)realSize[dy].size() != size.x)
+                continue;
+
+            for (int dx = 0; dx < size.x; dx++) {
+                if (realSize[dy][dx] == '1') {
+                    int tileX = pos.x - size.x + dx + 1;
+                    int tileY = pos.y - size.y + dy + 1;
+
+                    if (tileX >= 0 && tileX < width && tileY >= 0 && tileY < height) {
+                        tempMap[tileY][tileX] = 'X';
+                    }
+                }
+            }
+        }
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            if (tempMap[y][x] == 'X') {
+                printColor(RED, 'X');
+            } else {
+                TileType tileType = tileMap[y][x]->getTileType();
+                switch (tileType) {
+                case TileType::TILE_FREE:
+                    printColor(GREEN, tempMap[y][x]);
+                    break;
+                case TileType::TILE_OCCUPIED:
+                    printColor(YELLOW, tempMap[y][x]);
+                    break;
+                case TileType::TILE_TAKEN:
+                    printColor(CYAN, tempMap[y][x]);
+                    break;
+                case TileType::TILE_ROAD:
+                    printColor(MAGENTA, tempMap[y][x]);
+                    break;
+                case TileType::TILE_BORDER_INNER:
+                    printColor(BLUE, tempMap[y][x]);
+                    break;
+                case TileType::TILE_BORDER_OUTER:
+                    printColor(BRIGHT_BLUE, tempMap[y][x]);
+                    break;
+                case TileType::TILE_GUARD:
+                    printColor(RED, tempMap[y][x]);
+                    break;
+                case TileType::TILE_OBSTACLE_BODY:
+                    printColor(WHITE, tempMap[y][x]);
+                    break;
+                default:
+                    cerr << tempMap[y][x];
+                }
             }
         }
         cerr << "\n";

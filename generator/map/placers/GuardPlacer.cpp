@@ -7,8 +7,6 @@ GuardPlacer::GuardPlacer(Map &map) : map(map) {}
 void GuardPlacer::placeBorderGuards() {
     RoadVector roadVector = map.getRoadVector();
     ZoneMap zoneMap       = map.getZoneMap();
-    int W                 = map.getWidth();
-    int H                 = map.getHeight();
 
     std::map<pair<int, int>, int> guardStrengths; // (zoneA, zoneB) -> guard strength
 
@@ -70,7 +68,7 @@ void GuardPlacer::placeBorderGuards() {
             return true;
         };
         vector<int3> candidates =
-            bfs_collect_depth_xy(W, H, tilesOnBorder, 2, neighbors8, passable);
+            bfs_collect_depth_xy(map.getSearchCtx(), tilesOnBorder, 2, neighbors8, passable);
         set<int3> pathSet(path.begin(), path.end());
 
         stable_partition(candidates.begin(), candidates.end(),
@@ -100,7 +98,8 @@ void GuardPlacer::placeBorderGuards() {
                 return true;
             };
 
-            auto reachPath = bfs_path_xy(W, H, centerA, centerB, neighbors8, passable);
+            auto reachPath =
+                bfs_path_xy(map.getSearchCtx(), centerA, centerB, neighbors8, passable);
             if (reachPath.empty()) {
                 int borderTileCount = 0;
                 for (auto dir : directions8) {

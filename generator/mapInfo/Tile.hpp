@@ -12,6 +12,7 @@ enum class TileType {
     TILE_BORDER_INNER,
     TILE_BORDER_OUTER,
     TILE_OBSTACLE,
+    TILE_OBSTACLE_BODY, // tile covered by a placed obstacle sprite
     TILE_GUARD,
     TILE_DEBUG
 };
