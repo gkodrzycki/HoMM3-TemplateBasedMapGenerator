@@ -59,8 +59,11 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
         int3 townPos = map.findBestDistributedPosition(currentFreeTiles, placedTowns, placedObjects,
                                                        zoneCenter, tolerance);
 
-        cerr << "Placing town in zone " << zoneID << " at position " << townPos.toString() << endl;
-        cerr << "Size of placedTowns: " << placedTowns.size() << endl;
+        if (map.getTemplateInfo().getDebug() > 1) {
+            cerr << "Placing town in zone " << zoneID << " at position " << townPos.toString()
+                 << endl;
+            cerr << "Size of placedTowns: " << placedTowns.size() << endl;
+        }
 
         // Check if the found position is valid, if not try to find another one
 
