@@ -206,38 +206,74 @@ void Map::generateMap() {
     zonePlacer.placeZones();
     zonePlacer.groupZones();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Zones placed...\n";
+    }
+
     BorderPlacer borderPlacer(*this);
     borderPlacer.reserveBorderTiles();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Borders reserved...\n";
+    }
 
     TerrainPlacer terrainPlacer(*this);
     terrainPlacer.generateNoise();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Noise generated...\n";
+    }
+
     TownPlacer townPlacer(*this);
     townPlacer.placeTowns();
 
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Towns placed...\n";
+    }
+
     ConnectionPlacer connectionPlacer(*this);
     connectionPlacer.placeRoads();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Roads placed...\n";
+    }
     connectionPlacer.createMonoliths();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Monoliths placed...\n";
+    }
 
     ObjectPlacer objectPlacer(*this);
     // objectPlacer.placeBasicMines(); TODO: decide if we want to place basic mines standalone or
     // not
     objectPlacer.placeMines();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Mines placed...\n";
+    }
     objectPlacer.placeMineResources();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Mine resources placed...\n";
+    }
     objectPlacer.placeTreasures();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Treasures placed...\n";
+    }
 
     GuardPlacer guardPlacer(*this);
     guardPlacer.placeGuards();
 
-if (templateInfo.getDebug() > 0) {
-    cerr << "Guards placed, fixing reachability...\n";
-}
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Guards placed, fixing reachability...\n";
+    }
 
-fixReachability();
+    fixReachability();
 
-if (templateInfo.getDebug() > 0) {
-    cerr << "Reachability fixed, placing borders and obstacles...\n";
-}
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Reachability fixed, placing borders and obstacles...\n";
+    }
     borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
 
