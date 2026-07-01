@@ -343,8 +343,8 @@ bool ZonePlacer::claimTiles(vector<pair<int, int3>> &zoneTiles, bool fullClaim) 
             return false;
         return true;
     };
-auto &ctx = map.getSearchCtx();
-bfs_claim_xyz2(ctx, zoneTiles, neighbors4, passable, claimFn);
+    auto &ctx = map.getSearchCtx();
+    bfs_claim_xyz2(ctx, zoneTiles, neighbors4, passable, claimFn);
     ZoneMap zoneMap = map.getZoneMap();
 
     bool fullyClaimed = true;
@@ -559,7 +559,7 @@ void ZonePlacer::fixDisjointZones() {
 
         vector<int3> sources = {center};
         auto connectedTiles  = bfs_collect_depth_xy(
-            mapWidth, mapHeight, sources, numeric_limits<int>::max(), neighbors4, passable);
+            map.getSearchCtx(), sources, numeric_limits<int>::max(), neighbors4, passable);
 
         std::map<int3, bool> isConnected;
         for (const auto &tile : connectedTiles) {
