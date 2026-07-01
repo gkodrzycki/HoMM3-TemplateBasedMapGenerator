@@ -18,13 +18,13 @@ int GuardHandler::getGuardLevel(GuardTypeHandler type, string zoneStrength) {
         }
     case GuardTypeHandler::TREASURE:
         if (zoneStrength == "weak") {
-            return rng.nextInt(2, 3);
-        } else if (zoneStrength == "normal") {
             return rng.nextInt(3, 4);
-        } else if (zoneStrength == "strong") {
+        } else if (zoneStrength == "normal") {
             return rng.nextInt(4, 5);
+        } else if (zoneStrength == "strong") {
+            return rng.nextInt(5, 7);
         } else {
-            return rng.nextInt(1, 5);
+            return rng.nextInt(1, 7);
         }
     case GuardTypeHandler::BORDER:
         return rng.nextInt(6, 7);

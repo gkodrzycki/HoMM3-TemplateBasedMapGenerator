@@ -443,8 +443,9 @@ void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
 }
 
 void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier treasureTier) {
-    int mapWidth  = map.getWidth();
-    int mapHeight = map.getHeight();
+    int mapWidth           = map.getWidth();
+    int mapHeight          = map.getHeight();
+    string monsterStrength = map.getTemplateInfo().getZoneById(zoneID).getMonsters().strength;
 
     vector<int3> placedObjects;
     vector<int3> placedTreasures;
@@ -567,12 +568,29 @@ void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier tre
 
         } else {
             placeTreasuresNearCandidate(candidatePosition, valueToPlace);
-            map.getTile(candidatePosition)
-                ->setTileType(TileType::TILE_GUARD); // TODO: check value of guard?
+            map.getTile(candidatePosition)->setTileType(TileType::TILE_GUARD);
+            int finalValue = valueToPlace * getModifierForTreasure(tier, monsterStrength);
+            map.addGuardValue(candidatePosition, finalValue);
         }
 
         placedTreasures.push_back(candidatePosition);
     }
+}
+
+float ObjectPlacer::getModifierForTreasure(int treasureTier, string monsterStrength) {
+    int strengthIndex;
+
+    if (monsterStrength == "weak") {
+        strengthIndex = 0;
+    } else if (monsterStrength == "normal") {
+        strengthIndex = 1;
+    } else if (monsterStrength == "strong") {
+        strengthIndex = 2;
+    } else {
+        throw std::invalid_argument("Invalid monster strength: " + monsterStrength);
+    }
+
+    return valueOfTreasureModifiers[treasureTier][strengthIndex];
 }
 
 void ObjectPlacer::filterCandidates(vector<int3> &candidates, int3 placedObject,

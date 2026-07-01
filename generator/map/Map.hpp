@@ -22,6 +22,7 @@
 
 using HashMap          = map<int, string>;
 using GroupSettingMap  = map<string, shared_ptr<GroupSetting>>;
+using GuardValueMap    = map<int3, int>;
 using ZoneMap          = map<int, shared_ptr<Zone>>;
 using TileMap          = vector<vector<shared_ptr<Tile>>>;
 using ObjectVector     = vector<shared_ptr<Object>>;
@@ -52,6 +53,7 @@ class Map {
     void addTreasure(shared_ptr<Treasure> treasure);
     void addPandoraBox(shared_ptr<PandoraBox> pandoraBox);
     void addMonoliths(shared_ptr<Object> monolithFrom, shared_ptr<Object> monolithDest);
+    void addGuardValue(int3 pos, int value);
     void fixReachability();
     string getZoneHash(int zoneID);
     GroupSettingMap &getGroupSettingMap();
@@ -67,6 +69,7 @@ class Map {
     MonolithVector getMonolithVector();
     HashMap getHashMap();
     GridSearchContext &getSearchCtx();
+    GuardValueMap getGuardValueMap();
     RNG &getRNG();
     int getWidth();
     int getHeight();
@@ -101,4 +104,5 @@ class Map {
     PandoraBoxVector pandoraBoxVector;
     RoadVector roadVector;
     MonolithVector monolithVector;
+    GuardValueMap guardValueMap;
 };
