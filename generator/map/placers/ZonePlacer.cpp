@@ -343,8 +343,8 @@ bool ZonePlacer::claimTiles(vector<pair<int, int3>> &zoneTiles, bool fullClaim) 
             return false;
         return true;
     };
-auto &ctx = map.getSearchCtx();
-bfs_claim_xyz2(ctx, zoneTiles, neighbors4, passable, claimFn);
+    auto &ctx = map.getSearchCtx();
+    bfs_claim_xyz2(ctx, zoneTiles, neighbors4, passable, claimFn);
     ZoneMap zoneMap = map.getZoneMap();
 
     bool fullyClaimed = true;
@@ -440,11 +440,150 @@ void ZonePlacer::calculateZoneCenters() {
         zone->setCenter(visitedNodes.back());
     }
 }
+void ZonePlacer::roughenBoundaries() {
+    auto &rng = map.getRNG();
+
+    FastNoiseLite noiseX, noiseY;
+    noiseX.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    noiseX.SetFrequency(0.04f);
+    noiseX.SetSeed(rng.getSeed());
+
+    noiseY.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    noiseY.SetFrequency(0.04f);
+    noiseY.SetSeed(rng.getSeed() + 1000);
+
+    int mapWidth = map.getWidth(), mapHeight = map.getHeight();
+    float strength = 6.0f;
+
+    vector<vector<int>> snapshot(mapWidth, vector<int>(mapHeight, 0));
+    for (int y = 0; y < mapHeight; y++)
+        for (int x = 0; x < mapWidth; x++)
+            snapshot[x][y] = map.getTile(int3(x, y, 0))->getZoneID();
+
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            float dx = noiseX.GetNoise((float)x, (float)y) * strength;
+            float dy = noiseY.GetNoise((float)x, (float)y) * strength;
+
+            int sx = clamp((int)(x + dx), 0, mapWidth - 1);
+            int sy = clamp((int)(y + dy), 0, mapHeight - 1);
+
+            map.getTile(int3(x, y, 0))->setZoneID(snapshot[sx][sy]);
+        }
+    }
+}
+
+void ZonePlacer::relaxOutliers(float thresholdFactor) {
+    ZoneMap zoneMap = map.getZoneMap();
+    int mapWidth = map.getWidth(), mapHeight = map.getHeight();
+
+    std::map<int, vector<float>> distancesPerZone;
+
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            int zoneID = map.getTile(int3(x, y, 0))->getZoneID();
+            if (zoneID == 0)
+                continue;
+            int3 center = zoneMap[zoneID]->getCenter();
+            float d     = (float)int3(x, y, 0).distance2DSQ(center);
+            distancesPerZone[zoneID].push_back(d);
+        }
+    }
+
+    std::map<int, float> threshold;
+    for (auto &[zoneID, dists] : distancesPerZone) {
+        vector<float> sorted = dists;
+        sort(sorted.begin(), sorted.end());
+        float median      = sorted[sorted.size() / 2];
+        threshold[zoneID] = median * thresholdFactor;
+    }
+
+    vector<vector<int>> newZoneID(mapWidth, vector<int>(mapHeight, 0));
+    for (int y = 0; y < mapHeight; y++)
+        for (int x = 0; x < mapWidth; x++)
+            newZoneID[x][y] = map.getTile(int3(x, y, 0))->getZoneID();
+
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            int3 pos(x, y, 0);
+            int zoneID = map.getTile(pos)->getZoneID();
+            if (zoneID == 0)
+                continue;
+
+            int3 ownCenter = zoneMap[zoneID]->getCenter();
+            float ownDist  = (float)pos.distance2DSQ(ownCenter);
+
+            if (ownDist <= threshold[zoneID])
+                continue;
+
+            int bestZone   = zoneID;
+            float bestDist = ownDist;
+            for (auto &[zid, zone] : zoneMap) {
+                float d = (float)pos.distance2DSQ(zone->getCenter());
+                if (d < bestDist) {
+                    bestDist = d;
+                    bestZone = zid;
+                }
+            }
+            newZoneID[x][y] = bestZone;
+        }
+    }
+
+    for (int y = 0; y < mapHeight; y++) {
+        for (int x = 0; x < mapWidth; x++) {
+            int newZ     = newZoneID[x][y];
+            auto tilePtr = map.getTile(int3(x, y, 0));
+            if (newZ != tilePtr->getZoneID()) {
+                tilePtr->setZoneID(newZ);
+                tilePtr->setTerrain(zoneMap[newZ]->getTerrain());
+            }
+        }
+    }
+}
+
+void ZonePlacer::fixDisjointZones() {
+    ZoneMap zoneMap = map.getZoneMap();
+    int mapWidth = map.getWidth(), mapHeight = map.getHeight();
+
+    for (auto &[zoneID, zone] : zoneMap) {
+        int3 center = zone->getCenter();
+
+        auto neighbors4 = [&](const int3 &p) {
+            array<int3, 4> out;
+            for (int i = 0; i < 4; i++)
+                out[i] = p + directions4[i];
+            return out;
+        };
+
+        auto passable = [&](const int3 &p) { return map.getTile(p)->getZoneID() == zoneID; };
+
+        vector<int3> sources = {center};
+        auto connectedTiles  = bfs_collect_depth_xy(
+            map.getSearchCtx(), sources, numeric_limits<int>::max(), neighbors4, passable);
+
+        std::map<int3, bool> isConnected;
+        for (const auto &tile : connectedTiles) {
+            isConnected[tile] = true;
+        }
+
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                int3 pos(x, y, 0);
+                if (map.getTile(pos)->getZoneID() == zoneID && isConnected[pos] == false) {
+                    map.getTile(pos)->setZoneID(0);
+                }
+            }
+        }
+    }
+
+    claimFreeTiles(true);
+}
 
 void ZonePlacer::placeZones() {
     initZones();
     calculateDistances();
     generateZones();
+    roughenBoundaries();
     bool allClaimed = claimFreeTiles();
     if (!allClaimed) {
         cerr << "Not all tiles were claimed in the first pass, claiming remaining tiles with "
@@ -468,6 +607,12 @@ void ZonePlacer::placeZones() {
     }
 
     calculateZoneCenters();
+    for (int i = 0; i < 4; i++) {
+        relaxOutliers(2.5f - 0.1f * i);
+        calculateZoneCenters();
+    }
+
+    fixDisjointZones();
 
     if (map.getTemplateInfo().getDebug() > 0) {
         cerr << "=== Abstract grid ===\n";
