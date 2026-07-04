@@ -1,7 +1,5 @@
 website/backend/node_modules/
 
-website/backend/output/
-
 .git
 .gitignore
 .env
