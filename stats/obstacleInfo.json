@@ -2499,38 +2499,6 @@
         ]
     },
     {
-        "name": "Lava Flow_Subterranean0",
-        "terrains": [
-            "subterranean"
-        ],
-        "size": "2,2",
-        "realSize": [
-            "11",
-            "11"
-        ]
-    },
-    {
-        "name": "Lava Flow_Subterranean1",
-        "terrains": [
-            "subterranean"
-        ],
-        "size": "1,2",
-        "realSize": [
-            "1",
-            "1"
-        ]
-    },
-    {
-        "name": "Lava Flow_Subterranean2",
-        "terrains": [
-            "subterranean"
-        ],
-        "size": "2,1",
-        "realSize": [
-            "11"
-        ]
-    },
-    {
         "name": "Mandrake_Swamp0",
         "terrains": [
             "swamp"

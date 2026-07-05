@@ -276,8 +276,8 @@ void Map::generateMap() {
     if (templateInfo.getDebug() > 0) {
         cerr << "Reachability fixed, placing borders and obstacles...\n";
     }
-    borderPlacer.placeBorders();
     terrainPlacer.placeObstacles();
+    borderPlacer.placeBorders();
 
     if (templateInfo.getDebug() > 0) {
         printRealSizeMap();
