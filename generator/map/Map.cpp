@@ -134,6 +134,10 @@ void Map::fixReachability() {
             combinedVector.push_back(monolithFrom);
             combinedVector.push_back(monolithDest);
         }
+        for (const auto &[pos, value] : getGuardValueMap()) {
+            auto guardObject = Object(pos, "Guard", int3(1, 1, 0));
+            combinedVector.push_back(make_shared<Object>(guardObject));
+        }
 
         map<int3, bool> clearedTiles;
         for (auto obj : combinedVector) {
