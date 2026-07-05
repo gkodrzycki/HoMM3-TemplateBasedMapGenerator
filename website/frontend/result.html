@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Map Ready! - HoMM3 Generator</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Specific colors for results buttons to match HoMM3 aesthetic */
+        .btn-download { background-color: #6b4423; }
+        .btn-rate { background-color: #3b4d3c; }
+        .btn-new { background-color: #4a4a4a; }
+    </style>
+</head>
+
+<body>
+    <!-- Top Right Language Flag -->
+    <div class="lang-toggle" onclick="toggleLanguage()">
+        <img id="lang-flag" src="https://flagcdn.com/w40/gb.png" alt="Language Toggle">
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1 id="title" data-en="🗺️ Map Successfully Generated!" data-pl="🗺️ Mapa Wygenerowana Pomyślnie!">🗺️ Map Successfully Generated!</h1>
+
+        <h3 id="seed-display">Seed: Loading...</h3>
+
+        <p id="subtitle" data-en="Your map is ready for heroes to explore." data-pl="Twoja mapa jest gotowa do eksploracji przez bohaterów.">Your map is ready for heroes to explore.</p>
+
+        <div class="action-buttons">
+            <a id="download-link" href="#" class="button btn-download" download data-en="📥 Download .h3m File" data-pl="📥 Pobierz plik .h3m">📥 Download .h3m File</a>
+
+            <a id="rate-link" href="#" target="_blank" class="button btn-rate" data-en="⭐ Rate Map" data-pl="⭐ Oceń Mapę">⭐ Rate Map</a>
+
+            <a href="/" class="button btn-new" data-en="🧙‍♂️ Generate New Map" data-pl="🧙‍♂️ Generuj Nową Mapę">🧙‍♂️ Generate New Map</a>
+        </div>
+    </div>
+
+    <!-- Global Footer -->
+    <div class="global-footer">
+        <span id="footer-text" data-en="Source code available on" data-pl="Kod źródłowy dostępny na">Source code available on</span>
+        <a href="https://github.com/gkodrzycki/HoMM3-TemplateBasedMapGenerator" target="_blank">GitHub</a>
+    </div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileUrl = urlParams.get('file');
+    const seed = urlParams.get('seed');
+    let currentLang = urlParams.get('lang') || 'en';
+
+    if (!fileUrl) {
+        window.location.href = "/";
+    }
+
+    document.getElementById("download-link").href = fileUrl;
+
+    const formBaseUrls = {
+        en: "https://docs.google.com/forms/d/e/1FAIpQLSc2b25ZUvuh-rVQ3F7tw0IAI0Xf3K-fuEccKaZJ9MTsDKaYHQ/viewform?usp=pp_url",
+        pl: "https://docs.google.com/forms/d/e/1FAIpQLSehr81J2O5ruLAhABm6RJLE7IxUuyZ5xaLP-5YiUkcAUDWmJQ/viewform?usp=pp_url"
+    };
+
+    function updateRateLink() {
+        const formBase = formBaseUrls[currentLang] || formBaseUrls['en'];
+        const rateUrl = `${formBase}&entry.1989238419=${encodeURIComponent(seed || "")}`;
+        document.getElementById("rate-link").href = rateUrl;
+    }
+
+    function applyTranslations() {
+        // Switch the flag image
+        const flagImg = document.getElementById('lang-flag');
+        flagImg.src = currentLang === 'pl' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/pl.png';
+
+        const elementsToTranslate = ['title', 'subtitle', 'download-link', 'rate-link', 'footer-text'];
+        elementsToTranslate.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.innerText = el.getAttribute(`data-${currentLang}`);
+        });
+
+        const newMapBtn = document.querySelector('.btn-new');
+        if(newMapBtn) newMapBtn.innerText = newMapBtn.getAttribute(`data-${currentLang}`);
+
+        const seedPrefix = currentLang === 'en' ? "Seed: " : "Seed: ";
+        document.getElementById("seed-display").innerText = seedPrefix + (seed || "Unknown");
+
+        updateRateLink();
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'pl' : 'en';
+        applyTranslations();
+
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('lang', currentLang);
+        window.history.replaceState({}, '', newUrl);
+    }
+
+    applyTranslations();
+</script>
+</body>
+</html>

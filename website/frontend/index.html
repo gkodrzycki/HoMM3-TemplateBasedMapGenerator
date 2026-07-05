@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HoMM3 Map Generator</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- Top Right Language Flag -->
+    <div class="lang-toggle" onclick="toggleLanguage()">
+        <img id="lang-flag" src="https://flagcdn.com/w40/gb.png" alt="Language Toggle">
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1 id="title" data-en="⚔️ Map Generator" data-pl="⚔️ Generator Map">⚔️ Map Generator</h1>
+
+        <p id="seed-label" data-en="Enter seed (optional):" data-pl="Wprowadź seed (opcjonalnie):">Enter seed (optional):</p>
+
+        <input type="number" id="seed" placeholder="Random if empty" data-en="Random if empty" data-pl="Losowe jeśli puste" min="1">
+
+        <button id="generateBtn" class="button" data-en="Generate Map" data-pl="Generuj mapę" onclick="generate()">Generate Map</button>
+
+        <div id="status"></div>
+    </div>
+
+    <!-- Global Footer -->
+    <div class="global-footer">
+        <span id="footer-text" data-en="Source code available on" data-pl="Kod źródłowy dostępny na">Source code available on</span>
+        <a href="https://github.com/gkodrzycki/HoMM3-TemplateBasedMapGenerator" target="_blank">GitHub</a>
+    </div>
+
+<script>
+let currentLang = 'en';
+
+function applyTranslations() {
+    // Switch the flag image based on current language
+    const flagImg = document.getElementById('lang-flag');
+    flagImg.src = currentLang === 'pl' ? 'https://flagcdn.com/w40/gb.png' : 'https://flagcdn.com/w40/pl.png';
+
+    // Update standard text elements
+    const elementsToTranslate = ['title', 'seed-label', 'generateBtn', 'footer-text'];
+    elementsToTranslate.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.innerText = el.getAttribute(`data-${currentLang}`);
+    });
+
+    // Update input placeholder specifically
+    const seedInput = document.getElementById('seed');
+    if(seedInput) seedInput.placeholder = seedInput.getAttribute(`data-${currentLang}`);
+}
+
+function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'pl' : 'en';
+    applyTranslations();
+}
+
+async function generate() {
+    let seed = document.getElementById("seed").value;
+    const btn = document.getElementById("generateBtn");
+    const status = document.getElementById("status");
+
+    if (!seed) {
+        seed = Math.floor(Math.random() * 1e9);
+    }
+
+    btn.disabled = true;
+    status.innerText = currentLang === 'en' ? "Summoning terrain... ⏳" : "Przywoływanie terenu... ⏳";
+
+    try {
+        const res = await fetch(`/generate?seed=${seed}`);
+        const data = await res.json();
+
+        if (!data.ok) {
+            const errorPrefix = currentLang === 'en' ? "❌ Error generating map: " : "❌ Błąd generowania mapy: ";
+            status.innerText = errorPrefix + (data.error || "Unknown error");
+            btn.disabled = false;
+            console.error(data);
+            return;
+        }
+
+        window.location.href = `/result.html?file=${encodeURIComponent(data.file)}&seed=${seed}&lang=${currentLang}`;
+
+    } catch (e) {
+        console.error(e);
+        status.innerText = currentLang === 'en' ? "❌ Server error. Is the backend running?" : "❌ Błąd serwera. Czy backend działa?";
+        btn.disabled = false;
+    }
+}
+
+// Set initial language on page load
+applyTranslations();
+</script>
+</body>
+</html>
