@@ -327,7 +327,7 @@ void TerrainPlacer::generateNoise() {
                         if (t == nullptr)
                             continue;
                         if (subGrid[dy * rectWidth + dx]) {
-                            t->setTileType(TileType::TILE_DEBUG);
+                            t->setTileType(TileType::TILE_OBSTACLE);
                         }
                     }
                 }
