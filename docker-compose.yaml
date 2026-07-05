@@ -1,0 +1,19 @@
+services:
+  homm3-generator:
+    build: .
+    container_name: homm3-generator
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./website/backend/output:/app/website/backend/output
+
+  cloudflared:
+      image: cloudflare/cloudflared:latest
+      container_name: cloudflare-tunnel
+      restart: unless-stopped
+      command: tunnel run
+      environment:
+        - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+      depends_on:
+        - homm3-generator

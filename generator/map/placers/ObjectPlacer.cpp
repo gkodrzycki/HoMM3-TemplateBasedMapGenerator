@@ -549,6 +549,23 @@ void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier tre
             filterCandidates(treasureCandidates, placedObject, minDistanceTotal);
         }
 
+        // Guard positions cannot be adjacent to road tiles
+        auto isAdjacentToRoad = [&](const int3 &pos) {
+            for (const auto &dir : directions8) {
+                auto n = map.getTile(pos + dir);
+                if (n && n->isTileType("r"))
+                    return true;
+            }
+            return false;
+        };
+
+        auto eraseRoadAdjacent = [&](vector<int3> &v) {
+            v.erase(remove_if(v.begin(), v.end(), isAdjacentToRoad), v.end());
+        };
+
+        eraseRoadAdjacent(treasureCandidatesPruned);
+        eraseRoadAdjacent(treasureCandidates);
+
         evaluateCandidates(treasureCandidatesPruned, possiblePositions);
     }
 

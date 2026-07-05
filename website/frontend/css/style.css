@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+
+/* Main dark background */
+body {
+    background-color: #1a1612;
+    color: #3b2b18;
+    font-family: 'Cinzel', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    position: relative;
+}
+
+/* The 'Parchment' Box */
+.container {
+    background: #eaddc5;
+    border: 6px solid #6b4c1a;
+    border-radius: 4px;
+    padding: 40px 50px;
+    box-shadow:
+        inset 0 0 30px rgba(139, 101, 8, 0.4),
+        0 0 0 2px #d4af37,
+        0 15px 35px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+}
+
+h1 {
+    color: #5c1e06;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 0px #fff, 2px 2px 0px rgba(0,0,0,0.2);
+    font-size: 32px;
+    margin-top: 0;
+    border-bottom: 2px solid #b68b42;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+p, h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+/* Wood/Parchment Input */
+input {
+    background: #fdf5e6;
+    border: 2px solid #6b4c1a;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 18px;
+    color: #3b2b18;
+    width: calc(100% - 28px);
+    margin-bottom: 20px;
+    box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3);
+    outline: none;
+}
+
+input:focus {
+    border-color: #d4af37;
+}
+
+/* Custom Button Styling */
+.button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #6b4423;
+    color: #fce6c9 !important;
+    text-decoration: none !important;
+    font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: 2px solid #3e2312;
+    border-radius: 4px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6), inset 0px 0px 5px rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: filter 0.2s, background-color 0.2s, transform 0.1s;
+    text-align: center;
+    min-width: 250px;
+}
+
+.button:hover {
+    filter: brightness(1.2);
+    color: #ffffff !important;
+}
+
+.button:active {
+    transform: translateY(2px);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+#status {
+    margin-top: 25px;
+    font-weight: bold;
+    color: #8b0000;
+    font-size: 18px;
+}
+
+/* --- NEW: Top Right Flag Toggle --- */
+.lang-toggle {
+    position: fixed; /* Forces it to the browser window, ignoring Flexbox */
+    top: 20px;
+    right: 25px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 1000; /* Ensures it stays on top of everything */
+}
+
+.lang-toggle:hover {
+    transform: scale(1.1);
+}
+
+.lang-toggle img {
+    width: 40px;
+    height: auto;
+    border-radius: 3px;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.5);
+    border: 1px solid #d4af37;
+}
+
+/* --- NEW: Global Bottom Footer --- */
+.global-footer {
+    position: fixed; /* Forces it to the very bottom of the browser window */
+    bottom: 15px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #eaddc5; /* High contrast bright parchment text */
+    letter-spacing: 1px;
+    z-index: 1000;
+}
+
+.global-footer a {
+    color: #ffd700; /* Bright gold for maximum link visibility */
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.global-footer a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
