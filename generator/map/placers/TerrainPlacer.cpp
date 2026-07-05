@@ -280,10 +280,10 @@ void TerrainPlacer::generateNoise() {
     int width  = map.getWidth();
     int height = map.getHeight();
 
-    float initialFillProbability = 0.45f;
-    int birthLimit               = 5;
-    int survivalLimit            = 4;
-    int smoothingIterations      = 3;
+    float initialFillProbability = 0.32f;
+    int birthLimit               = 4;
+    int survivalLimit            = 2;
+    int smoothingIterations      = 2;
 
     AutomataConfig config{width,      height,        initialFillProbability,
                           birthLimit, survivalLimit, smoothingIterations};
@@ -304,7 +304,49 @@ void TerrainPlacer::generateNoise() {
         }
     }
 
+    int rectWidth  = 7;
+    int rectHeight = 7;
+
+    AutomataConfig smallRectConfig{width,      height,        initialFillProbability,
+                                   birthLimit, survivalLimit, smoothingIterations};
+    CellularAutomata automataSmallRect(smallRectConfig);
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            auto tilePtr = map.getTile(int3(x, y, 0));
+            if (tilePtr == nullptr)
+                continue;
+
+            if (isFreeRect(x, y, rectWidth, rectHeight)) {
+                automataSmallRect.generateSmallRectangle(this->map, rectWidth, rectHeight, x, y);
+                auto subGrid = automataSmallRect.getGrid();
+
+                for (int dy = 0; dy < rectHeight; dy++) {
+                    for (int dx = 0; dx < rectWidth; dx++) {
+                        auto t = map.getTile(int3(x + dx, y + dy, 0));
+                        if (t == nullptr)
+                            continue;
+                        if (subGrid[dy * rectWidth + dx]) {
+                            t->setTileType(TileType::TILE_DEBUG);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fillClosedRooms();
+}
+
+bool TerrainPlacer::isFreeRect(int startX, int startY, int w, int h) {
+    for (int y = startY; y < startY + h; ++y) {
+        for (int x = startX; x < startX + w; ++x) {
+            auto tilePtr = map.getTile(int3(x, y, 0));
+            if (tilePtr == nullptr || tilePtr->isTileType("BOb"))
+                return false;
+        }
+    }
+    return true;
 }
 
 void TerrainPlacer::fillClosedRooms() {

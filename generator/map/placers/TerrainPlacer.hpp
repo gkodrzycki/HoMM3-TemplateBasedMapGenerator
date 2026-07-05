@@ -13,6 +13,8 @@ class TerrainPlacer {
     void placeObstacles();
     void fillClosedRooms();
 
+    bool isFreeRect(int startX, int startY, int w, int h);
+
   private:
     Map &map;
 

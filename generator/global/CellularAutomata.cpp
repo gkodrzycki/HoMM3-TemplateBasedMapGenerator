@@ -25,6 +25,24 @@ void CellularAutomata::generate(Map &map) {
     eraseTooSmallComponents();
 }
 
+void CellularAutomata::generateSmallRectangle(Map &map, int width, int height, int offsetX,
+                                              int offsetY) {
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            auto tilePtr = map.getTile(int3(x + offsetX, y + offsetY, 0));
+            if (tilePtr == nullptr)
+                continue;
+
+            m_grid[y * m_config.width + x] =
+                (map.getRNG().nextFloat() < m_config.initialFillProbability);
+        }
+    }
+
+    for (int i = 0; i < m_config.smoothingIterations; ++i) {
+        doSimulationStep();
+    }
+}
+
 void CellularAutomata::eraseTooSmallComponents() {
     bool visited[m_config.width * m_config.height];
     std::fill(visited, visited + m_config.width * m_config.height, false);
@@ -72,7 +90,7 @@ int CellularAutomata::countAliveNeighbors(int x, int y) const {
             int ny = y + j;
 
             if (nx < 0 || nx >= m_config.width || ny < 0 || ny >= m_config.height) {
-                count++;
+                continue;
             } else if (m_grid[ny * m_config.width + nx]) {
                 count++;
             }
@@ -86,6 +104,23 @@ void CellularAutomata::doSimulationStep() {
         for (int x = 0; x < m_config.width; ++x) {
             int aliveNeighbors = countAliveNeighbors(x, y);
             int index          = y * m_config.width + x;
+
+            if (m_grid[index]) {
+                m_tempGrid[index] = (aliveNeighbors >= m_config.survivalLimit);
+            } else {
+                m_tempGrid[index] = (aliveNeighbors >= m_config.birthLimit);
+            }
+        }
+    }
+    m_grid.swap(m_tempGrid);
+}
+
+void CellularAutomata::doSimulationStepSmallRectangle(int width, int height, int offsetX,
+                                                      int offsetY) {
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            int aliveNeighbors = countAliveNeighbors(x + offsetX, y + offsetY);
+            int index          = (y + offsetY) * m_config.width + (x + offsetX);
 
             if (m_grid[index]) {
                 m_tempGrid[index] = (aliveNeighbors >= m_config.survivalLimit);
