@@ -574,10 +574,10 @@ void Map::printMap(int debugLevel) {
                 printColor(BRIGHT_BLUE, tileTypeToChar(tileType));
                 break;
             case TileType::TILE_GUARD:
-                printColor(RED, tileTypeToChar(tileType));
+                printColor(RED + BOLD, tileTypeToChar(tileType));
                 break;
             case TileType::TILE_OBSTACLE_BODY:
-                printColor(WHITE, tileTypeToChar(tileType));
+                printColor(RED, tileTypeToChar(tileType));
                 break;
             default:
                 cerr << tileTypeToChar(tileType);
