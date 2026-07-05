@@ -349,8 +349,9 @@ vector<int3> ObjectPlacer::getPossibleTreasurePositions(int3 candidatePosition) 
     return possiblePositions;
 }
 
-void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desiredValue) {
-    int currentValue = 0;
+bool ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desiredValue) {
+    int currentValue    = 0;
+    bool placedAnything = false;
 
     vector<int3> offsets = {{-1, -1, 0}, {0, -1, 0}, {1, -1, 0}};
     // try to place one building
@@ -392,7 +393,7 @@ void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
         int zoneID = map.getTile(randomObjectPos)->getZoneID();
         map.fixNeighbourTiles(randomObjectPos, randomBuilding.size, randomBuilding.realSize, zoneID,
                               int3(0, 0, 0));
-
+        placedAnything = true;
         currentValue += randomBuilding.value;
     }
 
@@ -400,7 +401,7 @@ void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
 
     int numberOfTreasurePositions = possibleTreasurePositions.size();
     if (numberOfTreasurePositions == 0)
-        return;
+        return placedAnything;
 
     while (currentValue < desiredValue) {
 
@@ -424,17 +425,44 @@ void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
             possibleTreasurePositions.erase(randomPosIt);
         }
 
+        int quantity = 1;
         if (treasureToPlace.category == ObjectCategory::RESOURCE) {
-            placeResource(ResourceType::RESOURCE_GOLD, randomPos,
-                          1); // TODO: place corresponding resource
+            int quantityToPlace =
+                min(10, (differenceValue + treasureToPlace.value - 1) / treasureToPlace.value);
+            placeCorrespondingResource(treasureToPlace.objectName, randomPos, quantityToPlace);
+            quantity = quantityToPlace;
         } else {
             placeTreasure(treasureToPlace.objectName, randomPos);
         }
 
         map.getTile(randomPos)->setTileType(TileType::TILE_OCCUPIED);
+        placedAnything = true;
 
-        currentValue += treasureToPlace.value;
+        currentValue += treasureToPlace.value * quantity;
     }
+    return placedAnything;
+}
+
+void ObjectPlacer::placeCorrespondingResource(string objectName, int3 position, int quantity) {
+    ResourceType type = ResourceType::RESOURCE_UNKNOWN;
+
+    if (objectName == "Wood") {
+        type = ResourceType::RESOURCE_WOOD;
+    } else if (objectName == "Sulfur") {
+        type = ResourceType::RESOURCE_SULFUR;
+    } else if (objectName == "Crystal") {
+        type = ResourceType::RESOURCE_CRYSTAL;
+    } else if (objectName == "Gems") {
+        type = ResourceType::RESOURCE_GEMS;
+    } else if (objectName == "Ore") {
+        type = ResourceType::RESOURCE_ORE;
+    } else if (objectName == "Mercury") {
+        type = ResourceType::RESOURCE_MERCURY;
+    } else if (objectName == "Gold") {
+        type = ResourceType::RESOURCE_GOLD;
+    }
+
+    placeResource(type, position, quantity);
 }
 
 void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier treasureTier) {
@@ -480,6 +508,10 @@ void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier tre
         } else if (auto artifact = dynamic_pointer_cast<Artifact>(treasure)) {
             if (map.getTile(artifact->getPosition())->getZoneID() == zoneID) {
                 placedObjects.push_back(artifact->getPosition());
+            }
+        } else if (auto treasureObj = dynamic_pointer_cast<Treasure>(treasure)) {
+            if (map.getTile(treasureObj->getPosition())->getZoneID() == zoneID) {
+                placedObjects.push_back(treasureObj->getPosition());
             }
         }
     }
@@ -562,7 +594,10 @@ void ObjectPlacer::placeTreasuresFromTier(int zoneID, int tier, TreasureTier tre
             }
 
         } else {
-            placeTreasuresNearCandidate(candidatePosition, valueToPlace);
+            bool placedAnything = placeTreasuresNearCandidate(candidatePosition, valueToPlace);
+            if (!placedAnything) {
+                continue;
+            }
             map.getTile(candidatePosition)->setTileType(TileType::TILE_GUARD);
             int finalValue = valueToPlace * getModifierForTreasure(tier, monsterStrength);
             map.addGuardValue(candidatePosition, finalValue);

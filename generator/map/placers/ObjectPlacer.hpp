@@ -35,7 +35,8 @@ class ObjectPlacer {
     void placeArtifact(ArtifactType artifactType, int3 pos);
     double evalTreasureCandidate(int3 candidatePosition, vector<vector<int>> &tilesTreeCount,
                                  vector<int3> &freeTiles, int acceptableBlockedTiles);
-    void placeTreasuresNearCandidate(int3 candidatePosition, int desiredValue);
+    bool placeTreasuresNearCandidate(int3 candidatePosition, int desiredValue);
+    void placeCorrespondingResource(string objectName, int3 position, int quantity);
     vector<int3> getPossibleTreasurePositions(int3 candidatePosition);
     // int placeTreasuresNearCandidate(int3 candidatePosition, ArtifactTier tierOfTreasures);
     int getNumberOfTreasures(int zoneID);
