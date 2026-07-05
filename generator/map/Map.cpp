@@ -139,7 +139,7 @@ void Map::fixReachability() {
         for (auto obj : combinedVector) {
             int3 pos = obj->getPosition();
             if (getTile(pos)->isTileType("T")) {
-                pos = pos + int3(-1, 1, 0);
+                pos = pos + obj->getEntryPoint();
             }
             if (reach_dist(ctx, pos.x, pos.y) == numeric_limits<int>::max()) {
                 continue;

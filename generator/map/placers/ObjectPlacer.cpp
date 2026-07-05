@@ -398,11 +398,6 @@ void ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
 
     vector<int3> possibleTreasurePositions = getPossibleTreasurePositions(candidatePosition);
 
-    for (auto &treasurePos : possibleTreasurePositions) {
-        placeResource(ResourceType::RESOURCE_GOLD, treasurePos, 1);
-        map.getTile(treasurePos)->setTileType(TileType::TILE_OCCUPIED);
-    }
-
     int numberOfTreasurePositions = possibleTreasurePositions.size();
     if (numberOfTreasurePositions == 0)
         return;
