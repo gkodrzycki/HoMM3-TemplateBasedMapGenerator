@@ -34,11 +34,11 @@ pair<int, int> Map::chooseMapSize(int minimumSize, int maximumSize) {
     throw runtime_error("Invalid map size selected: " + mapSize);
 }
 
-shared_ptr<Tile> Map::getTile(int3 pos) {
+Tile *Map::getTile(int3 pos) {
     if (pos.x < 0 || pos.x >= width || pos.y < 0 || pos.y >= height)
         return nullptr;
 
-    return tileMap[pos.y][pos.x];
+    return tileMap[pos.y][pos.x].get();
 }
 
 string Map::getZoneHash(int zoneID) { return hashMap[zoneID]; }
