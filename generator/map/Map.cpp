@@ -162,6 +162,7 @@ void Map::fixReachability() {
                 distance          = reach_dist(ctx, pos.x, pos.y);
             }
         }
+        dijkstra_reachability(ctx, center, neighbors, passable, cost);
 
         for (int j = 0; j < H; j++) {
             for (int i = 0; i < W; i++) {
