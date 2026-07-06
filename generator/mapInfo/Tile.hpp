@@ -35,7 +35,7 @@ class Tile {
     TileType getTileType();
     void printTile();
 
-    bool isTileType(string types);
+    bool isTileType(const string &types);
 
   private:
     int zoneID;
