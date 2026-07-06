@@ -84,6 +84,29 @@ bool TerrainPlacer::canPlaceTemplateAtAnchor(const Obstacle &templ, const int3 &
     // '0' (transparent visual) tiles must not overlap roads, buildings, guards or borders
     // - placing a large sprite there would look wrong and could block unintended paths.
 
+    // Exclusion-group spacing check: reject if an already-placed obstacle of the same
+    // group has its bounding box within minSpacing tiles of this one (Chebyshev metric).
+    const string &group = templ.getExclusionGroup();
+    if (!group.empty() && templ.getMinSpacing() > 0) {
+        auto it = placedByExclusionGroup.find(group);
+        if (it != placedByExclusionGroup.end()) {
+            int newLeft  = anchor.x - templ.getSize().x + 1;
+            int newTop   = anchor.y - templ.getSize().y + 1;
+            int newRight = anchor.x;
+            int newBot   = anchor.y;
+            for (const auto &[existAnchor, existSize] : it->second) {
+                int exLeft  = existAnchor.x - existSize.x + 1;
+                int exTop   = existAnchor.y - existSize.y + 1;
+                int exRight = existAnchor.x;
+                int exBot   = existAnchor.y;
+                int sepX    = max({0, exLeft - newRight, newLeft - exRight});
+                int sepY    = max({0, exTop - newBot, newTop - exBot});
+                if (sepX + sepY < templ.getMinSpacing())
+                    return false;
+            }
+        }
+    }
+
     // Bounds check: realSize must match size
     if ((int)templ.getRealSize().size() != templ.getSize().y) {
         return false;
@@ -160,6 +183,23 @@ void TerrainPlacer::loadObstacleInfo() {
         }
 
         Obstacle templ(name, int3(0, 0, 0), "Obstacle", size, int3(0, 0, 0), realSize);
+
+        // Apply prefix-based exclusion group defaults (Lake/Crater/Lava Flow share one group so
+        // neither type is placed near the other).
+        static const std::map<string, pair<string, int>> prefixExclusion = {
+            {"Lake", {"Lake", 14}}, {"Crater", {"crater", 16}}, {"Lava Flow", {"crater", 13}}};
+        {
+            size_t cut    = name.find_first_of("_0123456789");
+            string prefix = name.substr(0, cut);
+
+            if (auto pit = prefixExclusion.find(prefix); pit != prefixExclusion.end()) {
+                // Unpack the pair into nicely named variables!
+                const auto &[group, distance] = pit->second;
+
+                templ.setExclusionGroup(group);
+                templ.setMinSpacing(distance);
+            }
+        }
 
         for (const auto &terrainVal : item.at("terrains")) {
             string terrain = terrainVal.get<string>();
@@ -239,6 +279,12 @@ void TerrainPlacer::placeObstacleComponent(const vector<int3> &component) {
                 auto obstaclePtr = make_shared<Obstacle>(chosen);
                 obstaclePtr->setPosition(anchor);
                 map.addObject(obstaclePtr);
+
+                // Record in exclusion group for future spacing checks
+                if (!chosen.getExclusionGroup().empty()) {
+                    placedByExclusionGroup[chosen.getExclusionGroup()].emplace_back(
+                        anchor, chosen.getSize());
+                }
 
                 for (const auto &coveredTile : getTemplateCoveredTiles(templ, anchor)) {
                     remaining.erase(coveredTile);
@@ -387,6 +433,7 @@ void TerrainPlacer::fillClosedRooms() {
 }
 
 void TerrainPlacer::placeObstacles() {
+    placedByExclusionGroup.clear();
     auto components = collectObstacleComponents();
     for (const auto &component : components) {
         placeObstacleComponent(component);

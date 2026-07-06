@@ -16,6 +16,11 @@ Obstacle::Obstacle(const string &obstacleName, const int3 &position, const strin
 void Obstacle::setObstacleName(const string &obstacleName) { this->obstacleName = obstacleName; }
 const string Obstacle::getObstacleName() const { return obstacleName; }
 
+void Obstacle::setExclusionGroup(const string &group) { exclusionGroup = group; }
+void Obstacle::setMinSpacing(int spacing) { minSpacing = spacing; }
+const string &Obstacle::getExclusionGroup() const { return exclusionGroup; }
+int Obstacle::getMinSpacing() const { return minSpacing; }
+
 void Obstacle::printObject() const {
     cerr << "Object '" << getName() << "' obstacle name '" << obstacleName << "' at "
          << getPosition().toString() << "\n";
