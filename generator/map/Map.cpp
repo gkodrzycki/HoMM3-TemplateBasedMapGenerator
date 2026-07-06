@@ -34,11 +34,11 @@ pair<int, int> Map::chooseMapSize(int minimumSize, int maximumSize) {
     throw runtime_error("Invalid map size selected: " + mapSize);
 }
 
-shared_ptr<Tile> Map::getTile(int3 pos) {
+Tile *Map::getTile(int3 pos) {
     if (pos.x < 0 || pos.x >= width || pos.y < 0 || pos.y >= height)
         return nullptr;
 
-    return tileMap[pos.y][pos.x];
+    return tileMap[pos.y][pos.x].get();
 }
 
 string Map::getZoneHash(int zoneID) { return hashMap[zoneID]; }
@@ -134,12 +134,16 @@ void Map::fixReachability() {
             combinedVector.push_back(monolithFrom);
             combinedVector.push_back(monolithDest);
         }
+        for (const auto &[pos, value] : getGuardValueMap()) {
+            auto guardObject = Object(pos, "Guard", int3(1, 1, 0));
+            combinedVector.push_back(make_shared<Object>(guardObject));
+        }
 
         map<int3, bool> clearedTiles;
         for (auto obj : combinedVector) {
             int3 pos = obj->getPosition();
             if (getTile(pos)->isTileType("T")) {
-                pos = pos + int3(-1, 1, 0);
+                pos = pos + obj->getEntryPoint();
             }
             if (reach_dist(ctx, pos.x, pos.y) == numeric_limits<int>::max()) {
                 continue;
@@ -158,6 +162,7 @@ void Map::fixReachability() {
                 distance          = reach_dist(ctx, pos.x, pos.y);
             }
         }
+        dijkstra_reachability(ctx, center, neighbors, passable, cost);
 
         for (int j = 0; j < H; j++) {
             for (int i = 0; i < W; i++) {
@@ -574,10 +579,10 @@ void Map::printMap(int debugLevel) {
                 printColor(BRIGHT_BLUE, tileTypeToChar(tileType));
                 break;
             case TileType::TILE_GUARD:
-                printColor(RED, tileTypeToChar(tileType));
+                printColor(RED + BOLD, tileTypeToChar(tileType));
                 break;
             case TileType::TILE_OBSTACLE_BODY:
-                printColor(WHITE, tileTypeToChar(tileType));
+                printColor(RED, tileTypeToChar(tileType));
                 break;
             default:
                 cerr << tileTypeToChar(tileType);

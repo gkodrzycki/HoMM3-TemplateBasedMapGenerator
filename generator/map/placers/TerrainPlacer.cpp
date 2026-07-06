@@ -242,7 +242,7 @@ void TerrainPlacer::placeObstacleComponent(const vector<int3> &component) {
 
                 for (const auto &coveredTile : getTemplateCoveredTiles(templ, anchor)) {
                     remaining.erase(coveredTile);
-                    map.getTile(coveredTile)->setTileType(TileType::TILE_FREE);
+                    map.getTile(coveredTile)->setTileType(TileType::TILE_OBSTACLE_BODY);
                 }
 
                 placed = true;
@@ -329,7 +329,7 @@ void TerrainPlacer::generateNoise() {
                         if (t == nullptr)
                             continue;
                         if (subGrid[dy * rectWidth + dx]) {
-                            t->setTileType(TileType::TILE_DEBUG);
+                            t->setTileType(TileType::TILE_OBSTACLE);
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 *.o
 *.so
 **/generated_script.lua
+**/Generator
 **/units.lua
 **/Units
 **/test_obstacles.lua

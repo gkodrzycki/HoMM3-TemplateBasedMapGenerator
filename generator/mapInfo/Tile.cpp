@@ -14,7 +14,7 @@ int Tile::getZoneID() { return zoneID; }
 string Tile::getTerrain() { return terrain; }
 TileType Tile::getTileType() { return tileType; }
 
-bool Tile::isTileType(string types) {
+bool Tile::isTileType(const string &types) {
     for (auto type : types) {
         if (tileType == charToTileType(type))
             return true;

@@ -58,7 +58,7 @@ class Map {
     string getZoneHash(int zoneID);
     GroupSettingMap &getGroupSettingMap();
     TemplateInfo getTemplateInfo();
-    shared_ptr<Tile> getTile(int3 pos);
+    Tile *getTile(int3 pos);
     ZoneMap getZoneMap();
     const TileMap &getTileMap();
     ObjectVector getObjectVector();
