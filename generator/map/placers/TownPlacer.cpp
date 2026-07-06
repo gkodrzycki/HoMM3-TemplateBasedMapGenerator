@@ -52,9 +52,6 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
             }
         }
 
-        if (currentFreeTiles.empty())
-            break;
-
         float tolerance = (zoneType == "treasure") ? 0.6f : 0.8f;
         int3 townPos = map.findBestDistributedPosition(currentFreeTiles, placedTowns, placedObjects,
                                                        zoneCenter, tolerance);
@@ -66,9 +63,9 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
         }
 
         // Check if the found position is valid, if not try to find another one
-
         if (townPos.x == -1)
-            break;
+            throw runtime_error("Failed to find a valid position for town in zone " +
+                                to_string(zoneID) + " (zone type: " + zoneType + ")");
 
         auto townType     = rng.getRandomFromVector(townTypes);
         auto townTypeEnum = neutral ? getEnumFromNameOrThrow<Faction>(townType)
