@@ -353,10 +353,25 @@ bool ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
     int currentValue    = 0;
     bool placedAnything = false;
 
+    auto &buildingCountMap  = map.getBuildingCountMap();
+    auto &zoneBuildingCount = buildingCountMap[map.getTile(candidatePosition)->getZoneID()];
+    string zoneType      = map.getZoneMap()[map.getTile(candidatePosition)->getZoneID()]->getType();
     vector<int3> offsets = {{-1, -1, 0}, {0, -1, 0}, {1, -1, 0}};
+
     // try to place one building
     vector<MapObjectDefinition> possibleBuildings;
     for (auto &object : treasureInfo.allObjects) {
+        if (object.objectName == "libraryOfEnlightenment" &&
+            zoneBuildingCount.find(object.objectName) != zoneBuildingCount.end() &&
+            zoneBuildingCount[object.objectName] >= 1) {
+            continue;
+        }
+        if (object.objectName == "dragonUtopia" &&
+            zoneBuildingCount.find(object.objectName) != zoneBuildingCount.end() &&
+            zoneBuildingCount[object.objectName] >= 1 && zoneType != "treasure") {
+            continue;
+        }
+
         if (object.value <= desiredValue && (object.category == ObjectCategory::VISITABLE ||
                                              object.category == ObjectCategory::CREATURE_BANK)) {
 
@@ -375,12 +390,23 @@ bool ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
     }
 
     if (possibleBuildings.size() != 0) {
-        auto randomBuilding = map.getRNG().getRandomFromVector(possibleBuildings);
+        vector<double> buldingsWeights;
+        for (const auto &building : possibleBuildings) {
+            double weight   = building.value;
+            int timesPlaced = zoneBuildingCount.find(building.objectName) != zoneBuildingCount.end()
+                                  ? zoneBuildingCount.at(building.objectName)
+                                  : 0;
+            weight /= (1.0 + (timesPlaced * timesPlaced));
+            buldingsWeights.push_back(weight);
+        }
+
+        auto pickedIndex    = map.getRNG().getRandomWeightedIndex(buldingsWeights);
+        auto pickedBuilding = possibleBuildings[pickedIndex];
 
         vector<int3> possibleObjectPos;
         for (int i = 0; i < 3; i++) {
-            int3 objectPos = candidatePosition + offsets[i] - randomBuilding.entryPoint;
-            if (map.checkPlacementConflict(objectPos, randomBuilding.size, "BoTRr",
+            int3 objectPos = candidatePosition + offsets[i] - pickedBuilding.entryPoint;
+            if (map.checkPlacementConflict(objectPos, pickedBuilding.size, "BoTRr",
                                            int3(1, 1, 0))) {
                 continue;
             }
@@ -388,13 +414,14 @@ bool ObjectPlacer::placeTreasuresNearCandidate(int3 candidatePosition, int desir
         }
         int3 randomObjectPos = map.getRNG().getRandomFromVector(possibleObjectPos);
 
-        placeTreasure(randomBuilding.objectName, randomObjectPos);
+        placeTreasure(pickedBuilding.objectName, randomObjectPos);
+        zoneBuildingCount[pickedBuilding.objectName]++;
 
         int zoneID = map.getTile(randomObjectPos)->getZoneID();
-        map.fixNeighbourTiles(randomObjectPos, randomBuilding.size, randomBuilding.realSize, zoneID,
+        map.fixNeighbourTiles(randomObjectPos, pickedBuilding.size, pickedBuilding.realSize, zoneID,
                               int3(0, 0, 0));
         placedAnything = true;
-        currentValue += randomBuilding.value;
+        currentValue += pickedBuilding.value;
     }
 
     vector<int3> possibleTreasurePositions = getPossibleTreasurePositions(candidatePosition);

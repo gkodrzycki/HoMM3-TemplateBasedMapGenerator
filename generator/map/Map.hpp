@@ -25,6 +25,7 @@ using GroupSettingMap  = map<string, shared_ptr<GroupSetting>>;
 using GuardValueMap    = map<int3, int>;
 using ZoneMap          = map<int, shared_ptr<Zone>>;
 using TileMap          = vector<vector<shared_ptr<Tile>>>;
+using BuildingCountMap = map<int, map<string, int>>;
 using ObjectVector     = vector<shared_ptr<Object>>;
 using CreatureVector   = vector<shared_ptr<Creature>>;
 using RoadVector       = vector<shared_ptr<Road>>;
@@ -70,6 +71,7 @@ class Map {
     HashMap getHashMap();
     GridSearchContext &getSearchCtx();
     GuardValueMap getGuardValueMap();
+    BuildingCountMap &getBuildingCountMap();
     RNG &getRNG();
     int getWidth();
     int getHeight();
@@ -98,6 +100,7 @@ class Map {
     GroupSettingMap groupSettingMap;
     ZoneMap zoneMap;
     TileMap tileMap;
+    BuildingCountMap buildingCountMap;
     ObjectVector objectVector;
     CreatureVector creatureVector;
     TreasureVector treasureVector;
