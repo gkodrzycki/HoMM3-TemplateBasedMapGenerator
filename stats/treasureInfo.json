@@ -235,11 +235,6 @@
         "value": 100
     },
     {
-        "objectName": "oasis",
-        "value": 100,
-        "size": "2,2"
-    },
-    {
         "objectName": "stables",
         "value": 200,
         "size": "2,1"

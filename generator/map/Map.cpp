@@ -383,6 +383,9 @@ int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
                 validCandidates.push_back(pos);
             }
         }
+        if (validCandidates.empty()) {
+            return int3(-1, -1, -1);
+        }
 
         return rng.getRandomFromVector(validCandidates);
     }

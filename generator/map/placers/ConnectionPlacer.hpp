@@ -19,4 +19,5 @@ class ConnectionPlacer {
 
   private:
     Map &map;
+    vector<bool> failedRoadConnections;
 };
