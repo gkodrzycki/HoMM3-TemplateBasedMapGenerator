@@ -184,7 +184,7 @@ void TerrainPlacer::loadObstacleInfo() {
 
         Obstacle templ(name, int3(0, 0, 0), "Obstacle", size, int3(0, 0, 0), realSize);
 
-        // Apply prefix-based exclusion group defaults (Lake/Crater/LAva Flow share one group so
+        // Apply prefix-based exclusion group defaults (Lake/Crater/Lava Flow share one group so
         // neither type is placed near the other).
         static const std::map<string, std::pair<string, int>> prefixExclusion = {
             {"Lake", {"Lake", 14}}, {"Crater", {"crater", 16}}, {"Lava Flow", {"crater", 13}}};
