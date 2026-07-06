@@ -11,11 +11,17 @@ class Obstacle : public Object {
              const int3 &entryPoint, const vector<string> &realSize);
 
     void setObstacleName(const string &obstacleName);
+    void setExclusionGroup(const string &group);
+    void setMinSpacing(int spacing);
 
     const string getObstacleName() const;
+    const string &getExclusionGroup() const;
+    int getMinSpacing() const;
 
     void printObject() const override;
 
   private:
     string obstacleName;
+    string exclusionGroup;
+    int minSpacing = 0;
 };

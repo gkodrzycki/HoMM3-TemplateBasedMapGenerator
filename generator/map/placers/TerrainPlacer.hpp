@@ -22,6 +22,9 @@ class TerrainPlacer {
     std::map<string, vector<Obstacle>> cachedObstaclesByTerrain;
     bool obstacleInfoLoaded = false;
 
+    // tracks placed obstacles per exclusion group: group -> list of {anchor, size}
+    std::map<string, vector<std::pair<int3, int3>>> placedByExclusionGroup;
+
     void loadObstacleInfo();
     const vector<Obstacle> &getObstaclesForTerrain(const string &terrain);
 
