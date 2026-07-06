@@ -1,6 +1,8 @@
 #include "./ConnectionPlacer.hpp"
 
-ConnectionPlacer::ConnectionPlacer(Map &map) : map(map) {}
+ConnectionPlacer::ConnectionPlacer(Map &map) : map(map) {
+    failedRoadConnections.resize(map.getTemplateInfo().getConnections().size(), false);
+}
 
 void ConnectionPlacer::placeRoads() {
     std::map<int, vector<pair<int, int3>>> connectionsPoints = getConnectionsPoints();
@@ -16,10 +18,9 @@ void ConnectionPlacer::placeRoads() {
                 vector<int3> path = createPath(fromPos, destPos);
 
                 if (path.empty()) {
-                    throw runtime_error("Failed to create a path between zones " +
-                                        to_string(zoneID) + " and " + to_string(zoneID) +
-                                        " on seed " + to_string(map.getRNG().getOriginalSeed()) +
-                                        "\n");
+                    throw runtime_error("Failed to create a path between points in zone " +
+                                        to_string(zoneID) + " on seed " +
+                                        to_string(map.getRNG().getOriginalSeed()) + "\n");
                 }
 
                 Road road(1, path, "Road");
@@ -38,7 +39,8 @@ void ConnectionPlacer::placeRoads() {
     }
 
     auto connections = map.getTemplateInfo().getConnections();
-    for (auto connection : connections) {
+    for (size_t connectionID = 0; connectionID < connections.size(); connectionID++) {
+        const auto connection = connections[connectionID];
         if (connection.getType() == "teleport" || connection.getType() == "underground")
             continue;
 
@@ -48,10 +50,11 @@ void ConnectionPlacer::placeRoads() {
         vector<int3> path = createPath(fromPos, destPos);
 
         if (path.empty()) {
-            throw runtime_error("Failed to create a path between zones " +
-                                to_string(connection.getZone1()) + " and " +
-                                to_string(connection.getZone2()) + " on seed " +
-                                to_string(map.getRNG().getOriginalSeed()) + "\n");
+            cerr << "Failed to create a path between zones " << connection.getZone1() << " and "
+                 << connection.getZone2() << " on seed " << map.getRNG().getOriginalSeed()
+                 << " changing type to teleport\n";
+            failedRoadConnections[connectionID] = true;
+            continue;
         }
 
         Road road(1, path, "Road");
@@ -90,9 +93,11 @@ void ConnectionPlacer::createMonoliths() {
     int connectionCount    = 0;
     int distanceFromCenter = 20; // Distance of monoliths from zone centers to avoid blocking them
     auto connections       = map.getTemplateInfo().getConnections();
-    for (auto connection : connections) {
-        if (connection.getType() != "teleport")
+    for (size_t connectionID = 0; connectionID < connections.size(); connectionID++) {
+        const auto &connection = connections[connectionID];
+        if (connection.getType() != "teleport" && !failedRoadConnections[connectionID]) {
             continue;
+        }
 
         int3 centerFromPos = connectionsPoints[connection.getZone1()][0].second;
         int3 centerDestPos = connectionsPoints[connection.getZone2()][0].second;
