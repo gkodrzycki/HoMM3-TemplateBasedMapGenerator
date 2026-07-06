@@ -56,6 +56,7 @@ PandoraBoxVector Map::getPandoraBoxVector() { return pandoraBoxVector; }
 MonolithVector Map::getMonolithVector() { return monolithVector; }
 GridSearchContext &Map::getSearchCtx() { return searchCtx; }
 GuardValueMap Map::getGuardValueMap() { return guardValueMap; }
+BuildingCountMap &Map::getBuildingCountMap() { return buildingCountMap; }
 
 int Map::getWidth() { return width; }
 int Map::getHeight() { return height; }
