@@ -19,6 +19,7 @@ class ObjectPlacer {
     void placeMines();
     void placeMine(int3 pos, MineType mineType);
     void placeMineResources();
+    void placeAnchoredObjects();
     void placeTreasures();
     void placeTreasuresFromTier(int zoneID, int tier, TreasureTier treasureTier);
     vector<int3> generateTreasureCandidates(vector<int3> &zoneTiles, int minNeighbourTrees);

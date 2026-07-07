@@ -264,6 +264,11 @@ void Map::generateMap() {
     if (templateInfo.getDebug() > 0) {
         cerr << "Mine resources placed...\n";
     }
+    objectPlacer.placeAnchoredObjects();
+
+    if (templateInfo.getDebug() > 0) {
+        cerr << "Anchored objects placed...\n";
+    }
     objectPlacer.placeTreasures();
 
     if (templateInfo.getDebug() > 0) {

@@ -26,6 +26,13 @@ struct TreasureTier {
     int density = 0;
 };
 
+struct AnchoredObjectRule {
+    string objectName;
+    string anchor = "castle"; // currently only "castle" is supported
+    int distance  = 8;
+    int count     = 1;
+};
+
 // Per-resource mine counts or density weights.
 struct MineSettings {
     map<MineType, int> mineCounts;
@@ -59,6 +66,7 @@ class ZoneTemplate {
     const bool &getMatchTerrainToTown() const;
     const ZoneMonsters &getMonsters() const;
     const vector<TreasureTier> &getTreasure() const;
+    const vector<AnchoredObjectRule> &getAnchoredObjects() const;
 
     // Zone-level options
     string getPlacement() const;
@@ -99,6 +107,7 @@ class ZoneTemplate {
     vector<string> terrain;
     ZoneMonsters monsters;
     vector<TreasureTier> treasure;
+    vector<AnchoredObjectRule> anchoredObjects;
 
     // Options
     string placement;

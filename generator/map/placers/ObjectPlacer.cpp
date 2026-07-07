@@ -182,6 +182,137 @@ void ObjectPlacer::placeMineResources() {
     }
 }
 
+void ObjectPlacer::placeAnchoredObjects() {
+    auto &rng = map.getRNG();
+
+    for (auto &[zoneID, zone] : map.getZoneMap()) {
+        const auto rules = map.getTemplateInfo().getZoneById(zoneID).getAnchoredObjects();
+        if (rules.empty())
+            continue;
+
+        for (const auto &rule : rules) {
+            // Default anchor: zone center. Optional explicit castle anchor.
+            int3 anchorEntry = zone->getCenter();
+            if (rule.anchor == "castle") {
+                anchorEntry = int3(-1, -1, 0);
+                for (const auto &obj : map.getObjectVector()) {
+                    if (auto town = dynamic_pointer_cast<Town>(obj)) {
+                        if (town->getOwner() > 0 &&
+                            map.getTile(town->getPosition())->getZoneID() == zoneID) {
+                            anchorEntry = town->getPosition() + town->getEntryPoint();
+                            break;
+                        }
+                    }
+                }
+                if (anchorEntry.x == -1) {
+                    cerr << "No player castle in zone " << zoneID << ", skipping anchored object '"
+                         << rule.objectName << "'\n";
+                    continue;
+                }
+            } else if (rule.anchor != "zone_center") {
+                cerr << "Unsupported anchor '" << rule.anchor << "' for anchored object '"
+                     << rule.objectName << "', using zone_center\n";
+            }
+
+            const MapObjectDefinition *objDef = nullptr;
+            for (const auto &def : treasureInfo.allObjects) {
+                if (def.objectName == rule.objectName) {
+                    objDef = &def;
+                    break;
+                }
+            }
+            if (!objDef) {
+                throw runtime_error("Anchored object '" + rule.objectName +
+                                    "' not found in treasureInfo.json");
+            }
+
+            auto passable = [&](const int3 &p) -> bool {
+                auto tile = map.getTile(p);
+                if (!tile)
+                    return false;
+                if (tile->getZoneID() != zoneID)
+                    return false;
+                if (tile->isTileType("BbOT"))
+                    return false;
+                return true;
+            };
+
+            auto neighbours = [&](const int3 &p) {
+                vector<int3> out;
+                for (int k = 0; k < 8; k++) {
+                    int3 nxt = p + directions8[k];
+                    if (passable(nxt))
+                        out.push_back(nxt);
+                }
+                return out;
+            };
+
+            auto bfsDist = bfs_distances<int3>(anchorEntry, neighbours);
+
+            // Bounds:    [Distance - 5, Distance + 5].
+            // Preferred: [Distance, Distance + 5]
+            // Fallback:  [Distance - 5, Distance)
+            const int radius     = 5;
+            const int dist       = rule.distance;
+            const int lowerBound = max(0, dist - radius);
+            const int upperBound = dist + radius;
+
+            vector<pair<int, int3>> candidatesWithDist;
+            for (const auto &[entryTile, dist] : bfsDist) {
+                if (dist < lowerBound || dist > upperBound)
+                    continue;
+                auto tile = map.getTile(entryTile);
+                if (!tile || !tile->isTileType("F"))
+                    continue;
+                int3 objectPos = entryTile - objDef->entryPoint;
+                if (map.checkPlacementConflict(objectPos, objDef->size, "BoTRr", int3(1, 1, 0)))
+                    continue;
+                candidatesWithDist.push_back({dist, objectPos});
+            }
+
+            if (candidatesWithDist.empty()) {
+                throw runtime_error("No valid placement for anchored object '" + rule.objectName +
+                                    "' in zone " + to_string(zoneID) +
+                                    " (minDistance=" + to_string(dist) + ")");
+            }
+
+            // Sort so the nearest valid position to minDistance comes first.
+            sort(candidatesWithDist.begin(), candidatesWithDist.end(),
+                 [dist](const pair<int, int3> &a, const pair<int, int3> &b) {
+                     const bool aHigh = a.first >= dist;
+                     const bool bHigh = b.first >= dist;
+                     if (aHigh != bHigh)
+                         return aHigh;
+                     return aHigh ? (a.first < b.first) : (a.first > b.first);
+                 });
+
+            for (int c = 0; c < rule.count && !candidatesWithDist.empty(); c++) {
+                int nearestDist = candidatesWithDist.front().first;
+                vector<int3> shell;
+                for (const auto &[d, pos] : candidatesWithDist) {
+                    if (d == nearestDist)
+                        shell.push_back(pos);
+                    else
+                        break;
+                }
+
+                int3 chosenPos = rng.getRandomFromVector(shell);
+                placeTreasure(rule.objectName, chosenPos);
+                map.fixNeighbourTiles(chosenPos, objDef->size, objDef->realSize, zoneID,
+                                      int3(0, 0, 0));
+                // Remove candidates now conflicting with the placed object.
+                candidatesWithDist.erase(
+                    remove_if(candidatesWithDist.begin(), candidatesWithDist.end(),
+                              [&](const pair<int, int3> &p) {
+                                  return map.checkPlacementConflict(p.second, objDef->size, "BoTRr",
+                                                                    int3(1, 1, 0));
+                              }),
+                    candidatesWithDist.end());
+            }
+        }
+    }
+}
+
 double ObjectPlacer::evalTreasureCandidate(int3 candidatePosition,
                                            vector<vector<int>> &tilesTreeCount,
                                            vector<int3> &freeTiles, int acceptableBlockedTiles) {
