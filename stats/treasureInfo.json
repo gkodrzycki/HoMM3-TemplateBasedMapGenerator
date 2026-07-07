@@ -275,6 +275,10 @@
         "value": 250
     },
     {
+        "objectName": "redwoodObservatory",
+        "value": 750
+    },
+    {
         "objectName": "Gold",
         "value": 100
     }

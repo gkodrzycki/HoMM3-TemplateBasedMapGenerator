@@ -179,7 +179,10 @@
         "Monsters disposition (standard)": 3,
         "Monsters joining percentage": 1,
         "Monsters join only for money": true
-      }
+      },
+      "Anchored objects": [
+        { "Name": "redwoodObservatory", "Distance": 6 }
+      ]
     },
     {
       "Id": 3,
@@ -268,7 +271,10 @@
         "Monsters disposition (standard)": 3,
         "Monsters joining percentage": 1,
         "Monsters join only for money": true
-      }
+      },
+      "Anchored objects": [
+        { "Name": "redwoodObservatory", "Distance": 6 }
+      ]
     },
     {
       "Id": 4,

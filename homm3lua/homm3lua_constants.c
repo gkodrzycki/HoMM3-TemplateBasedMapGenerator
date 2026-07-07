@@ -260,6 +260,7 @@ void h3mlua_constants(lua_State *L) {
     literal("temple", "Temple");
     literal("rallyFlag", "Rally Flag");
     literal("wateringHole", "Watering Hole");
+    literal("redwoodObservatory", "Redwood Observatory");
 
     literal("ARTIFACT_ADMIRALS_HAT", "Admiral's Hat");
     literal("ARTIFACT_AMBASSADORS_SASH", "Ambassador's Sash");

@@ -23,6 +23,9 @@ const bool &ZoneTemplate::getMatchTerrainToTown() const { return matchTerrainToT
 
 const ZoneMonsters &ZoneTemplate::getMonsters() const { return monsters; }
 const vector<TreasureTier> &ZoneTemplate::getTreasure() const { return treasure; }
+const vector<AnchoredObjectRule> &ZoneTemplate::getAnchoredObjects() const {
+    return anchoredObjects;
+}
 string ZoneTemplate::getObjects() const { return objects; }
 string ZoneTemplate::getImageSettings() const { return imageSettings; }
 bool ZoneTemplate::getZoneRepulsion() const { return zoneRepulsion; }
@@ -190,6 +193,18 @@ void ZoneTemplate::deserialize(const json &zone) {
         if (opts.contains("Allowed Factions")) {
             for (const auto &f : opts.at("Allowed Factions"))
                 allowedFactions.push_back(f.get<string>());
+        }
+    }
+
+    // ---- Anchored objects -----------------------------------------------
+    if (zone.contains("Anchored objects")) {
+        for (const auto &entry : zone.at("Anchored objects")) {
+            AnchoredObjectRule rule;
+            rule.objectName = getOrError<string>(entry, "Name");
+            rule.anchor     = getOrDefault<string>(entry, "Anchor", "castle");
+            rule.distance   = getOrDefault<int>(entry, "Distance", 3);
+            rule.count      = getOrDefault<int>(entry, "Count", 1);
+            anchoredObjects.push_back(rule);
         }
     }
 }
