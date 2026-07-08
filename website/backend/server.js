@@ -67,7 +67,7 @@ function runGenerator(seed, res) {
 
     const child = execFile(
         GENERATOR_PATH,
-        ["--seed", String(seed), "--location", outputPath, "--debug", String(1)],
+        ["--seed", String(seed), "--location", outputPath],
         { maxBuffer: 1024 * 1024 * 50 },
         (err, stdout, stderr) => {
 
@@ -144,13 +144,26 @@ app.post("/generate", (req, res) => {
 });
 
 app.get("/download/:file", (req, res) => {
-    const filePath = path.join(OUTPUT_DIR, req.params.file);
+    const safeFileName = path.basename(req.params.file);
 
-    if (!fs.existsSync(filePath)) {
+    if (!safeFileName.endsWith('.h3m')) {
+        return res.status(403).send("Forbidden: Invalid file extension.");
+    }
+
+    const filePath = path.join(OUTPUT_DIR, safeFileName);
+
+    const absoluteOutputDir = path.resolve(OUTPUT_DIR);
+    const absoluteFilePath = path.resolve(filePath);
+
+    if (!absoluteFilePath.startsWith(absoluteOutputDir)) {
+        return res.status(403).send("Forbidden: Path boundary violation.");
+    }
+
+    if (!fs.existsSync(absoluteFilePath)) {
         return res.status(404).send("File not found");
     }
 
-    res.download(filePath);
+    res.download(absoluteFilePath);
 });
 
 // ========================
