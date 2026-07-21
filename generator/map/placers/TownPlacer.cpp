@@ -47,7 +47,7 @@ void TownPlacer::placeSpecificTowns(TownSettings townSettings, vector<string> &t
 
         vector<int3> currentFreeTiles;
         for (const auto &pos : freeTiles) {
-            if (map.getTile(pos)->getTileType() == TileType::TILE_FREE) {
+            if (map.getTile(pos)->isTileType("FO")) {
                 currentFreeTiles.push_back(pos);
             }
         }
@@ -110,7 +110,7 @@ void TownPlacer::placeTowns() {
             for (int y = 0; y < mapHeight; y++) {
                 int3 pos(x, y, 0);
                 auto tile = map.getTile(pos);
-                if (tile->getZoneID() == zoneID && tile->getTileType() == TileType::TILE_FREE) {
+                if (tile->getZoneID() == zoneID && tile->isTileType("FO")) {
                     if (!isInside(3, 3, mapWidth - 3, mapHeight - 3, pos) ||
                         map.checkPlacementConflict(pos, int3(5, 3, 0), "BbTRr", int3(1, 1, 0))) {
                         continue;

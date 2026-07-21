@@ -83,8 +83,8 @@ const string BOLD           = "\033[1m";
 const string RESET          = "\033[0m";
 
 const auto getZoneColor = [](int zoneID) -> string {
-    const string colors[] = {BRIGHT_CYAN, BRIGHT_MAGENTA, BRIGHT_GREEN, BRIGHT_YELLOW,
-                             CYAN,        MAGENTA,        BLUE,         GREEN};
+    // Zmienione kody BRIGHT_ na zwykłe, aby odwoływały się do color0-color7
+    const string colors[] = {CYAN, MAGENTA, GREEN, YELLOW, BLUE, RED, BLUE, GREEN};
     return colors[zoneID % 8];
 };
 

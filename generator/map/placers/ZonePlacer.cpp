@@ -103,6 +103,7 @@ void ZonePlacer::claimAbstractTile(int zoneID, int3 zoneCenter) {
         float randomNoise = rng.nextFloat(0.0, 1.5f);
 
         float score = dist + randomNoise;
+        // float score = dist;
 
         if (score < bestScore) {
             bestScore = score;
@@ -608,35 +609,136 @@ void ZonePlacer::placeZones() {
 
     calculateZoneCenters();
     for (int i = 0; i < 4; i++) {
-        relaxOutliers(2.5f - 0.1f * i);
+        relaxOutliers(2.2f - 0.1f * i);
         calculateZoneCenters();
     }
 
     fixDisjointZones();
 
+    const auto getHexColorForZone = [](int zoneID) -> std::string {
+        // Tablica kolorów HEX dopasowana do jasnego tła magisterki
+        const std::string hexColors[] = {
+            "#D1D5DB", // 0: Jasny szary (dyskretne zera)
+            "#A626A4", // 1: Magenta
+            "#50A14F", // 2: Ciemny zielony
+            "#C18401", // 3: Miodowy/Pomarańczowy
+            "#4078F2", // 4: Klasyczny niebieski
+            "#E45649", // 5: Głęboka czerwień
+            "#4078F2", // 6: Niebieski (powtórzony z oryginalnego kodu)
+            "#50A14F"  // 7: Zielony (powtórzony z oryginalnego kodu)
+        };
+
+        return hexColors[zoneID % 8];
+    };
+
     if (map.getTemplateInfo().getDebug() > 0) {
-        cerr << "=== Abstract grid ===\n";
-        for (int i = 0; i < gridN; i++) {
-            for (int j = 0; j < gridN; j++) {
-                printColor(getZoneColor(grid[i][j]), grid[i][j]);
-            }
-            cerr << "\n";
+        // 1. ZARZĄDZANIE NAZWĄ PLIKU (domyślna nazwa)
+        string baseFileName = "magisterka_grid";
+
+        // Opcja B: Przez zmienną środowiskową (nadpisuje flagę, np. GRID_OUT=test ./Generator)
+        if (const char *envName = std::getenv("GRID_OUT")) {
+            baseFileName = envName;
         }
 
-        cerr << "=== Map zones ===\n";
-        for (int i = 0; i < map.getHeight(); i++) {
-            for (int j = 0; j < map.getWidth(); j++) {
-                auto tilePtr = map.getTile(int3(j, i, 0));
+        string htmlFile = baseFileName + ".html";
+        string pngFile  = baseFileName + ".png";
 
+        // 2. KONFIGURACJA WIZUALNA
+        bool useSpaces   = false;
+        int rowWidth     = useSpaces ? (2 * gridN - 1) : gridN;
+        int paddingLeft  = (21 - rowWidth) / 2;
+        string indentStr = (paddingLeft > 0) ? string(paddingLeft, ' ') : "";
+
+        ofstream out(htmlFile);
+
+        // TUTAJ JEST KLUCZ! Musisz otworzyć tag <pre> z ustawieniami czcionki (monospace jest
+        // wymagany do siatki) Zmniejszyłem lekko font-size do 18px, bo dla dużej mapy 28px
+        // wygeneruje monstrualny plik
+        out << "<pre style='background: #FFFFFF; color: #383A42; font-family: monospace; "
+               "font-size: 26px; font-weight: 600; line-height: 1.2; padding: 40px; display: "
+               "inline-block;'>\n";
+
+        // // // 3. NAGŁÓWKI (HTML i Konsola)
+        // // out << "<pre style='background: #FFFFFF; color: #383A42; font-family: monospace;
+        // font-size: 28px; font-weight: 600; line-height: 1.3; padding: 40px; display:
+        // inline-block;'>\n";
+        // // out << "======================\n";
+        // // cerr << "======================\n";
+
+        // // 4. GENEROWANIE
+        // for (int i = 0; i < gridN; i++) {
+        //     out << indentStr;  // Wcięcie do pliku
+        //     cerr << indentStr; // Wcięcie do terminala
+
+        //     for (int j = 0; j < gridN; j++) {
+        //         // Zapis do HTML (HEX)
+        //         string hexColor = getHexColorForZone(grid[i][j]);
+        //         out << "<span style='color: " << hexColor << ";'>" << grid[i][j] << "</span>";
+
+        //         // Zapis do Terminala (ANSI) - korzysta z Twojej poprzedniej funkcji
+        //         printColor(getZoneColor(grid[i][j]), grid[i][j]);
+
+        //         // Spacje pomiędzy cyframi
+        //         if (useSpaces && j < gridN - 1) {
+        //             out << " ";
+        //             cerr << " ";
+        //         }
+        //     }
+        //     out << "\n";
+        //     cerr << "\n";
+        // }
+        // Obliczamy nowe wcięcie (nagłówek "=== Map zones ===" ma dokładnie 17 znaków)
+        int mapWidth         = map.getWidth();
+        int rowWidthZones    = useSpaces ? (2 * mapWidth - 1) : mapWidth;
+        int paddingLeftZones = (17 - rowWidthZones) / 2;
+        string indentZones   = (paddingLeftZones > 0) ? string(paddingLeftZones, ' ') : "";
+
+        int equalsCount = 48; // Zmień tę wartość, żeby wydłużyć lub skrócić linie "==="
+        string equalsStr(equalsCount, '=');
+        string headerText = equalsStr + " Map zones " + equalsStr;
+
+        // out << headerText << "\n";
+        // cerr << headerText << "\n";
+        // cerr << "=== Map zones ===\n";
+
+        for (int i = 0; i < map.getHeight(); i++) {
+            // Dodajemy wcięcie na początek wiersza, żeby ładnie wycentrować (jeśli siatka jest
+            // węższa niż nagłówek)
+            out << indentZones;
+            cerr << indentZones;
+
+            for (int j = 0; j < mapWidth; j++) {
+                auto tilePtr = map.getTile(int3(j, i, 0));
                 auto zoneMap = map.getZoneMap();
                 auto zoneID  = tilePtr->getZoneID();
-                if (zoneMap[zoneID]->getCenter() == int3(j, i, 0)) {
-                    printColor(BOLD + RED, tilePtr->getZoneID());
-                    continue;
+
+                // Wersja Terminal
+                printColor(getZoneColor(zoneID), zoneID);
+
+                // Wersja HTML
+                string hexColor = getHexColorForZone(zoneID);
+                out << "<span style='color: " << hexColor << ";'>" << zoneID << "</span>";
+
+                // Dodajemy spację pomiędzy cyframi (jeśli flaga useSpaces jest true)
+                if (useSpaces && j < mapWidth - 1) {
+                    out << " ";
+                    cerr << " ";
                 }
-                printColor(getZoneColor(tilePtr->getZoneID()), tilePtr->getZoneID());
             }
+            out << "\n";
             cerr << "\n";
         }
+
+        // NIE ZAPOMNIJ ZAMKNĄĆ TAGU I PLIKU
+        out << "</pre>\n";
+        out.close();
+
+        // UWAGA: Zwiększyłem okno na 4000x4000.
+        // Chrome odpali ogromne wirtualne okno (żeby objąć całą dużą mapę), a mogrify odetnie cały
+        // biały nadmiar.
+        string cmd = "google-chrome-stable --headless=new --hide-scrollbars "
+                     "--window-size=4000,4000 --screenshot=" +
+                     pngFile + " " + htmlFile + " > /dev/null 2>&1 && mogrify -trim " + pngFile;
+        system(cmd.c_str());
     }
 }

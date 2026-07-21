@@ -45,7 +45,7 @@ void ObjectPlacer::placeMines() {
             int3 tilePos = int3(x, y, 0);
             auto tile    = map.getTile(tilePos);
             int zoneID   = tile->getZoneID();
-            if (tile->isTileType("F")) {
+            if (tile->isTileType("FO")) {
                 if (!isInside(2, 2, mapWidth - 2, mapHeight - 2, tilePos) ||
                     map.checkPlacementConflict(tilePos, int3(4, 2, 0), "BbTRr", mineOffset)) {
                     continue;
@@ -60,6 +60,9 @@ void ObjectPlacer::placeMines() {
         GroupSettingMap &groupSettingMap = map.getGroupSettingMap();
         string zoneType                  = zone->getType();
         string zoneHash                  = map.getZoneHash(zoneID);
+
+        cerr << "Free tiles for zone " << zoneID << " (" << zoneType
+             << "): " << zoneTiles[zoneID].size() << endl;
 
         auto minimumMinesCount =
             map.getTemplateInfo().getZoneById(zoneID).getMinimumMines().mineCounts;
@@ -122,7 +125,7 @@ void ObjectPlacer::placeMines() {
                 auto tile = map.getTile(p);
                 if (!tile)
                     return false;
-                if (tile->isTileType("BbOT"))
+                if (tile->isTileType("BbT"))
                     return false;
                 return true;
             };

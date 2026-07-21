@@ -39,6 +39,8 @@ class Map {
     void initMap();
     void initTiles();
 
+    void tester();
+
     void generateMap();
 
     void placeDebugObjects();
@@ -78,11 +80,18 @@ class Map {
                            int zoneID, const int3 &offset = int3(1, 1, 0));
     bool checkPlacementConflict(const int3 &pos, const int3 &size, const string &types = "BbOTRr",
                                 const int3 &offset = int3(0, 0, 0), bool debug = false);
+    vector<int3> findBestDistributedPositionDEBUG(const vector<int3> &freeTiles,
+                                                  const vector<int3> &placedSameObjects,
+                                                  const vector<int3> &placedAllObjects,
+                                                  const int3 &zoneCenter, float tolerance = 0.8f,
+                                                  int minDistanceRelative = -1,
+                                                  int minDistanceTotal    = -1);
     int3 findBestDistributedPosition(const vector<int3> &freeTiles,
                                      const vector<int3> &placedSameObjects,
                                      const vector<int3> &placedAllObjects, const int3 &zoneCenter,
                                      float tolerance = 0.8f, int minDistanceRelative = -1,
                                      int minDistanceTotal = -1);
+    void printTestGrid(const vector<vector<int>> &grid);
 
   private:
     pair<int, int> chooseMapSize(int minimumSize, int maximumSize);

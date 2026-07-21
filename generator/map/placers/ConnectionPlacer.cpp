@@ -276,6 +276,8 @@ vector<int3> ConnectionPlacer::createPath(int3 fromPos, int3 destPos) {
                 openCells.push_back(int3(x, y, 0));
 
     int maxNumberOfNoice = openCells.size() * 0.3;
+    // if (TRIES < 0 ) return witness; // If TRIES is negative, skip the noise addition and return
+    // the initial path
     while (!openCells.empty()) {
         maxNumberOfNoice--;
         if (maxNumberOfNoice <= 0)

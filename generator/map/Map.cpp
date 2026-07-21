@@ -203,10 +203,156 @@ void Map::initTiles() {
 
 void Map::initMap() { initTiles(); }
 
-void Map::generateMap() {
-    if (templateInfo.getDebug() > 0) {
-        cerr << "==== SEED: " << rng.getOriginalSeed() << " ====\n";
+void Map::tester() {
+
+    vector<vector<int>> grid(10, vector<int>(10, 0));
+
+    grid[1][2] = 1;
+    grid[7][6] = 1;
+
+    vector<int3> freeTiles;
+    vector<int3> placedSameObjects;
+    for (int y = 0; y < 10; y++) {
+        for (int x = 0; x < 10; x++) {
+            if (grid[y][x] == 0) {
+                freeTiles.push_back(int3(x, y, 0));
+            } else if (grid[y][x] == 1) {
+                placedSameObjects.push_back(int3(x, y, 0));
+            }
+        }
     }
+
+    float param = 0.8f;
+    if (const char *envName = std::getenv("TAU_PARAM")) {
+        param = std::stof(envName);
+    }
+    auto bestPositions = findBestDistributedPositionDEBUG(freeTiles, placedSameObjects, {},
+                                                          int3(4, 4, 0), param, -1, -1);
+
+    for (const auto &bestPos : bestPositions) {
+        grid[bestPos.y][bestPos.x] = 2;
+    }
+    cerr << "Grid after placing best distributed positions:\n";
+    printTestGrid(grid);
+}
+
+void Map::printTestGrid(const vector<vector<int>> &grid) {
+    if (grid.empty() || grid[0].empty()) {
+        cerr << "Cannot print an empty test grid.\n";
+        return;
+    }
+
+    string baseFileName = "test-distributed-position";
+
+    if (const char *envName = std::getenv("GRID_OUT")) {
+        baseFileName = envName;
+    }
+
+    const string htmlFile = baseFileName + ".html";
+    const string pngFile  = baseFileName + ".png";
+
+    ofstream out(htmlFile);
+
+    if (!out.is_open()) {
+        cerr << "Could not open file: " << htmlFile << "\n";
+        return;
+    }
+
+    out << "<pre style='"
+           "background: #FFFFFF;"
+           "color: #383A42;"
+           "font-family: monospace;"
+           "font-size: 26px;"
+           "font-weight: 600;"
+           "line-height: 1.2;"
+           "padding: 40px;"
+           "display: inline-block;"
+           "'>\n";
+
+    for (const auto &row : grid) {
+        for (int cell : row) {
+            char symbol;
+            string hexColor;
+            string ansiColor;
+            bool isBold = false;
+
+            switch (cell) {
+            case 0:
+                symbol    = '.';
+                ansiColor = GREEN;
+                hexColor  = "#50A14F";
+                break;
+
+            case 1:
+                symbol    = 'O';
+                ansiColor = BLUE;
+                hexColor  = "#4078F2";
+                break;
+
+            case 2:
+                symbol    = 'X';
+                ansiColor = RED + BOLD;
+                hexColor  = "#E45649";
+                isBold    = true;
+                break;
+
+            default:
+                symbol    = '?';
+                ansiColor = "";
+                hexColor  = "#383A42";
+                break;
+            }
+
+            // Terminal output
+            if (ansiColor.empty()) {
+                cerr << symbol;
+            } else {
+                printColor(ansiColor, symbol);
+            }
+
+            // HTML output
+            out << "<span style='color: " << hexColor << ";";
+
+            if (isBold) {
+                out << " font-weight: 900;";
+            }
+
+            out << "'>" << symbol << "</span>";
+        }
+
+        out << "\n";
+        cerr << "\n";
+    }
+
+    out << "</pre>\n";
+    out.close();
+
+    const string cmd = "google-chrome-stable --headless=new "
+                       "--hide-scrollbars "
+                       "--window-size=4000,4000 "
+                       "--screenshot=\"" +
+                       pngFile +
+                       "\" "
+                       "\"" +
+                       htmlFile +
+                       "\" "
+                       "> /dev/null 2>&1 "
+                       "&& mogrify -trim \"" +
+                       pngFile + "\"";
+
+    const int result = system(cmd.c_str());
+
+    if (result != 0) {
+        cerr << "Failed to generate screenshot: " << pngFile << "\n";
+    }
+}
+
+void Map::generateMap() {
+    // if (templateInfo.getDebug() > 0) {
+    //     cerr << "==== SEED: " << rng.getOriginalSeed() << " ====\n";
+    // }
+
+    // tester();
     initMap();
 
     ZonePlacer zonePlacer(*this);
@@ -263,31 +409,31 @@ void Map::generateMap() {
     if (templateInfo.getDebug() > 0) {
         cerr << "Mine resources placed...\n";
     }
-    objectPlacer.placeTreasures();
+    // objectPlacer.placeTreasures();
 
-    if (templateInfo.getDebug() > 0) {
-        cerr << "Treasures placed...\n";
-    }
+    // if (templateInfo.getDebug() > 0) {
+    //     cerr << "Treasures placed...\n";
+    // }
 
-    GuardPlacer guardPlacer(*this);
-    guardPlacer.placeGuards();
+    // GuardPlacer guardPlacer(*this);
+    // guardPlacer.placeGuards();
 
-    if (templateInfo.getDebug() > 0) {
-        cerr << "Guards placed, fixing reachability...\n";
-    }
+    // if (templateInfo.getDebug() > 0) {
+    //     cerr << "Guards placed, fixing reachability...\n";
+    // }
 
-    fixReachability();
+    // fixReachability();
 
-    if (templateInfo.getDebug() > 0) {
-        cerr << "Reachability fixed, placing borders and obstacles...\n";
-    }
-    terrainPlacer.placeObstacles();
-    borderPlacer.placeBorders();
+    // if (templateInfo.getDebug() > 0) {
+    //     cerr << "Reachability fixed, placing borders and obstacles...\n";
+    // }
+    // terrainPlacer.placeObstacles();
+    // borderPlacer.placeBorders();
 
-    if (templateInfo.getDebug() > 0) {
-        printRealSizeMap();
-        placeDebugObjects();
-    }
+    // if (templateInfo.getDebug() > 0) {
+    //     printRealSizeMap();
+    //     placeDebugObjects();
+    // }
 }
 
 void Map::placeDebugObjects() {
@@ -360,6 +506,99 @@ bool Map::checkPlacementConflict(const int3 &pos, const int3 &size, const string
         }
     }
     return false;
+}
+
+vector<int3> Map::findBestDistributedPositionDEBUG(const vector<int3> &freeTiles,
+                                                   const vector<int3> &placedSameObjects,
+                                                   const vector<int3> &placedAllObjects,
+                                                   const int3 &zoneCenter, float tolerance,
+                                                   int minDistanceRelative, int minDistanceTotal) {
+    if (freeTiles.empty())
+        return {int3(-1, -1, -1)};
+
+    if (placedSameObjects.empty() && placedAllObjects.empty()) {
+        int centerThresholdSq = 8;
+
+        vector<int3> validCandidates;
+        for (const auto &pos : freeTiles) {
+            int dx     = pos.x - zoneCenter.x;
+            int dy     = pos.y - zoneCenter.y;
+            int distSq = dx * dx + dy * dy;
+
+            if (distSq <= centerThresholdSq) {
+                validCandidates.push_back(pos);
+            }
+        }
+        if (validCandidates.empty()) {
+            return {int3(-1, -1, -1)};
+        }
+
+        return validCandidates;
+    }
+
+    int maxMinDistSqRelative = -1;
+    int maxMinDistSqTotal    = -1;
+    vector<pair<int3, int>> tileDistances;
+    tileDistances.reserve(freeTiles.size());
+
+    for (const auto &pos : freeTiles) {
+        int minDistToAnyObjectSqRelative = numeric_limits<int>::max();
+        int minDistToAnyObjectSqTotal    = numeric_limits<int>::max();
+
+        for (const auto &placedPos : placedSameObjects) {
+            int dx     = pos.x - placedPos.x;
+            int dy     = pos.y - placedPos.y;
+            int distSq = dx * dx + dy * dy;
+            if (distSq < minDistToAnyObjectSqRelative) {
+                minDistToAnyObjectSqRelative = distSq;
+            }
+        }
+
+        for (const auto &placedPos : placedAllObjects) {
+            int dx     = pos.x - placedPos.x;
+            int dy     = pos.y - placedPos.y;
+            int distSq = dx * dx + dy * dy;
+            if (distSq < minDistToAnyObjectSqTotal) {
+                minDistToAnyObjectSqTotal = distSq;
+            }
+        }
+
+        if (minDistanceTotal > 0 &&
+            minDistToAnyObjectSqTotal < minDistanceTotal * minDistanceTotal) {
+            continue;
+        }
+
+        tileDistances.push_back({pos, minDistToAnyObjectSqRelative});
+
+        if (minDistToAnyObjectSqTotal > maxMinDistSqTotal) {
+            maxMinDistSqTotal = minDistToAnyObjectSqTotal;
+        }
+
+        if (minDistToAnyObjectSqRelative > maxMinDistSqRelative) {
+            maxMinDistSqRelative = minDistToAnyObjectSqRelative;
+        }
+    }
+
+    if (minDistanceRelative > 0) {
+        if (maxMinDistSqRelative < minDistanceRelative * minDistanceRelative) {
+            return {int3(-1, -1, -1)};
+        }
+    }
+
+    if (minDistanceTotal > 0) {
+        if (maxMinDistSqTotal < minDistanceTotal * minDistanceTotal) {
+            return {int3(-1, -1, -1)};
+        }
+    }
+    int thresholdSq = static_cast<int>(maxMinDistSqRelative * (tolerance * tolerance));
+
+    vector<int3> validCandidates;
+    for (const auto &item : tileDistances) {
+        if (item.second >= thresholdSq) {
+            validCandidates.push_back(item.first);
+        }
+    }
+    return validCandidates;
 }
 
 int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
@@ -537,62 +776,174 @@ int3 Map::findBestDistributedPosition(const vector<int3> &freeTiles,
 
 void Map::printMap(int debugLevel) {
 
-    if (debugLevel > 2) {
-        cerr << "==== Objects ====\n";
-        for (auto &object : objectVector) {
-            object->printObject();
+    if (debugLevel > 0) {
+        // 1. ZARZĄDZANIE NAZWĄ PLIKU (zmieniłem domyślną nazwę, żeby odróżnić od zone grid)
+        string baseFileName = "ch5-map";
+
+        // Opcja B: Przez zmienną środowiskową
+        if (const char *envName = std::getenv("GRID_OUT")) {
+            baseFileName = envName;
         }
 
-        cerr << "==== Monoliths ====\n";
-        for (auto &monoliths : monolithVector) {
-            cerr << "Monolith from ";
-            monoliths.first->printObject();
-            cerr << "Monolith dest ";
-            monoliths.second->printObject();
-        }
-    }
+        string htmlFile = baseFileName + ".html";
+        string pngFile  = baseFileName + ".png";
 
-    cerr << "==== Tiles ====\n";
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            TileType tileType = tileMap[i][j]->getTileType();
-            switch (tileType) {
-            case TileType::TILE_DEBUG:
-                printColor(RED, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_FREE:
-                printColor(GREEN, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_OCCUPIED:
-                printColor(YELLOW, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_RESERVED:
-                cerr << tileTypeToChar(tileType);
-                break;
-            case TileType::TILE_TAKEN:
-                printColor(CYAN, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_ROAD:
-                printColor(MAGENTA, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_BORDER_INNER:
-                printColor(BLUE, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_BORDER_OUTER:
-                printColor(BRIGHT_BLUE, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_GUARD:
-                printColor(RED + BOLD, tileTypeToChar(tileType));
-                break;
-            case TileType::TILE_OBSTACLE_BODY:
-                printColor(RED, tileTypeToChar(tileType));
-                break;
-            default:
-                cerr << tileTypeToChar(tileType);
+        // 2. KONFIGURACJA WIZUALNA
+        bool useSpaces = false;
+        ofstream out(htmlFile);
+
+        out << "<pre style='background: #FFFFFF; color: #383A42; font-family: monospace; "
+               "font-size: 26px; font-weight: 600; line-height: 1.2; padding: 40px; display: "
+               "inline-block;'>\n";
+
+        // 3. GENEROWANIE
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                TileType tileType = tileMap[i][j]->getTileType();
+                char c            = tileTypeToChar(tileType);
+
+                string hexColor;
+                string ansiColor;
+                bool isBold = false;
+
+                // Mapowanie kolorów ANSI na przyjazne do druku HEXy
+                switch (tileType) {
+                case TileType::TILE_DEBUG:
+                case TileType::TILE_OBSTACLE_BODY:
+                    ansiColor = RED;
+                    hexColor  = "#E45649"; // Czerwony
+                    break;
+                case TileType::TILE_FREE:
+                    ansiColor = GREEN;
+                    hexColor  = "#50A14F"; // Zielony
+                    break;
+                case TileType::TILE_OCCUPIED:
+                    ansiColor = YELLOW;
+                    hexColor  = "#C18401"; // Miodowy/Pomarańczowy (żółty byłby niewidoczny)
+                    break;
+                case TileType::TILE_ROAD:
+                    ansiColor = MAGENTA;
+                    hexColor  = "#A626A4"; // Magenta
+                    break;
+                case TileType::TILE_BORDER_INNER:
+                    ansiColor = BLUE;
+                    hexColor  = "#4078F2"; // Niebieski
+                    break;
+                case TileType::TILE_BORDER_OUTER:
+                    ansiColor = BRIGHT_BLUE;
+                    hexColor  = "#0953D6"; // Ciemniejszy, mocny niebieski dla kontrastu
+                    break;
+                case TileType::TILE_GUARD:
+                    ansiColor = RED + BOLD;
+                    hexColor  = "#E45649"; // Czerwony (pogrubiony flagą isBold)
+                    isBold    = true;
+                    break;
+                case TileType::TILE_TAKEN:
+                    ansiColor = CYAN;
+                    hexColor  = "#FF8C00"; // Ciemny turkus, odróżnia się od niebieskich borderów
+                    break;
+
+                case TileType::TILE_RESERVED:
+                    ansiColor = BRIGHT_BLUE;
+                    hexColor  = "#DAA520"; // Neutralny szary, widoczny, ale mniej dominujący
+                    break;
+
+                default:
+                    ansiColor = "";        // Domyślny kolor terminala
+                    hexColor  = "#383A42"; // Domyślny ciemny szary tekstu
+                    break;
+                }
+
+                // WYPISANIE W TERMINALU
+                if (ansiColor.empty()) {
+                    cerr << c;
+                } else {
+                    printColor(ansiColor, c);
+                }
+
+                // WYPISANIE DO PLIKU HTML
+                if (isBold) {
+                    out << "<span style='color: " << hexColor << "; font-weight: 900;'>" << c
+                        << "</span>";
+                } else {
+                    out << "<span style='color: " << hexColor << ";'>" << c << "</span>";
+                }
+
+                // Dodajemy spację pomiędzy znakami (jeśli flaga useSpaces jest włączona)
+                if (useSpaces && j < width - 1) {
+                    out << " ";
+                    cerr << " ";
+                }
             }
+            out << "\n";
+            cerr << "\n";
         }
-        cerr << "\n";
+
+        // ZAMKNIĘCIE TAGU I PLIKU
+        out << "</pre>\n";
+        out.close();
+
+        // SCREENSHOT
+        string cmd = "google-chrome-stable --headless=new --hide-scrollbars "
+                     "--window-size=4000,4000 --screenshot=" +
+                     pngFile + " " + htmlFile + " > /dev/null 2>&1 && mogrify -trim " + pngFile;
+        system(cmd.c_str());
     }
+
+    // if (debugLevel > 2) {
+    //     cerr << "==== Objects ====\n";
+    //     for (auto &object : objectVector) {
+    //         object->printObject();
+    //     }
+
+    //     cerr << "==== Monoliths ====\n";
+    //     for (auto &monoliths : monolithVector) {
+    //         cerr << "Monolith from ";
+    //         monoliths.first->printObject();
+    //         cerr << "Monolith dest ";
+    //         monoliths.second->printObject();
+    //     }
+    // }
+    // for (int i = 0; i < height; i++) {
+    //     for (int j = 0; j < width; j++) {
+    //         TileType tileType = tileMap[i][j]->getTileType();
+    //         switch (tileType) {
+    //         case TileType::TILE_DEBUG:
+    //             printColor(RED, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_FREE:
+    //             printColor(GREEN, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_OCCUPIED:
+    //             printColor(YELLOW, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_RESERVED:
+    //             cerr << tileTypeToChar(tileType);
+    //             break;
+    //         case TileType::TILE_TAKEN:
+    //             printColor(CYAN, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_ROAD:
+    //             printColor(MAGENTA, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_BORDER_INNER:
+    //             printColor(BLUE, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_BORDER_OUTER:
+    //             printColor(BRIGHT_BLUE, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_GUARD:
+    //             printColor(RED + BOLD, tileTypeToChar(tileType));
+    //             break;
+    //         case TileType::TILE_OBSTACLE_BODY:
+    //             printColor(RED, tileTypeToChar(tileType));
+    //             break;
+    //         default:
+    //             cerr << tileTypeToChar(tileType);
+    //         }
+    //     }
+    //     cerr << "\n";
+    // }
 }
 
 void Map::printRealSizeMap() {
