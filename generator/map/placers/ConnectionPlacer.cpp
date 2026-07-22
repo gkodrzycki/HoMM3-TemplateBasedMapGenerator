@@ -23,7 +23,7 @@ void ConnectionPlacer::placeRoads() {
                                         to_string(map.getRNG().getOriginalSeed()) + "\n");
                 }
 
-                Road road(1, path, "Road");
+                Road road(2, path, "Road");
                 auto roadPtr = make_shared<Road>(road);
                 map.addRoad(roadPtr);
 
@@ -57,7 +57,7 @@ void ConnectionPlacer::placeRoads() {
             continue;
         }
 
-        Road road(1, path, "Road");
+        Road road(2, path, "Road");
         auto roadPtr = make_shared<Road>(road);
         map.addRoad(roadPtr);
 
